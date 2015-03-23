@@ -633,7 +633,7 @@ public abstract class AGDT_Maps {
      * @param attributeName
      * @param outputFile
      * @param max
-     * @param filter If filter == true then result is clipped to the LSOA
+     * @param filter
      * boundary.
      */
     public TreeMap<Integer, Integer> selectAndCreateNewShapefile(
@@ -781,6 +781,163 @@ public abstract class AGDT_Maps {
         return inAndOutOfRegionCount;
     }
 
+    /*
+     * Select and create a new shapefile.
+     *
+     * @param fc
+     * @param sft
+     * @param tLSOACodes
+     * @param tLSOAData
+     * @param attributeName
+     * @param outputFile
+     * @param max
+     * @param filter
+     * boundary.
+     */
+    public TreeMap<Integer, Integer> selectAndCreateNewShapefile(
+            ShapefileDataStoreFactory sdsf,
+            FeatureCollection fc,
+            SimpleFeatureType sft,
+            TreeSet<String> levelCodes,
+            TreeMap<String, Integer> levelData,
+            //String attributeName, 
+            String targetPropertyName,
+            File outputFile,
+            boolean countClientsInAndOutOfRegion,
+            boolean density) {
+
+        TreeMap<Integer, Integer> inAndOutOfRegionCount = null;
+        if (countClientsInAndOutOfRegion) {
+            inAndOutOfRegionCount = new TreeMap<Integer, Integer>();
+            inAndOutOfRegionCount.put(0, 0);
+            inAndOutOfRegionCount.put(1, 0);
+        }
+
+        //        summariseAttributes(sft);
+        // Initialise the collection of new Features
+        TreeSetFeatureCollection tsfc;
+        tsfc = new TreeSetFeatureCollection();
+        // Create SimpleFeatureBuilder
+        //FeatureFactory ff = FactoryFinder.getGeometryFactories();
+        SimpleFeatureBuilder sfb;
+        sfb = new SimpleFeatureBuilder(sft);
+        Set<String> keySet = levelData.keySet();
+        FeatureIterator featureIterator;
+        featureIterator = fc.features();
+        int id_int = 0;
+        while (featureIterator.hasNext()) {
+            Feature inputFeature = featureIterator.next();
+            Collection<Property> properties;
+            properties = inputFeature.getProperties();
+            Iterator<Property> itep;
+            // get Area
+            double area = 0;
+            itep = properties.iterator();
+            while (itep.hasNext()) {
+                Property p = itep.next();
+                //System.out.println("Property " + p.toString());
+                String propertyName = p.getName().toString();
+                //System.out.println("PropertyName " + propertyName);
+//                PropertyDescriptor pd;
+//                pd = p.getDescriptor();
+                if (propertyName.equalsIgnoreCase("the_geom")) {
+                    Geometry g;
+                    g = (Geometry) p.getValue();
+                    area = g.getArea();
+                    try {
+                        Polygon poly;
+                        poly = (Polygon) g;
+                        area = poly.getArea();
+                    } catch (ClassCastException e) {
+                        int debug = 1;
+                    }
+                    try {
+                        MultiPolygon multipoly;
+                        multipoly = (MultiPolygon) g;
+                        area = multipoly.getArea();
+                    } catch (ClassCastException e) {
+                        int debug = 1;
+                    }
+                }
+            }
+            itep = properties.iterator();
+            while (itep.hasNext()) {
+                Property p = itep.next();
+                //System.out.println("Property " + p.toString());
+                String propertyName = p.getName().toString();
+                //System.out.println("PropertyName " + propertyName);
+                if (propertyName.equalsIgnoreCase(targetPropertyName)) {
+                    //PropertyType propertyType = p.getType();
+                    //System.out.println("PropertyType " + propertyType);
+                    Object value = p.getValue();
+                    //System.out.println("PropertyValue " + value);
+                    String valueString = value.toString();
+                    // Always filter if (filter) {
+                        if (levelCodes.contains(valueString)) {
+                            // Add to inAndOutOfRegionCount
+                            Integer clientCount = levelData.get(valueString);
+                            //                            if (clientCount == null) {
+                            //                                clientCount = 0;
+                            //                            }
+                            if (clientCount != null) {
+                                double densityValue;
+                                densityValue = (clientCount * 1000000) / area; // * 1000000 for 100 hectares
+                                String id = "" + id_int;
+                                addFeatureAttributeAndAddToFeatureCollection(
+                                        (SimpleFeature) inputFeature,
+                                        sfb, densityValue, tsfc, id);
+                                id_int++;
+                                if (countClientsInAndOutOfRegion) {
+                                    Generic_Collections.addToTreeMapIntegerInteger(
+                                            inAndOutOfRegionCount,
+                                            1, clientCount);
+                                }
+                            } else {
+                                int debug = 1;
+                            }
+                        } else {
+                            // Add to inAndOutOfRegionCount
+                            Integer clientCount = levelData.get(valueString);
+                            if (clientCount != null) {
+                                // Add to inAndOutOfRegionCount
+                                if (countClientsInAndOutOfRegion) {
+                                    Generic_Collections.addToTreeMapIntegerInteger(
+                                            inAndOutOfRegionCount, 0, clientCount);
+                                }
+                            } else {
+                                int debug = 1;
+                            }
+                        }
+//                    } else {
+//                        if (keySet.contains(valueString) || levelCodes.contains(valueString)) {
+//                            Integer clientCount = levelData.get(valueString);
+//                            //                            if (clientCount == null) {
+//                            //                                clientCount = 0;
+//                            //                            }
+//                            if (clientCount != null) {
+//                                double densityValue;
+//                                densityValue = (clientCount * 1000000) / area; // * 1000000 for 100 hectares
+//                                String id = "" + id_int;
+//                                addFeatureAttributeAndAddToFeatureCollection(
+//                                        (SimpleFeature) inputFeature, sfb, densityValue, tsfc, id);
+//                                id_int++;
+//                                // Add to inAndOutOfRegionCount
+//                                if (countClientsInAndOutOfRegion) {
+//                                    Generic_Collections.addToTreeMapIntegerInteger(
+//                                            inAndOutOfRegionCount, 1, clientCount);
+//                                }
+//
+//                            }
+//                        }
+//                    }
+                }
+            }
+        }
+        featureIterator.close();
+        AGDT_Shapefile.transact(outputFile, sft, tsfc, sdsf);
+        return inAndOutOfRegionCount;
+    }
+    
     /*
      * Get an output file name and create the new shapefile
      */
