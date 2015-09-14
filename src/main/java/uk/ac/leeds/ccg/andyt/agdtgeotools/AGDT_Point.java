@@ -32,4 +32,12 @@ public class AGDT_Point implements Serializable {
     public String toString() {
         return "x " + x + ", y " + y;
     }
+    
+    public double getDistance(AGDT_Point p) {
+        double result;
+        double xdiff = (double) (getX() - p.getX());
+        double ydiff = (double) (getY() - p.getY());
+        result = Math.sqrt((xdiff * xdiff) + (ydiff * ydiff));
+        return result;
+    }
 }

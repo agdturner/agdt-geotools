@@ -35,6 +35,7 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.data.store.ContentFeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.map.FeatureLayer;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
@@ -53,7 +54,7 @@ public class AGDT_Shapefile {
     private FileDataStore fileDataStore;
 
     
-    public AGDT_Shapefile() {
+    protected AGDT_Shapefile() {
     }
     
 //    public DW_Shapefile(File shapefile) throws MalformedURLException {
@@ -186,7 +187,9 @@ public class AGDT_Shapefile {
     }
 
     protected final void initFileDataStore() {
-        fileDataStore = getFileDataStore(getFile());
+        File f;
+        f = getFile();
+        fileDataStore = getFileDataStore(f);
     }
 
     /**
@@ -296,7 +299,7 @@ public class AGDT_Shapefile {
         commitTransaction(transaction);
         sds.dispose();
     }
-
+    
     public static void commitTransaction(Transaction transaction) {
         try {
             transaction.commit();
@@ -370,6 +373,9 @@ public class AGDT_Shapefile {
      * @return the file
      */
     public File getFile() {
+        if (file == null) {
+            int debug = 1;
+        }
         return file;
     }
 

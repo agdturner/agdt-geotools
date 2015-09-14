@@ -18,8 +18,8 @@
  */
 package uk.ac.leeds.ccg.andyt.agdtgeotools;
 
-import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_LegendItem;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import org.geotools.styling.Style;
@@ -30,8 +30,7 @@ import org.geotools.styling.Style;
  */
 public class AGDT_StyleParameters {
 
-    private List<Style> styles;
-    //private Style style;
+    private HashMap<String, List<Style>> styles;
     private String classificationFunctionName;
     private int nClasses;
     private String paletteName;
@@ -39,20 +38,45 @@ public class AGDT_StyleParameters {
     private Style backgroundStyle;
     private String backgroundStyleTitle;
     private boolean drawBoundaries;
+    private boolean doForeground;
     private ArrayList<Style> foregroundStyle0;
-    //private Style foregroundStyle0;
     private String foregroundStyleTitle0;
     private Style foregroundStyle1;
     private String foregroundStyleTitle1;
     private ArrayList<ArrayList<AGDT_LegendItem>> legendItems;
 
+    public void setMaxForTheLastLegendItem(
+            double max,
+            int styleIndex) {
+        int maxInt = (int) max;
+        ArrayList<AGDT_LegendItem> legendItems;
+        legendItems = getLegendItems(styleIndex);
+        AGDT_LegendItem legendItem;
+        legendItem = legendItems.get(legendItems.size() - 1);
+        String currentLabel = legendItem.getLabel();
+        String[] splitCurrentLabel = currentLabel.split("-");
+        String newLabel;
+        if (maxInt == max) {
+            newLabel = splitCurrentLabel[0] + "-" + maxInt;
+        } else {
+            newLabel = splitCurrentLabel[0] + "-" + max;
+        }
+        legendItem.setLabel(newLabel);
+    }
+
     /**
+     * @param key
      * @param index
      * @return the style at styleIndex
      */
-    public Style getStyle(int index) {
+    public Style getStyle(
+            String key,
+            int index) {
         Style result;
-        List<Style> styles0 = getStyles();
+        List<Style> styles0 = getStyles(key);
+        if (styles0 == null) {
+            styles0 = new ArrayList<Style>();
+        }
         try {
             result = styles0.get(index);
         } catch (IndexOutOfBoundsException e) {
@@ -69,41 +93,64 @@ public class AGDT_StyleParameters {
 
     public void setStylesNull() {
         if (styles != null) {
-            if (!styles.isEmpty()) {
-                int size = styles.size();
+            Iterator<String> ite;
+            ite = styles.keySet().iterator();
+            while (ite.hasNext()) {
+                String key = ite.next();
+                List<Style> tStyles;
+                tStyles = styles.get(key);
+                if (!tStyles.isEmpty()) {
+                    int size = tStyles.size();
 //                for (int i = 0; i < size; i ++) {
 //                    setStyle(null,i);
 //                }
-                styles.clear();
-                for (int i = 0; i < size; i ++) {
-                    styles.add(null);
-                }
+                    tStyles.clear();
+                    for (int i = 0; i < size; i++) {
+                        tStyles.add(null);
+                    }
 //                Iterator<Style> ite = styles.iterator();
 //                while (ite.hasNext()) {
 //                    Style style = ite.next();
 //                    style = null;
 //                }
+                }
             }
         }
     }
 
     /**
+     * @param key
      * @param style
      * @param index
      * @return the style
      */
-    public Style setStyle(Style style, int index) {
+    public Style setStyle(String key, Style style, int index) {
         Style result;
-        result = getStyle(index); // This ensures that styles is initialised to the right length.
-        getStyles().set(index, style);
+        result = getStyle(key, index); // This ensures that styles is initialised to the right length.
+        getStyles(key).set(index, style);
         return result;
     }
 
-    public List<Style> getStyles() {
+//    public HashMap<String, List<Style>> getStyles() {
+//        if (styles == null) {
+//            styles = new HashMap<String, List<Style>>();
+//        }
+//        return styles;
+//    }
+    public List<Style> getStyles(String key) {
+        List<Style> result;
         if (styles == null) {
-            styles = new ArrayList<Style>();
+            styles = new HashMap<String, List<Style>>();
+            result = new ArrayList<Style>();
+            styles.put(key, result);
+        } else {
+            result = styles.get(key);
+            if (result == null) {
+                result = new ArrayList<Style>();
+                styles.put(key, result);
+            }
         }
-        return styles;
+        return result;
     }
 
     /**
@@ -190,27 +237,33 @@ public class AGDT_StyleParameters {
         this.backgroundStyleTitle = backgroundStyleTitle;
     }
 
+    public boolean isDoForeground() {
+        return doForeground;
+    }
+
+    public void setDoForeground(boolean doForeground) {
+        this.doForeground = doForeground;
+    }
+
 //    /**
 //     * @return the foregroundStyle0
 //     */
 //    public Style getForegroundStyle0() {
 //        return foregroundStyle0;
 //    }
-
     /**
      * @return the foregroundStyle0
      */
     public ArrayList<Style> getForegroundStyle0() {
         return foregroundStyle0;
     }
-    
+
 //    /**
 //     * @param foregroundStyle0 the foregroundStyle0 to set
 //     */
 //    public void setForegroundStyle0(Style foregroundStyle0) {
 //        this.foregroundStyle0 = foregroundStyle0;
 //    }
-
     /**
      * @param foregroundStyle0 the foregroundStyle0 to set
      */
@@ -218,8 +271,6 @@ public class AGDT_StyleParameters {
         this.foregroundStyle0 = foregroundStyle0;
     }
 
-    
-            
     /**
      * @return the foregroundStyleTitle0
      */
@@ -285,12 +336,11 @@ public class AGDT_StyleParameters {
         }
         return result;
     }
-        
-        
+
     /**
      * @param legendItems the legendItems to set
      * @param index
-     * @return 
+     * @return
      */
     public ArrayList<AGDT_LegendItem> setLegendItems(
             ArrayList<AGDT_LegendItem> legendItems, int index) {

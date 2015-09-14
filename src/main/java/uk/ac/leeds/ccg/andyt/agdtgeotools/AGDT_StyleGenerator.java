@@ -55,9 +55,10 @@ import org.opengis.filter.expression.Expression;
  * @author geoagdt
  */
 public class AGDT_StyleGenerator extends StyleGenerator {
-        private static final java.util.logging.Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.geotools.brewer.color");
 
-        private static FilterFactory ff = CommonFactoryFinder.getFilterFactory(null);
+    private static final java.util.logging.Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.geotools.brewer.color");
+
+    private static FilterFactory ff = CommonFactoryFinder.getFilterFactory(null);
     private static StyleFactory sf = CommonFactoryFinder.getStyleFactory(null);
     private static StyleBuilder sb = new StyleBuilder(sf, ff);
 
@@ -68,9 +69,8 @@ public class AGDT_StyleGenerator extends StyleGenerator {
      *
      * @param classifier
      * @param colors
-     * @param typeId
-     *            semantic type identifier, which will be prefixed with
-     *            "colorbrewer:"
+     * @param typeId semantic type identifier, which will be prefixed with
+     * "colorbrewer:"
      * @param geometryAttrType
      * @param elseMode
      * @param opacity
@@ -81,10 +81,9 @@ public class AGDT_StyleGenerator extends StyleGenerator {
     //@Override
     public static FeatureTypeStyle createFeatureTypeStyle(
             Classifier classifier,
-        Expression expression, Color[] colors, String typeId,
-        GeometryDescriptor geometryAttrType, int elseMode, double opacity, Stroke stroke)
-        throws IllegalFilterException {
-        
+            Expression expression, Color[] colors, String typeId,
+            GeometryDescriptor geometryAttrType, int elseMode, double opacity, Stroke stroke)
+            throws IllegalFilterException {
 
         //answer goes here
         FeatureTypeStyle fts = sf.createFeatureTypeStyle();
@@ -95,24 +94,67 @@ public class AGDT_StyleGenerator extends StyleGenerator {
         //        if (elseMode == ELSEMODE_IGNORE) {
         //            numClasses++;
         //        }
-
         //numeric
         if (classifier instanceof RangedClassifier) {
             RangedClassifier ranged = (RangedClassifier) classifier;
-
             Object localMin = null;
             Object localMax = null;
-
-            // for each class
-            for (int i = 0; i < ranged.getSize(); i++) {
+            int i;
+            Rule rule;
+            // First class
+            i = 0;
+            localMin = ranged.getMin(i);
+            localMin = Double.MIN_VALUE;
+            localMin = ranged.getMin(i);
+            localMax = ranged.getMax(i);
+            rule = createRuleRanged(
+                    ranged,
+                    expression,
+                    localMin,
+                    localMax,
+                    geometryAttrType,
+                    i,
+                    elseMode,
+                    colors,
+                    opacity,
+                    stroke);
+            fts.addRule(rule);
+            // For each middle classes
+            for (i = 1; i < ranged.getSize() - 1; i++) {
                 // obtain min/max values
                 localMin = ranged.getMin(i);
                 localMax = ranged.getMax(i);
-
-                Rule rule = createRuleRanged(ranged, expression, localMin, localMax,
-                        geometryAttrType, i, elseMode, colors, opacity, stroke);
+                rule = createRuleRanged(
+                        ranged,
+                        expression,
+                        localMin,
+                        localMax,
+                        geometryAttrType,
+                        i,
+                        elseMode,
+                        colors,
+                        opacity,
+                        stroke);
                 fts.addRule(rule);
             }
+            // For last class
+            i = ranged.getSize() - 1;
+            // obtain min/max values
+            localMin = ranged.getMin(i);
+            localMax = Double.MAX_VALUE;
+            //localMax = ranged.getMax(i);
+            rule = createRuleRanged(
+                    ranged,
+                    expression,
+                    localMin,
+                    localMax,
+                    geometryAttrType,
+                    i,
+                    elseMode,
+                    colors,
+                    opacity,
+                    stroke);
+            fts.addRule(rule);
         } else if (classifier instanceof ExplicitClassifier) {
             ExplicitClassifier explicit = (ExplicitClassifier) classifier;
 
@@ -151,15 +193,15 @@ public class AGDT_StyleGenerator extends StyleGenerator {
         }
 
         //our syntax will be: ColorBrewer:id
-        fts.setSemanticTypeIdentifiers(new String[] { "generic:geometry", "colorbrewer:" + typeId });
+        fts.setSemanticTypeIdentifiers(new String[]{"generic:geometry", "colorbrewer:" + typeId});
 
         return fts;
     }
-    
+
     private static Rule createRuleRanged(RangedClassifier classifier, Expression expression,
-        Object localMin, Object localMax, GeometryDescriptor geometryAttrType, int i,
-        int elseMode, Color[] colors, double opacity, Stroke defaultStroke)
-        throws IllegalFilterException {
+            Object localMin, Object localMax, GeometryDescriptor geometryAttrType, int i,
+            int elseMode, Color[] colors, double opacity, Stroke defaultStroke)
+            throws IllegalFilterException {
         // 1.0 --> 1
         // (this makes our styleExpressions more readable. Note that the
         // filter always converts to double, so it doesn't care what we
@@ -175,16 +217,16 @@ public class AGDT_StyleGenerator extends StyleGenerator {
 
         if (localMin == localMax) {
             // build filter: =
-            filter = ff.equals(expression, ff.literal(localMax)); 
+            filter = ff.equals(expression, ff.literal(localMax));
         } else {
             // build filter: [min <= x] AND [x < max]
             Filter lowBoundFilter = null;
             Filter hiBoundFilter = null;
-            
-            if(localMin != null) {
+
+            if (localMin != null) {
                 lowBoundFilter = ff.greaterOrEqual(expression, ff.literal(localMin));
             }
-            if(localMax != null) {
+            if (localMax != null) {
                 // if this is the global maximum, include the max value
                 if (i == (classifier.getSize() - 1)) {
                     hiBoundFilter = ff.lessOrEqual(expression, ff.literal(localMax));
@@ -205,7 +247,7 @@ public class AGDT_StyleGenerator extends StyleGenerator {
         Color c = getColor(elseMode, colors, i);
         if (defaultStroke == null) {
             defaultStroke = sb.createStroke(
-                sb.literalExpression(c),
+                    sb.literalExpression(c),
                     sb.literalExpression(0),
                     sb.literalExpression(opacity));
         }
@@ -221,7 +263,7 @@ public class AGDT_StyleGenerator extends StyleGenerator {
 
         return rule;
     }
-    
+
     /**
      * Truncates an unneeded trailing decimal zero (1.0 --> 1) by converting to
      * an Integer object.
@@ -237,7 +279,7 @@ public class AGDT_StyleGenerator extends StyleGenerator {
             return value;
         }
     }
-    
+
     /**
      * Generates a quick name for each rule with a leading zero.
      *
@@ -253,7 +295,7 @@ public class AGDT_StyleGenerator extends StyleGenerator {
             return "rule" + strVal;
         }
     }
-    
+
     /**
      * Obtains the colour for the indexed rule. If an else rule is also to be
      * created from the colour palette, the appropriate offset is applied.
@@ -271,17 +313,17 @@ public class AGDT_StyleGenerator extends StyleGenerator {
             return null;
         }
     }
-    
+
     private static Rule createRuleExplicit(
-            ExplicitClassifier explicit, 
+            ExplicitClassifier explicit,
             Expression expression,
-        Set value, 
-        GeometryDescriptor geometryAttrType, 
-        int i, 
-        int elseMode, 
-        Color[] colors,
-        double opacity, 
-        Stroke defaultStroke) {
+            Set value,
+            GeometryDescriptor geometryAttrType,
+            int i,
+            int elseMode,
+            Color[] colors,
+            double opacity,
+            Stroke defaultStroke) {
         // create a sub filter for each unique value, and merge them
         // into the logic filter
         Object[] items = value.toArray();
@@ -319,10 +361,10 @@ public class AGDT_StyleGenerator extends StyleGenerator {
         // create the rule
         Rule rule = sb.createRule(symb);
 
-        if (filters.size() == 1){
-        	rule.setFilter(filters.get(0));
-        }else if (filters.size() > 1){
-        	rule.setFilter(ff.or(filters));
+        if (filters.size() == 1) {
+            rule.setFilter(filters.get(0));
+        } else if (filters.size() > 1) {
+            rule.setFilter(ff.or(filters));
         }
 
         rule.setTitle(title);
@@ -330,7 +372,7 @@ public class AGDT_StyleGenerator extends StyleGenerator {
 
         return rule;
     }
-    
+
     /**
      * Creates a symbolizer for the given geometry
      *
@@ -342,10 +384,10 @@ public class AGDT_StyleGenerator extends StyleGenerator {
      *
      */
     private static Symbolizer createSymbolizer(
-            GeometryDescriptor geometryAttrType, 
+            GeometryDescriptor geometryAttrType,
             Color color,
-        double opacity, 
-        Stroke defaultStroke) {
+            double opacity,
+            Stroke defaultStroke) {
         Symbolizer symb;
 
         if (defaultStroke == null) {
@@ -373,7 +415,7 @@ public class AGDT_StyleGenerator extends StyleGenerator {
 
         return symb;
     }
-    
+
     private static Color getElseColor(int elseMode, Color[] colors) {
         if (elseMode == ELSEMODE_INCLUDEASMIN) {
             return colors[0];
