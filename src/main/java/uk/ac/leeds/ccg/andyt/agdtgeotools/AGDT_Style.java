@@ -27,10 +27,15 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.TreeMap;
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
+import org.geotools.brewer.color.StyleGenerator;
 import org.geotools.data.FeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.filter.function.RangedClassifier;
 import org.geotools.styling.ColorMap;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
@@ -48,21 +53,29 @@ import org.geotools.styling.StyleFactory;
 import org.geotools.swing.dialog.JExceptionReporter;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
+import org.opengis.filter.expression.PropertyName;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_double;
 import uk.ac.leeds.ccg.andyt.grids.core.AbstractGrid2DSquareCell;
+import uk.ac.leeds.ccg.andyt.grids.core.AbstractGridStatistics;
+import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDouble;
+import uk.ac.leeds.ccg.andyt.grids.core.GridStatistics0;
+import uk.ac.leeds.ccg.andyt.grids.core.GridStatistics1;
 
 /**
  *
  * @author geoagdt
  */
-//public class DW_Style extends AGDT_Style {
 public class AGDT_Style {
 
-    public static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
-    public static FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
+    public static final StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
+    public static final FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
     public static StyleBuilder styleBuilder = new StyleBuilder(styleFactory, filterFactory);
 
     /**
@@ -136,79 +149,6 @@ public class AGDT_Style {
         } else {
             return createDefaultPointStyle();
         }
-    }
-
-    /**
-     * Create and returns a Style to draw point features as circles with blue
-     * outlines and cyan fill.
-     *
-     * @return A Style to draw point features as circles with blue outlines and
-     * cyan fill.
-     */
-    public static ArrayList<Style> createAdviceLeedsPointStyles() {
-//        StyleBuilder sb = new StyleBuilder();
-//        PointSymbolizer ps = sb.createPointSymbolizer();
-//        FilterFactory2 ff = sb.getFilterFactory();
-//        StyleFactory sf = sb.getStyleFactory();
-//        sf.
-        ArrayList<Style> result;
-        result = new ArrayList<Style>();
-        Mark mark;
-        int size;
-        String type;
-        Color fill;
-        Color outline;
-        outline = Color.BLUE;
-        // Order of styles added is in the order of DW_Processor.getAdviceLeedsServiceNames()
-//        ArrayList<String> tAdviceLeedsServiceNames;
-//        tAdviceLeedsServiceNames = DW_Processor.getAdviceLeedsServiceNames();
-        // CAB as crosses
-        size = 9;
-        type = "Cross";
-        fill = Color.GRAY;
-        Style GeneralCABStyle;
-        GeneralCABStyle = getPointStyle(size, type, fill, outline);
-        //  Otley
-        result.add(GeneralCABStyle);
-        //  Morley
-        result.add(GeneralCABStyle);
-        //  Crossgates
-        result.add(GeneralCABStyle);
-        //  Pudsey
-        result.add(GeneralCABStyle);
-        // Leeds CAB
-        fill = Color.WHITE;
-        result.add(getPointStyle(size, type, fill, outline));
-        // Chapeltown CAB
-        fill = Color.LIGHT_GRAY;
-        result.add(getPointStyle(size, type, fill, outline));
-
-        // Charities
-        size = 5;
-        type = "Square";
-        // Ebor Gardens
-        fill = Color.BLUE;
-        result.add(getPointStyle(size, type, fill, outline));
-        // St Vincents
-        fill = Color.CYAN;
-        result.add(getPointStyle(size, type, fill, outline));
-
-        // Leeds Law Centre
-        size = 10;
-        type = "X";
-        fill = Color.GRAY;
-        result.add(getPointStyle(size, type, fill, outline));
-
-        // Others
-        size = 8;
-        type = "Triangle";
-        // BLC
-        fill = Color.CYAN;
-        result.add(getPointStyle(size, type, fill, outline));
-        // LCC_WRU
-        fill = Color.BLUE;
-        result.add(getPointStyle(size, type, fill, outline));
-        return result;
     }
 
     public static Style getPointStyle(
@@ -389,6 +329,189 @@ public class AGDT_Style {
     }
 
     /**
+     * Create a Style to draw polygon features with a thin blue outline and a
+     * cyan fill
+     *
+     * @param featureCollection
+     * @param attributeName
+     * @param styleParameters
+     * @return
+     */
+    public static Object[] createPolygonStyle(
+            FeatureCollection featureCollection,
+            String attributeName,
+            AGDT_StyleParameters styleParameters) {
+        return createPolygonStyle(
+             featureCollection,
+             attributeName,
+             styleParameters,
+            true);
+    }
+    
+    /**
+     * Create a Style to draw polygon features with a thin blue outline and a
+     * cyan fill
+     *
+     * @param featureCollection
+     * @param attributeName
+     * @param styleParameters
+     * @return
+     */
+    public static Object[] createPolygonStyle(
+            FeatureCollection featureCollection,
+            String attributeName,
+            AGDT_StyleParameters styleParameters,
+            boolean doDebug) {    
+        Object[] result = new Object[2];
+
+        // Unpack styleParamters
+        int nClasses = styleParameters.getnClasses();
+        boolean addWhiteForZero = styleParameters.isAddWhiteForZero();
+        String paletteName = styleParameters.getPaletteName();
+        String classificationFunctionName = styleParameters.getClassificationFunctionName();
+
+        // STEP 0 Set up Color Brewer
+        ColorBrewer brewer = ColorBrewer.instance();
+
+        // STEP 1 - call a classifier function to summarise your content
+        FilterFactory2 ff;
+        ff = CommonFactoryFinder.getFilterFactory2();
+        PropertyName propertyName;
+        propertyName = ff.property(attributeName);
+        Function classify;
+        classify = ff.function(
+                classificationFunctionName,
+                propertyName,
+                ff.literal(nClasses));
+//        Classifier groups;
+//        groups = (Classifier) classify.evaluate(featureCollection);
+        RangedClassifier groups = null;
+        Color[] colorsForRenderingFeatures = null;
+        if (!featureCollection.isEmpty()) {
+            Object classifier = classify.evaluate(featureCollection);
+            if (classifier != null) {
+                groups = (RangedClassifier) classify.evaluate(featureCollection);
+                //System.out.println(groups.toString());
+
+                if (doDebug) {
+                    int debug = 1;
+                }
+                
+                // STEP 2 - look up a predefined palette from color brewer
+                BrewerPalette palette;
+                palette = brewer.getPalette(paletteName);
+
+                colorsForRenderingFeatures = palette.getColors(nClasses);
+                Color[] colorsForLegend = new Color[colorsForRenderingFeatures.length + 1];
+                if (addWhiteForZero) {
+                    System.arraycopy(colorsForRenderingFeatures, 0, colorsForLegend, 1, colorsForRenderingFeatures.length);
+                    colorsForLegend[0] = Color.WHITE;
+                } else {
+                    colorsForLegend = colorsForRenderingFeatures;
+                }
+                // STEP 2b Sort Legend Items
+                ArrayList<AGDT_LegendItem> legendItems = new ArrayList<AGDT_LegendItem>();
+                if (addWhiteForZero) {
+                    String newLabel = "0";
+                    AGDT_LegendItem li;
+                    li = new AGDT_LegendItem(
+                            newLabel,
+                            colorsForLegend[0]);
+                    legendItems.add(li);
+                }
+                String[] titles;
+                titles = groups.getTitles();
+                for (int i = 0; i < titles.length; i++) {
+                    //String title = titles[i];
+                    Object min = groups.getMin(i);
+                    Object max = groups.getMax(i);
+                    //String legendItemName;
+
+                    // Modify Label so it is only integers in legend
+                    String newLabel;
+                    String minString = min.toString();
+                    String maxString = max.toString();
+                    String[] minParts = minString.split("\\.");
+                    if (minParts.length == 2) {
+                        newLabel = minParts[0];
+                    } else {
+                        newLabel = minString;
+                    }
+                    newLabel += "-";
+                    String[] maxParts = maxString.split("\\.");
+                    if (maxParts.length == 2) {
+                        newLabel += maxParts[0];
+                    } else {
+                        newLabel += maxString;
+                    }
+
+                    //legendItemName = "title " + title + ", min " + min + ", max " + max;
+                    //System.out.println(legendItemName);
+                    AGDT_LegendItem li;
+                    if (addWhiteForZero) {
+                        li = new AGDT_LegendItem(newLabel, colorsForLegend[i + 1]);
+                    } else {
+                        li = new AGDT_LegendItem(newLabel, colorsForLegend[i]);
+                    }
+                    legendItems.add(li);
+                }
+                result[1] = legendItems;
+            } else {
+                int debug = 1;
+            }
+        }
+        //LegendLayer ll = new DW_ChoroplethMapLegendLayer(Color.BLACK,"label",legendItems);
+
+        // STEP 3 - ask StyleGenerator to make a set of rules for the Classifier
+        // assigning features the correct color based on height
+        double opacity;
+        opacity = 0.95; //0.5;//1.0; //1.0; //0.95
+        int elsemode;
+        elsemode = StyleGenerator.ELSEMODE_IGNORE;
+        Stroke stroke;
+        if (styleParameters.isDrawBoundaries()) {
+            stroke = styleFactory.getDefaultStroke();
+        } else {
+            stroke = null;
+//            stroke = styleFactory.createStroke(
+//                    filterFactory.literal(Color.TRANSLUCENT),
+//                    filterFactory.literal(0),
+//                    filterFactory.literal(1.0));
+        }
+        String typeID;
+        typeID = "Generated FeatureTypeStyle for " + nClasses + " "
+                + classificationFunctionName + " classes in palette "
+                + paletteName;
+        FeatureType featureType;
+        featureType = featureCollection.getSchema();
+        GeometryDescriptor geometryDescriptor;
+        geometryDescriptor = featureType.getGeometryDescriptor();
+        Style style;
+        style = styleFactory.createStyle();
+        if (groups != null) {
+            FeatureTypeStyle featureTypeStyle;
+            featureTypeStyle = AGDT_StyleGenerator.createFeatureTypeStyle(
+                    groups,
+                    propertyName,
+                    colorsForRenderingFeatures,
+                    typeID,
+                    geometryDescriptor,
+                    elsemode,
+                    opacity,
+                    stroke);
+            style.featureTypeStyles().add(featureTypeStyle);
+        }
+//        List<FeatureTypeStyle> ftss = style.featureTypeStyles();
+//            Iterator<FeatureTypeStyle> ite = ftss.iterator();
+//            while (ite.hasNext()){
+//                FeatureTypeStyle fts = ite.next();
+//                Description d = fts.getDescription();
+//            }
+        result[0] = style;
+        return result;
+    }
+    
+    /**
      * Assuming min is 0.
      *
      * @param g
@@ -494,6 +617,340 @@ public class AGDT_Style {
 //        Style style;
 //        style = sb.createStyle(sb.createRasterSymbolizer(map, 1));
 //        return style;
+    }
+
+    /**
+     * Assuming min is 0.
+     *
+     * @param normalisation
+     * @param g
+     * @param cov
+     * @param type
+     * @param nClasses
+     * @param paletteName
+     * @param addWhiteForZero
+     * @return
+     */
+    public static Object[] getStyleAndLegendItems(
+            double normalisation,
+            AbstractGrid2DSquareCell g,
+            GridCoverage cov,
+            String type,
+            int nClasses,
+            String paletteName,
+            boolean addWhiteForZero) {
+        if (type.equalsIgnoreCase("EqualInterval")) {
+            return getEqualIntervalStyleAndLegendItems(
+                    normalisation,
+                    g,
+                    cov,
+                    nClasses,
+                    paletteName,
+                    addWhiteForZero);
+        }
+        if (type.equalsIgnoreCase("Quantile")) {
+            return getQuantileStyleAndLegendItems(
+                    normalisation,
+                    (Grid2DSquareCellDouble) g,
+                    cov,
+                    nClasses,
+                    paletteName,
+                    addWhiteForZero);
+        }
+        return null;
+    }
+
+    /**
+     * Assuming min is 0.
+     *
+     * @param normalisation
+     * @param g
+     * @param cov
+     * @param nClasses
+     * @param paletteName
+     * @param addWhiteForZero
+     * @return
+     */
+    public static Object[] getEqualIntervalStyleAndLegendItems(
+            double normalisation,
+            AbstractGrid2DSquareCell g,
+            GridCoverage cov,
+            int nClasses,
+            String paletteName,
+            boolean addWhiteForZero) {
+        Object[] result = new Object[2];
+        ArrayList<AGDT_LegendItem> legendItems;
+        legendItems = new ArrayList<AGDT_LegendItem>();
+        String[] classNames;
+        double[] breaks;
+        Generic_double d = new Generic_double();
+        double min = g.getGridStatistics(true).getMinDouble(true);
+        double max = g.getGridStatistics(true).getMaxDouble(true);
+        double interval = (max - min) / (double) nClasses;
+        double minInterval = min;
+        double maxInterval = min + interval;
+        if (addWhiteForZero) {
+            nClasses++;
+            classNames = new String[nClasses];
+            breaks = new double[nClasses];
+            classNames[0] = "0";
+            minInterval = 0.0d;
+            maxInterval = 0.1d;//Math.nextUp(minInterval);
+            breaks[0] = minInterval;
+            minInterval = maxInterval;
+            maxInterval = minInterval + interval;
+            for (int i = 1; i < nClasses; i++) {
+                if (i < nClasses - 1) {
+                    double roundedMinInterval;
+                    roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                            new BigDecimal("" + minInterval * 100 / normalisation),
+                            2, RoundingMode.UP).doubleValue();
+                    double roundedMaxInterval;
+                    roundedMaxInterval = Generic_BigDecimal.roundIfNecessary(
+                            new BigDecimal("" + maxInterval * 100 / normalisation),
+                            2, RoundingMode.UP).doubleValue();
+                    classNames[i] = "" + roundedMinInterval + " - " + roundedMaxInterval;
+                    breaks[i] = minInterval;
+                    minInterval += interval;
+                    maxInterval += interval;
+                } else {
+                    double roundedMinInterval;
+                    roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                            new BigDecimal("" + minInterval * 100 / normalisation),
+                            2, RoundingMode.UP).doubleValue();
+                    double roundedMax;
+                    roundedMax = Generic_BigDecimal.roundIfNecessary(
+                            new BigDecimal("" + max * 100 / normalisation),
+                            2, RoundingMode.UP).doubleValue();
+                    classNames[i] = "" + roundedMinInterval + " - " + roundedMax;
+                    breaks[i] = minInterval;
+                }
+            }
+        } else {
+            classNames = new String[nClasses];
+            breaks = new double[nClasses];
+            for (int i = 0; i < nClasses; i++) {
+                if (i < nClasses - 1) {
+                    double roundedMinInterval;
+                    roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                            new BigDecimal("" + minInterval * 100 / normalisation),
+                            2, RoundingMode.UP).doubleValue();
+                    double roundedMaxInterval;
+                    roundedMaxInterval = Generic_BigDecimal.roundIfNecessary(
+                            new BigDecimal("" + maxInterval * 100 / normalisation),
+                            2, RoundingMode.UP).doubleValue();
+                    classNames[i] = "" + roundedMinInterval + " - " + roundedMaxInterval;
+                    breaks[i] = minInterval;
+                    minInterval += interval;
+                    maxInterval += interval;
+                } else {
+                    double roundedMinInterval;
+                    roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                            new BigDecimal("" + minInterval * 100 / normalisation),
+                            2, RoundingMode.UP).doubleValue();
+
+                    double roundedMax;
+                    roundedMax = Generic_BigDecimal.roundIfNecessary(
+                            new BigDecimal("" + max * 100 / normalisation),
+                            2, RoundingMode.UP).doubleValue();
+                    classNames[i] = "" + roundedMinInterval + " - " + roundedMax;
+                    breaks[i] = minInterval;
+                }
+            }
+        }
+        ColorBrewer cb;
+        cb = ColorBrewer.instance();
+        BrewerPalette bp;
+        bp = cb.getPalette(paletteName);
+        Color[] colors;
+        if (addWhiteForZero) {
+            Color[] dummyColors = bp.getColors(nClasses - 1);
+            colors = new Color[nClasses];
+            colors[0] = Color.WHITE;
+            System.arraycopy(dummyColors, 0, colors, 1, nClasses - 1);
+        } else {
+            colors = bp.getColors(nClasses);
+        }
+        StyleBuilder sb;
+        sb = new StyleBuilder();
+        ColorMap cm;
+        cm = sb.createColorMap(classNames, breaks, colors, ColorMap.TYPE_RAMP);
+        Style style;
+        style = sb.createStyle(sb.createRasterSymbolizer(cm, 1));
+        result[0] = style;
+        for (int i = 0; i < nClasses; i++) {
+            AGDT_LegendItem li;
+            li = new AGDT_LegendItem(classNames[i], colors[i]);
+            legendItems.add(li);
+        }
+        result[1] = legendItems;
+        return result;
+    }
+
+    /**
+     * Assuming min is 0.
+     *
+     * @param normalisation
+     * @param g
+     * @param cov
+     * @param nClasses
+     * @param paletteName
+     * @param addWhiteForZero
+     * @return
+     */
+    public static Object[] getQuantileStyleAndLegendItems(
+            double normalisation,
+            //AbstractGrid2DSquareCell g,
+            Grid2DSquareCellDouble g,
+            GridCoverage cov,
+            int nClasses,
+            String paletteName,
+            boolean addWhiteForZero) {
+        Object[] result = new Object[2];
+        ArrayList<AGDT_LegendItem> legendItems;
+        legendItems = new ArrayList<AGDT_LegendItem>();
+        String[] classNames;
+        double[] breaks;
+        Generic_double d = new Generic_double();
+        boolean handleOutOfMemoryError = true;
+        AbstractGridStatistics gs;
+        GridStatistics1 gs1;
+        GridStatistics0 gs0;
+        //gs1.
+        gs = g.getGridStatistics(handleOutOfMemoryError);
+        long nonZeroAndNonNoDataValueCount;
+        nonZeroAndNonNoDataValueCount = gs.getNonZeroAndNonNoDataValueCountLong(
+                handleOutOfMemoryError);
+        System.out.println("nonZeroAndNonNoDataValueCount " + nonZeroAndNonNoDataValueCount);
+        Object[] quantileClassMap;
+        quantileClassMap = gs.getQuantileClassMap(nClasses, handleOutOfMemoryError);
+        TreeMap<Integer, Double> minDouble;
+        minDouble = (TreeMap<Integer, Double>) quantileClassMap[0];
+        TreeMap<Integer, Double> maxDouble;
+        maxDouble = (TreeMap<Integer, Double>) quantileClassMap[1];
+        
+        TreeMap<Integer, TreeMap<Double, Long>> classMap;
+        classMap = (TreeMap<Integer, TreeMap<Double, Long>>) quantileClassMap[2];
+        // Get the true number of classes in the classMap
+        int newClassCount = 0;
+        Iterator<Integer> ite;
+        ite = classMap.keySet().iterator();
+        while (ite.hasNext()) {
+            Integer key = ite.next();
+            if (!classMap.get(key).isEmpty()) {
+                newClassCount ++;
+            }
+        }
+        
+        
+        
+        if (newClassCount < nClasses) {
+            // Subdivide any end classes into smaller ones?
+            // It might be better to ask for a larger number of classes in the 
+            // first instance and then group these? 
+        }
+        
+        
+        
+        nClasses = newClassCount;
+        double min = gs.getMinDouble(true);
+        double max = gs.getMaxDouble(true);
+        if (addWhiteForZero) {
+            nClasses++;
+            classNames = new String[nClasses];
+            breaks = new double[nClasses];
+            classNames[0] = "0";
+            for (int i = 1; i < nClasses; i++) {
+                if (i < nClasses - 1) {
+                    String roundedMinInterval;
+                    double minInterval;
+                    minInterval = minDouble.get(i - 1);
+                    roundedMinInterval = getRoundedValue(
+                            normalisation,
+                            minInterval);
+                    String roundedMaxInterval;
+                    double maxInterval;
+                    maxInterval = maxDouble.get(i - 1);
+                    roundedMaxInterval  = getRoundedValue(
+                            normalisation,
+                            maxInterval);
+                    classNames[i] = "" + roundedMinInterval + " - " + roundedMaxInterval;
+                    breaks[i] = minInterval;
+                } else {
+                    String roundedMinInterval;
+                    double minInterval;
+                    minInterval = minDouble.get(i - 1);
+                    roundedMinInterval = getRoundedValue(
+                            normalisation,
+                            minInterval);
+                    String roundedMax = getRoundedValue(
+                            normalisation,
+                            max);
+                    classNames[i] = "" + roundedMinInterval + " - " + roundedMax;
+                    breaks[i] = minInterval;
+                }
+            }
+        } else {
+            classNames = new String[nClasses];
+            breaks = new double[nClasses];
+            for (int i = 0; i < nClasses; i++) {
+                if (i < nClasses - 1) {
+                    String roundedMinInterval;
+                    double minInterval;
+                    minInterval = minDouble.get(i);
+                    roundedMinInterval = getRoundedValue(
+                            normalisation,
+                            minInterval);
+                    String roundedMaxInterval;
+                    double maxInterval;
+                    maxInterval = maxDouble.get(i);
+                    roundedMaxInterval  = getRoundedValue(
+                            normalisation,
+                            maxInterval);
+                    classNames[i] = "" + roundedMinInterval + " - " + roundedMaxInterval;
+                    breaks[i] = minInterval;
+                } else {
+                    String roundedMinInterval;
+                    double minInterval;
+                    minInterval = minDouble.get(i);
+                    roundedMinInterval = getRoundedValue(
+                            normalisation,
+                            minInterval);
+                    String roundedMax = getRoundedValue(
+                            normalisation,
+                            max);
+                    classNames[i] = "" + roundedMinInterval + " - " + roundedMax;
+                    breaks[i] = minInterval;
+                }
+            }
+        }
+        ColorBrewer cb;
+        cb = ColorBrewer.instance();
+        BrewerPalette bp;
+        bp = cb.getPalette(paletteName);
+        Color[] colors;
+        if (addWhiteForZero) {
+            Color[] dummyColors = bp.getColors(nClasses - 1);
+            colors = new Color[nClasses];
+            colors[0] = Color.WHITE;
+            System.arraycopy(dummyColors, 0, colors, 1, nClasses - 1);
+        } else {
+            colors = bp.getColors(nClasses);
+        }
+        StyleBuilder sb;
+        sb = new StyleBuilder();
+        ColorMap cm;
+        cm = sb.createColorMap(classNames, breaks, colors, ColorMap.TYPE_RAMP);
+        Style style;
+        style = sb.createStyle(sb.createRasterSymbolizer(cm, 1));
+        result[0] = style;
+        for (int i = 0; i < nClasses; i++) {
+            AGDT_LegendItem li;
+            li = new AGDT_LegendItem(classNames[i], colors[i]);
+            legendItems.add(li);
+        }
+        result[1] = legendItems;
+        return result;
     }
 
     private static String getRoundedValue(
