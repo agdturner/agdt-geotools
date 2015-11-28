@@ -113,8 +113,9 @@ public class AGDT_Style {
 
     /**
      * Create a DW_Style object from a definition in a SLD document
+     *
      * @param sld
-     * @return 
+     * @return
      */
     public static org.geotools.styling.Style createFromSLD(File sld) {
         try {
@@ -245,13 +246,14 @@ public class AGDT_Style {
     }
 
     /**
-     * Creates and returns a Style to draw line features as thin blue lines.
+     * Creates and returns a Style to draw line features as thin c coloured
+     * lines.
      *
-     * @return A Style to draw line features as thin blue lines.
+     * @return A Style to draw line features as thin c coloured lines.
      */
-    public static Style createDefaultLineStyle() {
+    public static Style createDefaultLineStyle(Color c) {
         Style style;
-        Stroke stroke = getDefaultStroke(Color.BLUE);
+        Stroke stroke = getDefaultStroke(c);
         /*
          * Setting the geometryPropertyName arg to null signals that we want to
          * draw the default geometry of features.
@@ -265,6 +267,15 @@ public class AGDT_Style {
         style = styleFactory.createStyle();
         style.featureTypeStyles().add(fts);
         return style;
+    }
+
+    /**
+     * Creates and returns a Style to draw line features as thin blue lines.
+     *
+     * @return A Style to draw line features as thin blue lines.
+     */
+    public static Style createDefaultLineStyle() {
+        return createDefaultLineStyle(Color.BLUE);
     }
 
     public static Stroke getDefaultStroke(Color c) {
@@ -342,12 +353,12 @@ public class AGDT_Style {
             String attributeName,
             AGDT_StyleParameters styleParameters) {
         return createPolygonStyle(
-             featureCollection,
-             attributeName,
-             styleParameters,
-            true);
+                featureCollection,
+                attributeName,
+                styleParameters,
+                true);
     }
-    
+
     /**
      * Create a Style to draw polygon features with a thin blue outline and a
      * cyan fill
@@ -361,7 +372,7 @@ public class AGDT_Style {
             FeatureCollection featureCollection,
             String attributeName,
             AGDT_StyleParameters styleParameters,
-            boolean doDebug) {    
+            boolean doDebug) {
         Object[] result = new Object[2];
 
         // Unpack styleParamters
@@ -396,7 +407,7 @@ public class AGDT_Style {
                 if (doDebug) {
                     int debug = 1;
                 }
-                
+
                 // STEP 2 - look up a predefined palette from color brewer
                 BrewerPalette palette;
                 palette = brewer.getPalette(paletteName);
@@ -510,7 +521,7 @@ public class AGDT_Style {
         result[0] = style;
         return result;
     }
-    
+
     /**
      * Assuming min is 0.
      *
@@ -666,6 +677,51 @@ public class AGDT_Style {
      * @param normalisation
      * @param g
      * @param cov
+     * @param type
+     * @param nClasses
+     * @param paletteName
+     * @param addWhiteForZero
+     * @return
+     */
+    public static Object[] getStyleAndLegendItems(
+            double normalisation,
+            AbstractGrid2DSquareCell g,
+            GridCoverage cov,
+            String type,
+            int nClasses,
+            String paletteName,
+            String paletteName2,
+            boolean addWhiteForZero) {
+        if (type.equalsIgnoreCase("EqualInterval")) {
+            return getEqualIntervalStyleAndLegendItems(
+                    normalisation,
+                    g,
+                    cov,
+                    nClasses,
+                    paletteName,
+                    paletteName2,
+                    addWhiteForZero);
+        }
+//        if (type.equalsIgnoreCase("Quantile")) {
+//            return getQuantileStyleAndLegendItems(
+//                    normalisation,
+//                    (Grid2DSquareCellDouble) g,
+//                    cov,
+//                    nClasses,
+//                    paletteName,
+//                    nClasses2,
+//                    paletteName2,
+//                    addWhiteForZero);
+//        }
+        return null;
+    }
+
+    /**
+     * Assuming min is 0.
+     *
+     * @param normalisation
+     * @param g
+     * @param cov
      * @param nClasses
      * @param paletteName
      * @param addWhiteForZero
@@ -695,7 +751,7 @@ public class AGDT_Style {
             breaks = new double[nClasses];
             classNames[0] = "0";
             minInterval = 0.0d;
-            maxInterval = 0.1d;//Math.nextUp(minInterval);
+            maxInterval = 0.000000001d;//Math.nextUp(minInterval);//0.1d;//Math.nextUp(minInterval);
             breaks[0] = minInterval;
             minInterval = maxInterval;
             maxInterval = minInterval + interval;
@@ -741,7 +797,7 @@ public class AGDT_Style {
                             2, RoundingMode.UP).doubleValue();
                     classNames[i] = "" + roundedMinInterval + " - " + roundedMaxInterval;
                     breaks[i] = minInterval;
-                    minInterval += interval;
+                    minInterval = maxInterval;
                     maxInterval += interval;
                 } else {
                     double roundedMinInterval;
@@ -795,6 +851,176 @@ public class AGDT_Style {
      * @param cov
      * @param nClasses
      * @param paletteName
+     * @param nClasses2
+     * @param paletteName2
+     * @param addWhiteForZero
+     * @return
+     */
+    public static Object[] getEqualIntervalStyleAndLegendItems(
+            double normalisation,
+            AbstractGrid2DSquareCell g,
+            GridCoverage cov,
+            int nClasses,
+            String paletteName,
+            String paletteName2,
+            boolean addWhiteForZero) {
+        Object[] result = new Object[2];
+        ArrayList<AGDT_LegendItem> legendItems;
+        legendItems = new ArrayList<AGDT_LegendItem>();
+        String[] classNames;
+        double[] breaks;
+        Generic_double d = new Generic_double();
+        double min = g.getGridStatistics(true).getMinDouble(true);
+        if (min >= 0.0d) {
+            return getEqualIntervalStyleAndLegendItems(
+                    normalisation,
+                    g,
+                    cov,
+                    nClasses,
+                    paletteName,
+                    addWhiteForZero);
+        }
+        double max = g.getGridStatistics(true).getMaxDouble(true);
+        int numberOfPositiveClasses;
+        int numberOfNegativeClasses;
+        double interval;
+        if ((-min) > max) {
+            interval = -min / (double) nClasses;
+            // Calculate the number of intervals above and below 0
+            numberOfNegativeClasses = (int) Math.ceil(-min / interval);
+            numberOfPositiveClasses = nClasses;
+            max = interval * numberOfPositiveClasses;
+        } else {
+            interval = max / (double) nClasses;
+            numberOfNegativeClasses = nClasses;
+            numberOfPositiveClasses = (int) Math.ceil(max / interval);
+            min = -interval * numberOfNegativeClasses;
+        }
+        int totalClasses;
+        if (addWhiteForZero) {
+            totalClasses = numberOfNegativeClasses + numberOfPositiveClasses + 1;
+            double minInterval = min;
+            double maxInterval = min + interval;
+            classNames = new String[totalClasses];
+            double roundedMinInterval;
+            roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                    new BigDecimal("" + minInterval * 100 / normalisation),
+                    2, RoundingMode.UP).doubleValue();
+            double roundedMaxInterval;
+            roundedMaxInterval = Generic_BigDecimal.roundIfNecessary(
+                    new BigDecimal("" + maxInterval * 100 / normalisation),
+                    2, RoundingMode.UP).doubleValue();
+            breaks = new double[totalClasses];
+            int i;
+            i = 0;
+            //classNames[i] = "" + roundedMinInterval + " - " + roundedMaxInterval;
+            classNames[i] = "< " + roundedMaxInterval;
+            //breaks[i] = minInterval;
+            breaks[i] = maxInterval;
+            minInterval = maxInterval;
+            maxInterval = minInterval + interval;
+            for (i = 1; i < numberOfNegativeClasses - 1; i++) {
+                roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                        new BigDecimal("" + minInterval * 100 / normalisation),
+                        2, RoundingMode.UP).doubleValue();
+                roundedMaxInterval = Generic_BigDecimal.roundIfNecessary(
+                        new BigDecimal("" + maxInterval * 100 / normalisation),
+                        2, RoundingMode.UP).doubleValue();
+                classNames[i] = "" + roundedMinInterval + " - " + roundedMaxInterval;
+                //breaks[i] = minInterval;
+                breaks[i] = maxInterval;
+                minInterval = maxInterval;
+                maxInterval += interval;
+            }
+            roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                    new BigDecimal("" + minInterval * 100 / normalisation),
+                    2, RoundingMode.UP).doubleValue();
+            classNames[i] = "" + roundedMinInterval + " - 0";
+            //breaks[i] = minInterval;
+
+//            minInterval = maxInterval;
+//            maxInterval += interval;
+            minInterval = -0.00001d;//-1;//-0.1d;//-0.000000001d;//Math.nextDown(0.0d);
+            breaks[i] = minInterval;
+            i++;
+            // Add white for values next to 0;
+            classNames[i] = "0";
+            maxInterval = 0.00001d;//1;//0.1d;//0.000000001d;//Math.nextUp(0.0d);
+            //breaks[i] = minInterval;
+            breaks[i] = maxInterval;
+            int whiteIndex = i;
+            minInterval = maxInterval;
+            maxInterval = 0.0d + interval;
+            i++;
+            roundedMaxInterval = Generic_BigDecimal.roundIfNecessary(
+                    new BigDecimal("" + maxInterval * 100 / normalisation),
+                    2, RoundingMode.UP).doubleValue();
+            classNames[i] = "0 - " + roundedMaxInterval;
+            //breaks[i] = minInterval;
+            breaks[i] = maxInterval;
+            minInterval = maxInterval;
+            maxInterval += interval;
+            int j;
+            for (j = 1; j < numberOfPositiveClasses - 1; j++) {
+                roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                        new BigDecimal("" + minInterval * 100 / normalisation),
+                        2, RoundingMode.UP).doubleValue();
+                roundedMaxInterval = Generic_BigDecimal.roundIfNecessary(
+                        new BigDecimal("" + maxInterval * 100 / normalisation),
+                        2, RoundingMode.UP).doubleValue();
+                classNames[i + j] = "" + roundedMinInterval + " - " + roundedMaxInterval;
+                //breaks[i + j] = minInterval;
+                breaks[i + j] = maxInterval;
+                minInterval = maxInterval;
+                maxInterval += interval;
+            }
+            classNames[i + j] = "> " + roundedMaxInterval;
+            breaks[i + j] = maxInterval;
+            ColorBrewer cb;
+            cb = ColorBrewer.instance();
+            BrewerPalette bp;
+            bp = cb.getPalette(paletteName);
+            BrewerPalette bp2;
+            bp2 = cb.getPalette(paletteName2);
+            Color[] colors;
+            colors = new Color[totalClasses];
+            Color[] cs;
+            cs = bp.getColors(numberOfNegativeClasses);
+            for (j = 0; j < cs.length; j++) {
+                colors[j] = cs[cs.length - (j + 1)];
+            }
+            colors[whiteIndex] = Color.WHITE;
+            Color[] cs2;
+            cs2 = bp2.getColors(numberOfPositiveClasses);
+            for (j = 0; j < cs2.length; j++) {
+                colors[j + whiteIndex + 1] = cs2[j];
+            }
+            StyleBuilder sb;
+            sb = new StyleBuilder();
+            ColorMap cm;
+            //cm = sb.createColorMap(classNames, breaks, colors, ColorMap.TYPE_RAMP);
+            cm = sb.createColorMap(classNames, breaks, colors, ColorMap.TYPE_INTERVALS);
+            Style style;
+            style = sb.createStyle(sb.createRasterSymbolizer(cm, 1));
+            result[0] = style;
+            for (j = 0; j < totalClasses; j++) {
+                AGDT_LegendItem li;
+                li = new AGDT_LegendItem(classNames[j], colors[j]);
+                legendItems.add(li);
+            }
+        }
+        result[1] = legendItems;
+        return result;
+    }
+
+    /**
+     * Assuming min is 0.
+     *
+     * @param normalisation
+     * @param g
+     * @param cov
+     * @param nClasses
+     * @param paletteName
      * @param addWhiteForZero
      * @return
      */
@@ -828,7 +1054,7 @@ public class AGDT_Style {
         minDouble = (TreeMap<Integer, Double>) quantileClassMap[0];
         TreeMap<Integer, Double> maxDouble;
         maxDouble = (TreeMap<Integer, Double>) quantileClassMap[1];
-        
+
         TreeMap<Integer, TreeMap<Double, Long>> classMap;
         classMap = (TreeMap<Integer, TreeMap<Double, Long>>) quantileClassMap[2];
         // Get the true number of classes in the classMap
@@ -838,20 +1064,16 @@ public class AGDT_Style {
         while (ite.hasNext()) {
             Integer key = ite.next();
             if (!classMap.get(key).isEmpty()) {
-                newClassCount ++;
+                newClassCount++;
             }
         }
-        
-        
-        
+
         if (newClassCount < nClasses) {
             // Subdivide any end classes into smaller ones?
             // It might be better to ask for a larger number of classes in the 
             // first instance and then group these? 
         }
-        
-        
-        
+
         nClasses = newClassCount;
         double min = gs.getMinDouble(true);
         double max = gs.getMaxDouble(true);
@@ -871,7 +1093,7 @@ public class AGDT_Style {
                     String roundedMaxInterval;
                     double maxInterval;
                     maxInterval = maxDouble.get(i - 1);
-                    roundedMaxInterval  = getRoundedValue(
+                    roundedMaxInterval = getRoundedValue(
                             normalisation,
                             maxInterval);
                     classNames[i] = "" + roundedMinInterval + " - " + roundedMaxInterval;
@@ -904,7 +1126,7 @@ public class AGDT_Style {
                     String roundedMaxInterval;
                     double maxInterval;
                     maxInterval = maxDouble.get(i);
-                    roundedMaxInterval  = getRoundedValue(
+                    roundedMaxInterval = getRoundedValue(
                             normalisation,
                             maxInterval);
                     classNames[i] = "" + roundedMinInterval + " - " + roundedMaxInterval;
@@ -968,5 +1190,5 @@ public class AGDT_Style {
         }
         return result;
     }
-    
+
 }

@@ -26,15 +26,15 @@ import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Shapefile;
  *
  * @author geoagdt
  */
-public class DisplayShapefile {
+public class AGDT_DisplayShapefile {
     
     private SimpleFeatureSource featureSource;
     private MapContent mc;
     
-    public DisplayShapefile(){}
+    public AGDT_DisplayShapefile(){}
     
     public static void main(String[] args) {
-        new DisplayShapefile().run();
+        new AGDT_DisplayShapefile().run();
     }
     
     public void run() {
@@ -50,12 +50,15 @@ public class DisplayShapefile {
 //        File dir = new File("/scratch02/IslandStories/Input/Census/2011/DZ/BoundaryData/");
         String name = "LeedsPostcodeUnitPolyShapefile.shp";
         File dir = new File("/scratch02/DigitalWelfare/Generated/Postcode/");
-        File shapefile = AGDT_Geotools.getShapefile(dir, name);
+        File shapefile = AGDT_Geotools.getShapefile(dir, name, false);
         try {
             displayShapefile(shapefile);
         } catch (Exception ex) {
-            Logger.getLogger(DisplayShapefile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AGDT_DisplayShapefile.class.getName()).log(Level.SEVERE, null, ex);
         }
+//        AGDT_Shapefile aAGDT_Shapefile = new AGDT_Shapefile(shapefile);
+//        MapContent mc;
+//        mc = AGDT_Geotools.createMapContent(aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile);
 //        AGDT_Shapefile aAGDT_Shapefile = new AGDT_Shapefile(shapefile);
 //        MapContent mc;
 //        mc = AGDT_Geotools.createMapContent(aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile);
