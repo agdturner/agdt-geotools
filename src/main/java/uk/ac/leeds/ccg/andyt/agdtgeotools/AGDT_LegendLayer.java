@@ -1,15 +1,11 @@
 package uk.ac.leeds.ccg.andyt.agdtgeotools;
 
-import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_StyleParameters;
-import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_LegendItem;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
-import java.awt.font.LineMetrics;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -18,14 +14,12 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.DirectLayer;
 import org.geotools.map.MapContent;
 import org.geotools.map.MapViewport;
-import org.geotools.styling.Stroke;
-import org.geotools.styling.StyleFactory;
-import org.opengis.filter.expression.Expression;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_double;
 
 public class AGDT_LegendLayer extends DirectLayer {
 
-    private AGDT_StyleParameters styleParameters;
+    private final AGDT_StyleParametersAbstract styleParameters;
+    //private final AGDT_StyleParameters styleParameters;
 
     private List<AGDT_LegendItem> legendItems;
     private MapContent mc;
@@ -35,11 +29,9 @@ public class AGDT_LegendLayer extends DirectLayer {
     private int originalImageHeight;
     private boolean addLegendToTheSide;
     private String legendTitle;
-    private String mapTitle;
 
     private AffineTransform at;
     private FontRenderContext frc;
-    private final Font mapTitleFont;
     //private final FontMetrics mapTitleFontMetrics;
 
     private final Font legendTitleFont;
@@ -62,11 +54,8 @@ public class AGDT_LegendLayer extends DirectLayer {
     private int newImageWidth;
     private int newImageHeight;
 
-    private int legendWidth;
-    private int legendHeight;
-
-    private int mapTitleHeight;
-    private int mapItemHeight;
+    public int legendWidth;
+    public int legendHeight;
 
     private int legendTitleWidth;
     private int legendTitleHeight;
@@ -78,8 +67,8 @@ public class AGDT_LegendLayer extends DirectLayer {
     private int legendUpperLeftY;
 
     public AGDT_LegendLayer(
-            AGDT_StyleParameters styleParameters,
-            String mapTitle,
+            AGDT_StyleParametersAbstract styleParameters,
+            //AGDT_StyleParameters styleParameters,
             String legendTitle,
             List<AGDT_LegendItem> legendItems,
             MapContent mc,
@@ -87,12 +76,9 @@ public class AGDT_LegendLayer extends DirectLayer {
             int imageHeight,
             boolean addLegendToTheSide) {
         this.styleParameters = styleParameters;
-        this.mapTitleFont = new Font("Ariel", Font.BOLD, 14);
-        //this.mapTitleFontMetrics = new FontMetrics(mapTitleFont);
         this.legendTitleFont = new Font("Ariel", Font.BOLD, 12);
         this.legendItemFont = new Font("Ariel", Font.PLAIN, 10);
-        init(mapTitle,
-                legendTitle,
+        init(legendTitle,
                 legendItems,
                 mc,
                 imageWidth,
@@ -100,9 +86,7 @@ public class AGDT_LegendLayer extends DirectLayer {
                 addLegendToTheSide);
     }
 
-    public final void init(
-            AffineTransform at) {
-        this.at = at;
+    public final void init() {
         this.frc = new FontRenderContext(
                 at,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT,
@@ -112,8 +96,6 @@ public class AGDT_LegendLayer extends DirectLayer {
     }
 
     /**
-     *
-     * @param mapTitle
      * @param legendTitle
      * @param legendItems
      * @param mc
@@ -122,7 +104,6 @@ public class AGDT_LegendLayer extends DirectLayer {
      * @param addLegendToTheSide
      */
     public final void init(
-            String mapTitle,
             String legendTitle,
             List<AGDT_LegendItem> legendItems,
             MapContent mc,
@@ -133,7 +114,6 @@ public class AGDT_LegendLayer extends DirectLayer {
                 at,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT,
                 RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-        this.mapTitle = mapTitle;
         this.legendTitle = legendTitle;
         this.legendItems = legendItems;
         this.mc = mc;
@@ -242,8 +222,9 @@ public class AGDT_LegendLayer extends DirectLayer {
         int[] result = new int[2];
         int maxWidth = 0;
         int maxHeight = 0;
-        for (int i = 0; i < legendItems.size(); i++) {
-            AGDT_LegendItem li = legendItems.get(i);
+//        for (int i = 0; i < legendItems.size(); i++) {
+//            AGDT_LegendItem li = legendItems.get(i);
+        for (AGDT_LegendItem li : legendItems) {
             Rectangle2D b;
             b = legendItemFont.getStringBounds(
                     li.getLabel(),
@@ -284,8 +265,8 @@ public class AGDT_LegendLayer extends DirectLayer {
 //			//Create the segments of the scale bar
 //			Rectangle scrRect = viewport.getScreenArea();	
 
-            AffineTransform at = graphics.getTransform();
-            init(at);
+            at = graphics.getTransform();
+            init();
 
             newImageHeight = originalImageHeight; // This is true until title is added
             this.legendUpperLeftY = legendInsetHeight;
@@ -347,20 +328,25 @@ public class AGDT_LegendLayer extends DirectLayer {
                 }
             }
         } catch (Exception e) {
+            System.err.println(e.getMessage());
             e.printStackTrace();
         }
     }
 
     public void initBounds() {
         bounds = mc.getMaxBounds();
-        double minX = bounds.getMinX();
-        double minY = bounds.getMinY();
-        double maxX = bounds.getMaxX();
-        double maxY = bounds.getMaxY();
-        System.out.println("minX " + minX);
-        System.out.println("minY " + minY);
-        System.out.println("maxX " + maxX);
-        System.out.println("maxY " + maxY);
+        double minX;
+        double minY;
+        double maxX;
+        double maxY;
+        minX = bounds.getMinX();
+        minY = bounds.getMinY();
+        maxX = bounds.getMaxX();
+        maxY = bounds.getMaxY();
+//        System.out.println("minX " + minX);
+//        System.out.println("minY " + minY);
+//        System.out.println("maxX " + maxX);
+//        System.out.println("maxY " + maxY);
         double width = bounds.getWidth();
         //System.out.println("height " + height + ", width " + width);
         double imageWidth_double = originalImageWidth;
@@ -370,11 +356,20 @@ public class AGDT_LegendLayer extends DirectLayer {
         //double minYnew = minY - ( height / imageHeight_double ) * legendHeight;
         //bounds.expandToInclude(minXnew, minYnew);
         bounds.expandToInclude(minXnew, minY);
+//        minX = bounds.getMinX();
+//        minY = bounds.getMinY();
+//        maxX = bounds.getMaxX();
+//        maxY = bounds.getMaxY();
+//        System.out.println("minX " + minX);
+//        System.out.println("minY " + minY);
+//        System.out.println("maxX " + maxX);
+//        System.out.println("maxY " + maxY);
     }
 
     @Override
     public ReferencedEnvelope getBounds() {
         return bounds;
     }
-
+    
+    
 }

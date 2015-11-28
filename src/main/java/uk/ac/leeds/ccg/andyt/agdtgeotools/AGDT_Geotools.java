@@ -53,15 +53,15 @@ import uk.ac.leeds.ccg.andyt.grids.core.AbstractGrid2DSquareCell;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 
 /**
- * A class for holding various useful methods for doing things with AGDT_Geotools
- Objects.
+ * A class for holding various useful methods for doing things with
+ * AGDT_Geotools Objects.
  *
  * @author geoagdt
  */
 public class AGDT_Geotools {
 
     public static int getMapContentImageHeight(
-            MapContent mc, 
+            MapContent mc,
             int imageWidth) {
         int result;
         ReferencedEnvelope re = mc.getMaxBounds();
@@ -74,14 +74,10 @@ public class AGDT_Geotools {
     }
 
     /**
-     * polygon0 PostcodeSector
-     * polygon1 OA
-     * polygon2 LSOA
-     * polygon3 postcodeUnitPoly / MSOA
-     * polygon4 polyGrid,
-     * line0 lineGrid
-     * points0 PostcodeUnitPoint
-     * points1 PostcodeSectorPoint
+     * polygon0 PostcodeSector polygon1 OA polygon2 LSOA polygon3
+     * postcodeUnitPoly / MSOA polygon4 polyGrid, line0 lineGrid points0
+     * PostcodeUnitPoint points1 PostcodeSectorPoint
+     *
      * @param polygon0
      * @param polygon1
      * @param polygon2
@@ -127,7 +123,7 @@ public class AGDT_Geotools {
                     polygon3.getFeatureSource(), polygon3Style);
             result.addLayer(polygon3layer);
         }
-        
+
         if (polygon1 != null) {
             // Add polygon layer 1 to mc
             // -------------------------
@@ -151,8 +147,6 @@ public class AGDT_Geotools {
                     polygon2.getFeatureSource(), polygon2Style);
             result.addLayer(polygon2layer);
         }
-
-        
 
         if (polygon4 != null) {
             // Add polygon layer 4 to mc
@@ -237,6 +231,26 @@ public class AGDT_Geotools {
      * @param name
      * @return File
      */
+    public static File getInputShapefile(
+            File dir,
+            String name) {
+        File result;
+        File outDirectory = new File(
+                dir,
+                name);
+        String shapefileFilename = name + ".shp";
+        result = getShapefile(dir, shapefileFilename, false);
+        return result;
+    }
+
+    /**
+     * Shapefiles are best stored in a directory with the full shapefile name
+     * for GeoTools.
+     *
+     * @param dir
+     * @param name
+     * @return File
+     */
     public static File getOutputShapefile(
             File dir,
             String name) {
@@ -246,22 +260,25 @@ public class AGDT_Geotools {
                 name);
         outDirectory.mkdirs();
         String shapefileFilename = name + ".shp";
-        result = getShapefile(dir, shapefileFilename);
+        result = getShapefile(dir, shapefileFilename, true);
         return result;
     }
 
     public static File getShapefile(
             File dir,
-            String shapefileFilename) {
+            String shapefileFilename,
+            boolean mkdirs) {
         File result;
         File shapefileDir;
         shapefileDir = new File(
                 dir,
                 shapefileFilename);
-        // Could add extra logic here to deal with issues if directory or a file 
-        // of this name already exists...
-        if (!shapefileDir.exists()) {
-            shapefileDir.mkdirs();
+        if (mkdirs) {
+            // Could add extra logic here to deal with issues if directory or a file 
+            // of this name already exists...
+            if (!shapefileDir.exists()) {
+                shapefileDir.mkdirs();
+            }
         }
         result = new File(
                 shapefileDir,
@@ -322,13 +339,13 @@ public class AGDT_Geotools {
     }
 
     /**
-     * 
+     *
      * @param ge
      * @param mapContent
      * @param imageWidth
      * @param imageHeight
      * @param outputImageFile
-     * @param outputType 
+     * @param outputType
      */
     public static void writeImageFile(
             Grids_Environment ge,
@@ -398,6 +415,14 @@ public class AGDT_Geotools {
         // Render onto background
         //graphics2D.setComposite(AlphaComposite.Src);
         renderer.paint(graphics2D, rectangle, mapContent.getMaxBounds());
+//        // Wait a bit to try to be sure that the painting is finished. It's a bugger when it isn't!
+//        synchronized (outputType) {
+//            try {
+//                outputType.wait(2000L);
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(AGDT_Geotools.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//                    }
         Generic_Visualisation.saveImage(bufferedImage, outputType, outputImageFile);
         graphics2D.dispose();
     }
@@ -412,4 +437,360 @@ public class AGDT_Geotools {
 //        
 //        
 //    }
+    /**
+     * Warning this will set g to null.
+     *
+     * @param normalisation
+     * @param styleParameters
+     * @param index
+     * @param outname
+     * @param g
+     * @param gc
+     * @param foregroundDW_Shapefile0
+     * @param foregroundDW_Shapefile1
+     * @param backgroundDW_Shapefile
+     * @param outputDir
+     * @param imageWidth
+     * @param showMapsInJMapPane
+     * @param scaleToFirst
+     */
+    public static void outputToImageUsingGeoToolsAndSetCommonStyle(
+            double normalisation,
+            AGDT_StyleParameters styleParameters,
+            int index,
+            String outname,
+            AbstractGrid2DSquareCell g,
+            GridCoverage2D gc,
+            ArrayList<AGDT_Shapefile> foregroundDW_Shapefile0,
+            AGDT_Shapefile foregroundDW_Shapefile1,
+            AGDT_Shapefile backgroundDW_Shapefile,
+            File outputDir,
+            int imageWidth,
+            boolean showMapsInJMapPane,
+            boolean scaleToFirst) {
+        String png_String = "PNG";
+        MapContent mc = createMapContent(
+                normalisation,
+                outname,
+                g,
+                gc,
+                foregroundDW_Shapefile0,
+                foregroundDW_Shapefile1,
+                backgroundDW_Shapefile,
+                imageWidth,
+                styleParameters,
+                index,
+                scaleToFirst);
+        // Set g to null as it is no longer needed. 
+        // This is done to prevent any unwanted OutOfMemory Errors being encountered.
+        g = null;
+
+        int imageHeight = getMapContentImageHeight(mc, imageWidth);
+        File outputFile = getOutputFile(
+                outputDir,
+                outname,
+                png_String);
+        File outputImageFile = AGDT_Maps.getOutputImageFile(
+                outputFile, png_String);
+
+        AGDT_Geotools.writeImageFile(
+                //g._Grids_Environment,
+                mc,
+                imageWidth,
+                imageHeight,
+                outputImageFile,
+                png_String);
+
+        // Dispose of MapContent to prevent memory leaks
+        if (showMapsInJMapPane) {
+            // Display mc in a JMapFrame
+            JMapFrame.showMap(mc); // Need to not dispose of mc if this is to persist!
+        } else {
+            // Tidy up
+            //gc.dispose();
+            // Dispose of mc to avoid memory leaks
+            //mc.removeLayer(backgroundFeatureLayer);
+            List<Layer> layers = mc.layers();
+            Iterator<Layer> ite = layers.iterator();
+            while (ite.hasNext()) {
+                Layer l = ite.next();
+//                if (l.equals(backgroundFeatureLayer)) {
+//                    System.out.println("Odd this was removed from MapContent!");
+//                } else {
+                l.preDispose();
+                l.dispose();
+//                }
+            }
+            //mc.removeLayer(backgroundFeatureLayer);
+            mc.dispose();
+        }
+    }
+
+    /**
+     * Warning this will set g to null.
+     *
+     * @param normalisation
+     * @param styleParameters
+     * @param index
+     * @param outname
+     * @param g
+     * @param gc
+     * @param foregroundDW_Shapefile0
+     * @param foregroundDW_Shapefile1
+     * @param backgroundDW_Shapefile
+     * @param outputDir
+     * @param imageWidth
+     * @param showMapsInJMapPane
+     * @param scaleToFirst
+     */
+    public static void outputToImageUsingGeoToolsAndSetCommonStyle(
+            double normalisation,
+            AGDT_StyleParameters styleParameters,
+            int index,
+            String outname,
+            AbstractGrid2DSquareCell g,
+            GridCoverage2D gc,
+            File outputDir,
+            int imageWidth,
+            boolean showMapsInJMapPane,
+            boolean scaleToFirst) {
+        String png_String = "PNG";
+        MapContent mc = createMapContent(
+                normalisation,
+                outname,
+                g,
+                gc,
+                imageWidth,
+                styleParameters,
+                index,
+                scaleToFirst);
+        // Set g to null as it is no longer needed. 
+        // This is done to prevent any unwanted OutOfMemory Errors being encountered.
+        g = null;
+
+        int imageHeight = getMapContentImageHeight(mc, imageWidth);
+        File outputFile = getOutputFile(
+                outputDir,
+                outname,
+                png_String);
+        File outputImageFile = AGDT_Maps.getOutputImageFile(
+                outputFile, png_String);
+
+        AGDT_Geotools.writeImageFile(
+                //g._Grids_Environment,
+                mc,
+                imageWidth,
+                imageHeight,
+                outputImageFile,
+                png_String);
+
+        // Dispose of MapContent to prevent memory leaks
+        if (showMapsInJMapPane) {
+            // Display mc in a JMapFrame
+            JMapFrame.showMap(mc); // Need to not dispose of mc if this is to persist!
+        } else {
+            // Tidy up
+            //gc.dispose();
+            // Dispose of mc to avoid memory leaks
+            //mc.removeLayer(backgroundFeatureLayer);
+            List<Layer> layers = mc.layers();
+            Iterator<Layer> ite = layers.iterator();
+            while (ite.hasNext()) {
+                Layer l = ite.next();
+//                if (l.equals(backgroundFeatureLayer)) {
+//                    System.out.println("Odd this was removed from MapContent!");
+//                } else {
+                l.preDispose();
+                l.dispose();
+//                }
+            }
+            //mc.removeLayer(backgroundFeatureLayer);
+            mc.dispose();
+        }
+    }
+
+    private static MapContent createMapContent(
+            double normalisation,
+            String name,
+            AbstractGrid2DSquareCell g,
+            GridCoverage2D gc,
+            int imageWidth,
+            AGDT_StyleParameters styleParameters,
+            int index,
+            boolean scaleToFirst) {
+        MapContent result;
+        result = new MapContent();
+        // Unbox styleParameters
+        Style style;
+        style = styleParameters.getStyle(name, index);
+        ArrayList<AGDT_LegendItem> legendItems = null;
+
+        // Add output to mc
+        // ----------------
+        // If input style is null then create a basic Style to render the 
+        // features
+        if (style == null) {
+            Object[] styleAndLegendItems;
+            if (styleParameters.getPaletteName2() == null) {
+//            styleAndLegendItems = DW_Style.getEqualIntervalStyleAndLegendItems(
+                styleAndLegendItems = AGDT_Style.getStyleAndLegendItems(
+                        normalisation,
+                        g,
+                        gc,
+                        styleParameters.getClassificationFunctionName(),
+                        styleParameters.getnClasses(),
+                        styleParameters.getPaletteName(),
+                        styleParameters.isAddWhiteForZero());
+            } else {
+                styleAndLegendItems = AGDT_Style.getStyleAndLegendItems(
+                        normalisation,
+                        g,
+                        gc,
+                        styleParameters.getClassificationFunctionName(),
+                        styleParameters.getnClasses(),
+                        styleParameters.getPaletteName(),
+                        styleParameters.getPaletteName2(),
+                        styleParameters.isAddWhiteForZero());
+            }
+            style = (Style) styleAndLegendItems[0];
+            styleParameters.setStyle(name, style, index);
+            legendItems = (ArrayList<AGDT_LegendItem>) styleAndLegendItems[1];
+            styleParameters.setLegendItems(legendItems, index);
+        } else {
+            if (scaleToFirst) {
+                legendItems = styleParameters.getLegendItems(index);
+            }
+        }
+        GridCoverageLayer gcl = new GridCoverageLayer(gc, style);
+        result.addLayer(gcl);
+
+        int imageHeight = getMapContentImageHeight(result, imageWidth);
+
+        // Add a legend
+        // ------------
+        if (legendItems != null) {
+            boolean addLegendToTheSide = true;
+            AGDT_LegendLayer ll = new AGDT_LegendLayer(
+                    styleParameters,
+                    "Legend",
+                    legendItems,
+                    result,
+                    imageWidth,
+                    imageHeight,
+                    addLegendToTheSide);
+            result.addLayer(ll);
+        }
+
+        return result;
+    }
+
+    private static MapContent createMapContent(
+            double normalisation,
+            String name,
+            AbstractGrid2DSquareCell g,
+            GridCoverage2D gc,
+            ArrayList<AGDT_Shapefile> foregroundShapefiles,
+            AGDT_Shapefile foregroundDW_Shapefile1,
+            AGDT_Shapefile backgroundDW_Shapefile,
+            int imageWidth,
+            AGDT_StyleParameters styleParameters,
+            int index,
+            boolean scaleToFirst) {
+        MapContent result;
+        result = new MapContent();
+        // Unbox styleParameters
+        Style style;
+        style = styleParameters.getStyle(name, index);
+        ArrayList<AGDT_LegendItem> legendItems = null;
+
+        if (styleParameters.isDrawBoundaries()) {
+            FeatureLayer backgroundFeatureLayer;
+            backgroundFeatureLayer = backgroundDW_Shapefile.getFeatureLayer(
+                    styleParameters.getBackgroundStyle());
+            result.addLayer(backgroundFeatureLayer);
+        }
+
+        // Add output to mc
+        // ----------------
+        // If input style is null then create a basic Style to render the 
+        // features
+        if (style == null) {
+            Object[] styleAndLegendItems;
+//            styleAndLegendItems = DW_Style.getEqualIntervalStyleAndLegendItems(
+            styleAndLegendItems = AGDT_Style.getStyleAndLegendItems(
+                    normalisation,
+                    g,
+                    gc,
+                    styleParameters.getClassificationFunctionName(),
+                    styleParameters.getnClasses(),
+                    styleParameters.getPaletteName(),
+                    styleParameters.isAddWhiteForZero());
+            style = (Style) styleAndLegendItems[0];
+            styleParameters.setStyle(name, style, index);
+            legendItems = (ArrayList<AGDT_LegendItem>) styleAndLegendItems[1];
+            styleParameters.setLegendItems(legendItems, index);
+        } else {
+            if (scaleToFirst) {
+                legendItems = styleParameters.getLegendItems(index);
+            }
+        }
+        GridCoverageLayer gcl = new GridCoverageLayer(gc, style);
+        result.addLayer(gcl);
+
+        // Add foreground0
+        // ---------------
+        addForeground0(
+                result,
+                styleParameters,
+                foregroundShapefiles);
+
+        // Add foreground1
+        // ---------------
+        if (foregroundDW_Shapefile1 != null) {
+            FeatureLayer foregroundFeatureLayer1;
+            foregroundFeatureLayer1 = foregroundDW_Shapefile1.getFeatureLayer(
+                    styleParameters.getForegroundStyle1());
+            result.addLayer(foregroundFeatureLayer1);
+        }
+
+        int imageHeight = getMapContentImageHeight(result, imageWidth);
+
+        // Add a legend
+        // ------------
+        if (legendItems != null) {
+            boolean addLegendToTheSide = true;
+            AGDT_LegendLayer ll = new AGDT_LegendLayer(
+                    styleParameters,
+                    "Legend",
+                    legendItems,
+                    result,
+                    imageWidth,
+                    imageHeight,
+                    addLegendToTheSide);
+            result.addLayer(ll);
+        }
+
+        return result;
+    }
+
+    // Add foreground0
+    // ---------------
+    private static void addForeground0(
+            MapContent result,
+            AGDT_StyleParameters styleParameters,
+            ArrayList<AGDT_Shapefile> foregroundDW_Shapefile0) {
+        if (foregroundDW_Shapefile0 != null) {
+            Iterator<AGDT_Shapefile> ite;
+            ite = foregroundDW_Shapefile0.iterator();
+            int indexx = 0;
+            while (ite.hasNext()) {
+                AGDT_Shapefile sf = ite.next();
+                FeatureLayer foregroundFeatureLayer0;
+                foregroundFeatureLayer0 = sf.getFeatureLayer(
+                        styleParameters.getForegroundStyle0().get(indexx));
+                result.addLayer(foregroundFeatureLayer0);
+                indexx++;
+            }
+        }
+    }
 }

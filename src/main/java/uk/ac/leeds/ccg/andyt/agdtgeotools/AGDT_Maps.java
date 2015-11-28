@@ -410,8 +410,7 @@ public abstract class AGDT_Maps {
     /**
      * @param dir
      * @param filenames
-     * @param omit This is a list of which filename indexes to omit from getting
-     * the data of.
+     * @param include This is a list of which filename indexes to include.
      * @return A Object[] result where: ----------------------------------------
      * result[0] is an Object[] with the same length as filenames.length where
      * each element i is the respective TreeMap<String, Integer> returned from
@@ -422,25 +421,31 @@ public abstract class AGDT_Maps {
     protected static Object[] getLevelData(
             File dir,
             String[] filenames,
-            ArrayList<Integer> omit) {
+            ArrayList<Integer> include) {
         Object[] result = new Object[2];
         int length = filenames.length;
         Object[] resultPart0 = new Object[length];
         int max = Integer.MIN_VALUE;
         for (int i = 0; i < length; i++) {
             boolean doLevel;
-            doLevel = true;
-            if (omit != null) {
-                if (omit.contains(i)) {
-                    doLevel = false;
+            doLevel = false;
+            if (include != null) {
+                if (include.contains(i)) {
+                    doLevel = true;
                 }
+            } else {
+                doLevel = true;
             }
             if (doLevel) {
                 Object[] levelData = getLevelData(
                         dir,
                         filenames[i]);
-                resultPart0[i] = levelData;
-                max = Math.max(max, (Integer) levelData[1]);
+                if (levelData != null) {
+                    resultPart0[i] = levelData;
+                    max = Math.max(max, (Integer) levelData[1]);
+//                } else {
+//                    return null;
+                }
             }
         }
         result[0] = resultPart0;
@@ -451,10 +456,9 @@ public abstract class AGDT_Maps {
     /**
      * @param dir
      * @param filename
-     * @return An Object[] result where: ---------------------------------------
-     * result[0] is a TreeMap<String, Integer> with keys which are DW_Census
-     * Codes and values that are counts;
-     * --------------------------------------------- result[1] is the max count.
+     * @return An Object[] result where: result[0] is a
+     * {@code TreeMap<String, Integer>} with keys which are Area Codes and
+     * values that are counts; result[1] is the max count.
      */
     protected static Object[] getLevelData(
             File dir,
@@ -465,7 +469,10 @@ public abstract class AGDT_Maps {
         File file = new File(
                 dir,
                 filename);
-
+        if (!file.exists()) {
+            System.out.println("file " + file + " does not exist.");
+            return null;
+        }
 //        System.out.println("Reading data from file " + file);
         try {
             BufferedReader br = Generic_StaticIO.getBufferedReader(file);
@@ -1265,7 +1272,7 @@ public abstract class AGDT_Maps {
             SimpleFeatureType sft,
             ShapefileDataStoreFactory sdsf) {
         File result;
-        result = AGDT_Geotools.getShapefile(dir, shapefileFilename);
+        result = AGDT_Geotools.getShapefile(dir, shapefileFilename, true);
         if (!result.exists()) {
             AGDT_Shapefile.transact(
                     result,

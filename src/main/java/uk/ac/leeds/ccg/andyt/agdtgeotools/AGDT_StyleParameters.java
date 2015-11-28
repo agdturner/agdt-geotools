@@ -18,6 +18,7 @@
  */
 package uk.ac.leeds.ccg.andyt.agdtgeotools;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,19 +29,21 @@ import org.geotools.styling.Style;
  *
  * @author geoagdt
  */
-public class AGDT_StyleParameters {
+public class AGDT_StyleParameters extends AGDT_StyleParametersAbstract {
 
     private HashMap<String, List<Style>> styles;
     private String classificationFunctionName;
     private int nClasses;
+    private int nClasses2;
     private String paletteName;
+    private String paletteName2;
     private boolean addWhiteForZero;
     private Style backgroundStyle;
     private String backgroundStyleTitle;
     private boolean drawBoundaries;
     private boolean doForeground;
-    private ArrayList<Style> foregroundStyle0;
-    private String foregroundStyleTitle0;
+    private ArrayList<Style> foregroundStyles;
+    private ArrayList<String> foregroundStyleNames;
     private Style foregroundStyle1;
     private String foregroundStyleTitle1;
     private ArrayList<ArrayList<AGDT_LegendItem>> legendItems;
@@ -49,19 +52,42 @@ public class AGDT_StyleParameters {
             double max,
             int styleIndex) {
         int maxInt = (int) max;
+        BigDecimal maxBD;
+        maxBD = BigDecimal.valueOf(max);
         ArrayList<AGDT_LegendItem> legendItems;
         legendItems = getLegendItems(styleIndex);
-        AGDT_LegendItem legendItem;
-        legendItem = legendItems.get(legendItems.size() - 1);
-        String currentLabel = legendItem.getLabel();
-        String[] splitCurrentLabel = currentLabel.split("-");
-        String newLabel;
-        if (maxInt == max) {
-            newLabel = splitCurrentLabel[0] + "-" + maxInt;
-        } else {
-            newLabel = splitCurrentLabel[0] + "-" + max;
+        if (legendItems != null) {
+            AGDT_LegendItem legendItem;
+            legendItem = legendItems.get(legendItems.size() - 1);
+            String currentLabel = legendItem.getLabel();
+            String[] splitCurrentLabel = currentLabel.split("-");
+            String newLabel;
+            BigDecimal currentMaxBD;
+            currentMaxBD = new BigDecimal(splitCurrentLabel[0]);
+            double currentMax;
+            currentMax = currentMaxBD.doubleValue();
+            int currentMaxInt;
+            currentMaxInt = currentMaxBD.intValue();
+            if (maxBD.compareTo(currentMaxBD) == 1) {
+                if (maxInt == max) {
+                    newLabel = splitCurrentLabel[0] + "-" + maxInt;
+                } else {
+                    newLabel = splitCurrentLabel[0] + "-" + max;
+                }
+            } else {
+                if (currentMaxInt == currentMax) {
+                    newLabel = splitCurrentLabel[0] + "-" + currentMaxInt;
+                } else {
+                    newLabel = splitCurrentLabel[0] + "-" + currentMax;
+                }
+            }
+            // If the range is a single value simply use that.
+            String[] splitNewLabel = newLabel.split("-");
+            if (splitNewLabel[0].equalsIgnoreCase(splitNewLabel[1])) {
+                newLabel = splitNewLabel[0];
+            }
+            legendItem.setLabel(newLabel);
         }
-        legendItem.setLabel(newLabel);
     }
 
     /**
@@ -175,10 +201,24 @@ public class AGDT_StyleParameters {
     }
 
     /**
-     * @param nClasses the nClasses to set
+     * @param n the nClasses to set
      */
-    public void setnClasses(int nClasses) {
-        this.nClasses = nClasses;
+    public void setnClasses(int n) {
+        this.nClasses = n;
+    }
+
+    /**
+     * @return the nClasses2
+     */
+    public int getnClasses2() {
+        return nClasses2;
+    }
+
+    /**
+     * @param n the nClasses to set
+     */
+    public void setnClasses2(int n) {
+        this.nClasses2 = n;
     }
 
     /**
@@ -189,10 +229,24 @@ public class AGDT_StyleParameters {
     }
 
     /**
-     * @param paletteName the paletteName to set
+     * @param s the paletteName to set
      */
-    public void setPaletteName(String paletteName) {
-        this.paletteName = paletteName;
+    public void setPaletteName(String s) {
+        this.paletteName = s;
+    }
+
+    /**
+     * @return the paletteName
+     */
+    public String getPaletteName2() {
+        return paletteName2;
+    }
+
+    /**
+     * @param s the paletteName to set
+     */
+    public void setPaletteName2(String s) {
+        this.paletteName2 = s;
     }
 
     /**
@@ -246,43 +300,58 @@ public class AGDT_StyleParameters {
     }
 
 //    /**
-//     * @return the foregroundStyle0
+//     * @return the foregroundStyles
 //     */
 //    public Style getForegroundStyle0() {
-//        return foregroundStyle0;
+//        return foregroundStyles;
 //    }
     /**
-     * @return the foregroundStyle0
+     * @return the foregroundStyles
      */
     public ArrayList<Style> getForegroundStyle0() {
-        return foregroundStyle0;
+        return foregroundStyles;
     }
 
 //    /**
-//     * @param foregroundStyle0 the foregroundStyle0 to set
+//     * @param foregroundStyles the foregroundStyles to set
 //     */
-//    public void setForegroundStyle0(Style foregroundStyle0) {
-//        this.foregroundStyle0 = foregroundStyle0;
+//    public void setForegroundStyles(Style foregroundStyles) {
+//        this.foregroundStyles = foregroundStyles;
 //    }
     /**
-     * @param foregroundStyle0 the foregroundStyle0 to set
+     * @param foregroundStyle0 the foregroundStyles to set
      */
-    public void setForegroundStyle0(ArrayList<Style> foregroundStyle0) {
-        this.foregroundStyle0 = foregroundStyle0;
+    public void setForegroundStyles(ArrayList<Style> foregroundStyle0) {
+        this.foregroundStyles = foregroundStyle0;
+    }
+
+    public ArrayList<String> getForegroundStyleNames() {
+        if (foregroundStyleNames == null) {
+            foregroundStyleNames = new ArrayList<String>();
+        }
+        return foregroundStyleNames;
+    }
+
+    public void setForegroundStyleNames(ArrayList<String> foregroundStyleNames) {
+        this.foregroundStyleNames = foregroundStyleNames;
     }
 
     /**
      * @return the foregroundStyleTitle0
      */
-    public String getForegroundStyleTitle0() {
-        return foregroundStyleTitle0;
+    public String getForegroundStyleName(int i) {
+        return getForegroundStyleNames().get(i);
     }
 
     /**
      * @param foregroundStyleTitle0 the foregroundStyleTitle0 to set
      */
-    public void setForegroundStyleTitle0(String foregroundStyleTitle0) {
-        this.foregroundStyleTitle0 = foregroundStyleTitle0;
+    public void setForegroundStyleName(int i, String foregroundStyleName) {
+        ArrayList<String> fgsn = getForegroundStyleNames();
+        while (fgsn.size() <= i) {
+            fgsn.add(null);
+        }
+        fgsn.set(i, foregroundStyleName);
     }
 
     /**
@@ -403,28 +472,18 @@ public class AGDT_StyleParameters {
         this.backgroundStyle = styleParameters.backgroundStyle;
         this.backgroundStyleTitle = styleParameters.backgroundStyleTitle;
         this.classificationFunctionName = styleParameters.classificationFunctionName;
-        this.foregroundStyle0 = styleParameters.foregroundStyle0;
-        this.foregroundStyleTitle0 = styleParameters.foregroundStyleTitle0;
+        this.foregroundStyles = styleParameters.foregroundStyles;
+        this.foregroundStyleNames = styleParameters.foregroundStyleNames;
         this.legendItems = styleParameters.legendItems;
         this.nClasses = styleParameters.nClasses;
+        this.nClasses2 = styleParameters.nClasses2;
         this.paletteName = styleParameters.paletteName;
+        this.paletteName2 = styleParameters.paletteName2;
         //this.style = styleParameters.style;
         this.styles = styleParameters.styles;
         this.drawBoundaries = styleParameters.drawBoundaries;
     }
 
-    /**
-     * @return the drawBoundaries
-     */
-    public boolean isDrawBoundaries() {
-        return drawBoundaries;
-    }
-
-    /**
-     * @param drawBoundaries the drawBoundaries to set
-     */
-    public void setDrawBoundaries(boolean drawBoundaries) {
-        this.drawBoundaries = drawBoundaries;
-    }
+    
 
 }
