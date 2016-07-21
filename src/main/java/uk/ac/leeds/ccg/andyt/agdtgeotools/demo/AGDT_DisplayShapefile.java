@@ -48,8 +48,12 @@ public class AGDT_DisplayShapefile {
 //        File dir = new File("/scratch02/IslandStories/Input/Census/2011/IZ/BoundaryData/");
 //        String name = "DZ_2011_EoR_Argyll___Bute.shp";
 //        File dir = new File("/scratch02/IslandStories/Input/Census/2011/DZ/BoundaryData/");
-        String name = "LeedsPostcodeUnitPolyShapefile.shp";
-        File dir = new File("/scratch02/DigitalWelfare/Generated/Postcode/");
+        //String name = "LeedsPostcodeUnitPolyShapefile.shp";
+        //File dir = new File("/scratch02/DigitalWelfare/Generated/Postcode/");
+//        String name = "county_region.shp";
+        String name = "high_water_polyline.shp";
+        File dir = new File("M:/Projects/PFIHack/data/input/OrdnanceSurvey/bdline_essh_gb/Data/GB/");
+
         File shapefile = AGDT_Geotools.getShapefile(dir, name, false);
         try {
             displayShapefile(shapefile);
