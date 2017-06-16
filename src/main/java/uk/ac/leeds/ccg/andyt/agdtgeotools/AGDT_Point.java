@@ -1,13 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uk.ac.leeds.ccg.andyt.agdtgeotools;
 
 import java.io.Serializable;
 
 /**
- *
+ * For storing a 2D point with int value of x and y.
  * @author geoagdt
  */
 public class AGDT_Point implements Serializable {
@@ -41,6 +37,11 @@ public class AGDT_Point implements Serializable {
         return result;
     }
 
+    /**
+     *
+     * @param obj
+     * @return
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -62,8 +63,9 @@ public class AGDT_Point implements Serializable {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 97 * hash + this.x;
-        hash = 97 * hash + this.y;
+        hash = 59 * hash + this.x;
+        hash = 59 * hash + this.y;
         return hash;
     }
+    
 }

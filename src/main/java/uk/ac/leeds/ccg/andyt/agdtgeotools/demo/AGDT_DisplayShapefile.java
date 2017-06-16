@@ -6,6 +6,8 @@
 package uk.ac.leeds.ccg.andyt.agdtgeotools.demo;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -19,6 +21,7 @@ import org.geotools.map.MapContent;
 import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
 import org.geotools.swing.JMapFrame;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Geotools;
 import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Shapefile;
 
@@ -27,16 +30,14 @@ import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Shapefile;
  * @author geoagdt
  */
 public class AGDT_DisplayShapefile {
-    
-    private SimpleFeatureSource featureSource;
-    private MapContent mc;
-    
-    public AGDT_DisplayShapefile(){}
-    
+
+    public AGDT_DisplayShapefile() {
+    }
+
     public static void main(String[] args) {
         new AGDT_DisplayShapefile().run();
     }
-    
+
     public void run() {
 //        String name = "SG_DataZone_Bdry_2011.shp";
 //        File dir = new File("/scratch02/IslandStories/Input/Census/2011/MSOA/BoundaryData/");
@@ -51,12 +52,26 @@ public class AGDT_DisplayShapefile {
         //String name = "LeedsPostcodeUnitPolyShapefile.shp";
         //File dir = new File("/scratch02/DigitalWelfare/Generated/Postcode/");
 //        String name = "county_region.shp";
-        String name = "high_water_polyline.shp";
-        File dir = new File("M:/Projects/PFIHack/data/input/OrdnanceSurvey/bdline_essh_gb/Data/GB/");
-
-        File shapefile = AGDT_Geotools.getShapefile(dir, name, false);
+        ArrayList<File> files;
+        files = new ArrayList<File>();
+        String name;
+        File dir;
+        File f;
+        
+        name = "high_water_polyline.shp";
+        dir = new File(
+                "M:/Projects/PFIHack/data/input/OrdnanceSurvey/bdline_essh_gb/Data/GB/");
+        f = AGDT_Geotools.getShapefile(dir, name, false);
+        files.add(f);
+        
+        name = "test.shp";
+        dir = new File(
+         "M:/test/");
+        f = AGDT_Geotools.getShapefile(dir, name, false);
+        files.add(f);
+        
         try {
-            displayShapefile(shapefile);
+            displayShapefiles(files);
         } catch (Exception ex) {
             Logger.getLogger(AGDT_DisplayShapefile.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -67,18 +82,33 @@ public class AGDT_DisplayShapefile {
 //        MapContent mc;
 //        mc = AGDT_Geotools.createMapContent(aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile);
     }
-    
-    
-    private void displayShapefile(File f) throws Exception {
-        FileDataStore store = FileDataStoreFinder.getDataStore(f);
-        featureSource = store.getFeatureSource();
 
-        // Create a map context and add our shapefile to it
+    protected void displayShapefiles(ArrayList<File> files) throws Exception {
+        // Create a map context
+
+        MapContent mc;
         mc = new MapContent();
-        Style style = SLD.createSimpleStyle(featureSource.getSchema());
-        Layer layer = new FeatureLayer(featureSource, style);
-        mc.layers().add(layer);
 
+        Iterator<File> ite;
+        ite = files.iterator();
+        while (ite.hasNext()) {
+            File f;
+            f = ite.next();
+            FileDataStore fds;
+            fds = FileDataStoreFinder.getDataStore(f);
+            SimpleFeatureSource fs;
+            fs = fds.getFeatureSource();
+
+//        CoordinateReferenceSystem crs;
+//        crs = store.getSchema().getCoordinateReferenceSystem();
+//        System.out.println(crs.toWKT());
+//        System.out.println(crs.toString());
+            Style style;
+            style = SLD.createSimpleStyle(fs.getSchema());
+            Layer layer;
+            layer = new FeatureLayer(fs, style);
+            mc.layers().add(layer);
+        }
         // Create a JMapFrame with custom toolbar buttons
         JMapFrame mapFrame = new JMapFrame(mc);
         mapFrame.enableToolBar(true);
@@ -88,7 +118,6 @@ public class AGDT_DisplayShapefile {
 //        toolbar.addSeparator();
 //        toolbar.add(new JButton(new ValidateGeometryAction()));
 //        toolbar.add(new JButton(new ExportShapefileAction()));
-
         // Display the map frame. When it is closed the application will exit
         mapFrame.setSize(800, 600);
         mapFrame.setVisible(true);
