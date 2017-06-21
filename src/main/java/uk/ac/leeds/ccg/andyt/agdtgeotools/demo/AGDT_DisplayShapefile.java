@@ -15,9 +15,11 @@ import javax.swing.JToolBar;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
+import org.geotools.map.MapViewport;
 import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
 import org.geotools.swing.JMapFrame;
@@ -57,19 +59,19 @@ public class AGDT_DisplayShapefile {
         String name;
         File dir;
         File f;
-        
+
         name = "high_water_polyline.shp";
         dir = new File(
                 "M:/Projects/PFIHack/data/input/OrdnanceSurvey/bdline_essh_gb/Data/GB/");
         f = AGDT_Geotools.getShapefile(dir, name, false);
         files.add(f);
-        
+
         name = "test.shp";
         dir = new File(
-         "M:/test/");
+                "M:/test/");
         f = AGDT_Geotools.getShapefile(dir, name, false);
         files.add(f);
-        
+
         try {
             displayShapefiles(files);
         } catch (Exception ex) {
@@ -84,11 +86,23 @@ public class AGDT_DisplayShapefile {
     }
 
     protected void displayShapefiles(ArrayList<File> files) throws Exception {
-        // Create a map context
+        displayShapefiles(files, 800, 600, null);
+    }
 
+    /**
+     * @param files
+     * @param displayWidth
+     * @param displayHeight
+     * @param re Used to set MapViewport
+     * @throws Exception 
+     */
+    protected void displayShapefiles(
+            ArrayList<File> files,
+            int displayWidth,
+            int displayHeight,
+            ReferencedEnvelope re) throws Exception {
         MapContent mc;
         mc = new MapContent();
-
         Iterator<File> ite;
         ite = files.iterator();
         while (ite.hasNext()) {
@@ -120,6 +134,14 @@ public class AGDT_DisplayShapefile {
 //        toolbar.add(new JButton(new ExportShapefileAction()));
         // Display the map frame. When it is closed the application will exit
         mapFrame.setSize(800, 600);
+
+        if (re != null) {
+            MapViewport mvp;
+            mvp = mc.getViewport();
+            mvp.setBounds(re);
+            mc.setViewport(mvp);
+        }
+        
         mapFrame.setVisible(true);
     }
 }

@@ -202,6 +202,39 @@ public class AGDT_Geotools {
         result.addLayer(pointsFeatureLayer1);
         return result;
     }
+    
+    /**
+     * polygon0 PostcodeSector polygon1 OA polygon2 LSOA polygon3
+     * postcodeUnitPoly / MSOA polygon4 polyGrid, line0 lineGrid points0
+     * PostcodeUnitPoint points1 PostcodeSectorPoint
+     *
+     * @param polygon
+     * @param polygon1
+     * @param polygon2
+     * @param polygon3
+     * @param polygon4
+     * @param line0
+     * @param points0
+     * @param points1
+     * @return
+     */
+    public static MapContent createMapContent(
+            AGDT_Shapefile polygon) {
+        MapContent result;
+        result = new MapContent();
+
+        if (polygon != null) {
+            // Add polygon layer to result
+            // ---------------------------
+            Style polygon0Style;
+            polygon0Style = AGDT_Style.createDefaultPolygonStyle(
+                    Color.BLUE, Color.WHITE);
+            FeatureLayer polygon0layer = new FeatureLayer(
+                    polygon.getFeatureSource(), polygon0Style);
+            result.addLayer(polygon0layer);
+        }
+        return result;
+    }
 
     /**
      * @param mapDirectory
