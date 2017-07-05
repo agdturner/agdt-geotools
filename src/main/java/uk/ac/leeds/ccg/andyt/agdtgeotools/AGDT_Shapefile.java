@@ -65,7 +65,7 @@ public class AGDT_Shapefile {
         initFileDataStore();
     }
 
-    public void setFile(File file) {
+    public final void setFile(File file) {
         this.file = file;
     }
 

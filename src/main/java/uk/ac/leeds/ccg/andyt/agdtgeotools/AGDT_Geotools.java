@@ -49,7 +49,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
-import uk.ac.leeds.ccg.andyt.grids.core.AbstractGrid2DSquareCell;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_AbstractGrid2DSquareCell;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 
 /**
@@ -395,7 +395,7 @@ public class AGDT_Geotools {
                     outputImageFile,
                     outputType);
         } catch (OutOfMemoryError oome) {
-            if (ge._HandleOutOfMemoryError_boolean) {
+            if (ge.HandleOutOfMemoryError_boolean) {
                 ge.clear_MemoryReserve();
                 ge.swapToFile_Grid2DSquareCellChunk(true);
                 ge.init_MemoryReserve(true);
@@ -492,7 +492,7 @@ public class AGDT_Geotools {
             AGDT_StyleParameters styleParameters,
             int index,
             String outname,
-            AbstractGrid2DSquareCell g,
+            Grids_AbstractGrid2DSquareCell g,
             GridCoverage2D gc,
             ArrayList<AGDT_Shapefile> foregroundDW_Shapefile0,
             AGDT_Shapefile foregroundDW_Shapefile1,
@@ -581,7 +581,7 @@ public class AGDT_Geotools {
             AGDT_StyleParameters styleParameters,
             int index,
             String outname,
-            AbstractGrid2DSquareCell g,
+            Grids_AbstractGrid2DSquareCell g,
             GridCoverage2D gc,
             File outputDir,
             int imageWidth,
@@ -645,7 +645,7 @@ public class AGDT_Geotools {
     private static MapContent createMapContent(
             double normalisation,
             String name,
-            AbstractGrid2DSquareCell g,
+            Grids_AbstractGrid2DSquareCell g,
             GridCoverage2D gc,
             int imageWidth,
             AGDT_StyleParameters styleParameters,
@@ -720,7 +720,7 @@ public class AGDT_Geotools {
     private static MapContent createMapContent(
             double normalisation,
             String name,
-            AbstractGrid2DSquareCell g,
+            Grids_AbstractGrid2DSquareCell g,
             GridCoverage2D gc,
             ArrayList<AGDT_Shapefile> foregroundShapefiles,
             AGDT_Shapefile foregroundDW_Shapefile1,

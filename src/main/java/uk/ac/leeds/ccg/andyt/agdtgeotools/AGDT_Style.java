@@ -62,7 +62,7 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_double;
-import uk.ac.leeds.ccg.andyt.grids.core.AbstractGrid2DSquareCell;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_AbstractGrid2DSquareCell;
 import uk.ac.leeds.ccg.andyt.grids.core.AbstractGridStatistics;
 import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDouble;
 import uk.ac.leeds.ccg.andyt.grids.core.GridStatistics0;
@@ -533,7 +533,7 @@ public class AGDT_Style {
      * @return
      */
     public static Style getStyle(
-            AbstractGrid2DSquareCell g,
+            Grids_AbstractGrid2DSquareCell g,
             GridCoverage cov,
             int nClasses,
             String paletteName,
@@ -644,7 +644,7 @@ public class AGDT_Style {
      */
     public static Object[] getStyleAndLegendItems(
             double normalisation,
-            AbstractGrid2DSquareCell g,
+            Grids_AbstractGrid2DSquareCell g,
             GridCoverage cov,
             String type,
             int nClasses,
@@ -685,7 +685,7 @@ public class AGDT_Style {
      */
     public static Object[] getStyleAndLegendItems(
             double normalisation,
-            AbstractGrid2DSquareCell g,
+            Grids_AbstractGrid2DSquareCell g,
             GridCoverage cov,
             String type,
             int nClasses,
@@ -729,7 +729,7 @@ public class AGDT_Style {
      */
     public static Object[] getEqualIntervalStyleAndLegendItems(
             double normalisation,
-            AbstractGrid2DSquareCell g,
+            Grids_AbstractGrid2DSquareCell g,
             GridCoverage cov,
             int nClasses,
             String paletteName,
@@ -858,7 +858,7 @@ public class AGDT_Style {
      */
     public static Object[] getEqualIntervalStyleAndLegendItems(
             double normalisation,
-            AbstractGrid2DSquareCell g,
+            Grids_AbstractGrid2DSquareCell g,
             GridCoverage cov,
             int nClasses,
             String paletteName,

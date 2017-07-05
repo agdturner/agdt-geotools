@@ -24,7 +24,7 @@ import java.util.TreeMap;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.geometry.Envelope2D;
-import uk.ac.leeds.ccg.andyt.grids.core.AbstractGrid2DSquareCell;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_AbstractGrid2DSquareCell;
 import uk.ac.leeds.ccg.andyt.grids.core.AbstractGrid2DSquareCellDoubleChunkFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDouble;
 import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDoubleChunkArrayFactory;
@@ -146,7 +146,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
                 "processor");
         processorDir.mkdirs();
         ge = new Grids_Environment();
-        eage = new ESRIAsciiGridExporter();
+        eage = new ESRIAsciiGridExporter(ge);
         ie = new ImageExporter(ge);
         gp = new Grid2DSquareCellProcessorGWS(ge);
         gp.set_Directory(processorDir, false, handleOutOfMemoryErrors);
@@ -298,7 +298,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
                 "processor");
         processorDir.mkdirs();
         ge = new Grids_Environment();
-        eage = new ESRIAsciiGridExporter();
+        eage = new ESRIAsciiGridExporter(ge);
         ie = new ImageExporter(ge);
         gp = new Grid2DSquareCellProcessorGWS(ge);
         gp.set_Directory(processorDir, false, handleOutOfMemoryErrors);
