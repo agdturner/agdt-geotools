@@ -25,14 +25,14 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.geometry.Envelope2D;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_AbstractGrid2DSquareCell;
-import uk.ac.leeds.ccg.andyt.grids.core.AbstractGrid2DSquareCellDoubleChunkFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDouble;
-import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDoubleChunkArrayFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDoubleFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.GridStatistics0;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_AbstractGrid2DSquareCellDoubleChunkFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDouble;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDoubleChunkArrayFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDoubleFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_GridStatistics0;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
-import uk.ac.leeds.ccg.andyt.grids.exchange.ESRIAsciiGridExporter;
-import uk.ac.leeds.ccg.andyt.grids.exchange.ImageExporter;
+import uk.ac.leeds.ccg.andyt.grids.exchange.Grids_ESRIAsciiGridExporter;
+import uk.ac.leeds.ccg.andyt.grids.exchange.Grids_ImageExporter;
 import uk.ac.leeds.ccg.andyt.grids.process.Grid2DSquareCellProcessorGWS;
 import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Geotools;
 import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Maps;
@@ -45,11 +45,11 @@ import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_StyleParameters;
 public class AGDT_DisplayRaster extends AGDT_Maps {
 
     protected Grids_Environment ge;
-    protected ESRIAsciiGridExporter eage;
-    protected ImageExporter ie;
+    protected Grids_ESRIAsciiGridExporter eage;
+    protected Grids_ImageExporter ie;
     protected Grid2DSquareCellProcessorGWS gp;
-    protected Grid2DSquareCellDoubleFactory gf;
-    protected AbstractGrid2DSquareCellDoubleChunkFactory gcf;
+    protected Grids_Grid2DSquareCellDoubleFactory gf;
+    protected Grids_AbstractGrid2DSquareCellDoubleChunkFactory gcf;
     protected long nrows;
     protected long ncols;
     protected int chunkNRows;
@@ -146,14 +146,14 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
                 "processor");
         processorDir.mkdirs();
         ge = new Grids_Environment();
-        eage = new ESRIAsciiGridExporter(ge);
-        ie = new ImageExporter(ge);
+        eage = new Grids_ESRIAsciiGridExporter(ge);
+        ie = new Grids_ImageExporter(ge);
         gp = new Grid2DSquareCellProcessorGWS(ge);
         gp.set_Directory(processorDir, false, handleOutOfMemoryErrors);
-        gcf = new Grid2DSquareCellDoubleChunkArrayFactory();
+        gcf = new Grids_Grid2DSquareCellDoubleChunkArrayFactory();
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
-        gf = new Grid2DSquareCellDoubleFactory(
+        gf = new Grids_Grid2DSquareCellDoubleFactory(
                 processorDir,
                 chunkNRows,
                 chunkNCols,
@@ -161,7 +161,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
                 -9999d,
                 ge,
                 handleOutOfMemoryErrors);
-        gf.set_GridStatistics(new GridStatistics0());
+        gf.set_GridStatistics(new Grids_GridStatistics0());
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
@@ -191,8 +191,8 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
 //        File asciigridFile = new File(
 //                dirIn,
 //                nameOfGrid + ".asc");
-//        Grid2DSquareCellDouble g;
-//        g = (Grid2DSquareCellDouble) gf.create(asciigridFile);
+//        Grids_Grid2DSquareCellDouble g;
+//        g = (Grids_Grid2DSquareCellDouble) gf.create(asciigridFile);
 //
 //        System.out.println(g.toString(handleOutOfMemoryErrors));
 //        String nameOfGrid2;
@@ -201,8 +201,8 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
 //                dirIn,
 //                nameOfGrid2 + ".asc");
 //
-//        Grid2DSquareCellDouble g2;
-//        g2 = (Grid2DSquareCellDouble) gf.create(asciigridFile2);
+//        Grids_Grid2DSquareCellDouble g2;
+//        g2 = (Grids_Grid2DSquareCellDouble) gf.create(asciigridFile2);
 //
 //        System.out.println(g2.toString(handleOutOfMemoryErrors));
 
@@ -213,15 +213,15 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
                 dirIn,
                 nameOfGrid + ".asc");
 
-        Grid2DSquareCellDouble g;
-        g = (Grid2DSquareCellDouble) gf.create(differenceAsciigridFile);
+        Grids_Grid2DSquareCellDouble g;
+        g = (Grids_Grid2DSquareCellDouble) gf.create(differenceAsciigridFile);
 
 //        gp.addToGrid(g, g2, -1.0d, handleOutOfMemoryErrors);
 //        
 //        System.out.println(g.toString(handleOutOfMemoryErrors));
 //        
-//        ESRIAsciiGridExporter eage;
-//        eage = new ESRIAsciiGridExporter();
+//        Grids_ESRIAsciiGridExporter eage;
+//        eage = new Grids_ESRIAsciiGridExporter();
 //        eage.toAsciiFile(g, differenceAsciigridFile, handleOutOfMemoryErrors);
         ArcGridReader agr;
         agr = getArcGridReader(differenceAsciigridFile);
@@ -298,14 +298,14 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
                 "processor");
         processorDir.mkdirs();
         ge = new Grids_Environment();
-        eage = new ESRIAsciiGridExporter(ge);
-        ie = new ImageExporter(ge);
+        eage = new Grids_ESRIAsciiGridExporter(ge);
+        ie = new Grids_ImageExporter(ge);
         gp = new Grid2DSquareCellProcessorGWS(ge);
         gp.set_Directory(processorDir, false, handleOutOfMemoryErrors);
-        gcf = new Grid2DSquareCellDoubleChunkArrayFactory();
+        gcf = new Grids_Grid2DSquareCellDoubleChunkArrayFactory();
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
-        gf = new Grid2DSquareCellDoubleFactory(
+        gf = new Grids_Grid2DSquareCellDoubleFactory(
                 processorDir,
                 chunkNRows,
                 chunkNCols,
@@ -346,8 +346,8 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
         agr = getArcGridReader(asciigridFile);
         GridCoverage2D gc;
         gc = getGridCoverage2D(agr);
-        Grid2DSquareCellDouble g;
-        g = (Grid2DSquareCellDouble) gf.create(asciigridFile);
+        Grids_Grid2DSquareCellDouble g;
+        g = (Grids_Grid2DSquareCellDouble) gf.create(asciigridFile);
         int index = 0;
         boolean scaleToFirst = false;
         String outname = nameOfGrid + "GeoToolsOutput";

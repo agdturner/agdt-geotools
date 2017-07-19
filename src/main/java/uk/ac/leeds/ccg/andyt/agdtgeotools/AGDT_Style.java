@@ -63,10 +63,10 @@ import org.opengis.filter.expression.PropertyName;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_double;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_AbstractGrid2DSquareCell;
-import uk.ac.leeds.ccg.andyt.grids.core.AbstractGridStatistics;
-import uk.ac.leeds.ccg.andyt.grids.core.Grid2DSquareCellDouble;
-import uk.ac.leeds.ccg.andyt.grids.core.GridStatistics0;
-import uk.ac.leeds.ccg.andyt.grids.core.GridStatistics1;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_AbstractGridStatistics;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Grid2DSquareCellDouble;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_GridStatistics0;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_GridStatistics1;
 
 /**
  *
@@ -660,9 +660,8 @@ public class AGDT_Style {
                     addWhiteForZero);
         }
         if (type.equalsIgnoreCase("Quantile")) {
-            return getQuantileStyleAndLegendItems(
-                    normalisation,
-                    (Grid2DSquareCellDouble) g,
+            return getQuantileStyleAndLegendItems(normalisation,
+                    (Grids_Grid2DSquareCellDouble) g,
                     cov,
                     nClasses,
                     paletteName,
@@ -705,7 +704,7 @@ public class AGDT_Style {
 //        if (type.equalsIgnoreCase("Quantile")) {
 //            return getQuantileStyleAndLegendItems(
 //                    normalisation,
-//                    (Grid2DSquareCellDouble) g,
+//                    (Grids_Grid2DSquareCellDouble) g,
 //                    cov,
 //                    nClasses,
 //                    paletteName,
@@ -1027,7 +1026,7 @@ public class AGDT_Style {
     public static Object[] getQuantileStyleAndLegendItems(
             double normalisation,
             //AbstractGrid2DSquareCell g,
-            Grid2DSquareCellDouble g,
+            Grids_Grid2DSquareCellDouble g,
             GridCoverage cov,
             int nClasses,
             String paletteName,
@@ -1039,9 +1038,9 @@ public class AGDT_Style {
         double[] breaks;
         Generic_double d = new Generic_double();
         boolean handleOutOfMemoryError = true;
-        AbstractGridStatistics gs;
-        GridStatistics1 gs1;
-        GridStatistics0 gs0;
+        Grids_AbstractGridStatistics gs;
+        Grids_GridStatistics1 gs1;
+        Grids_GridStatistics0 gs0;
         //gs1.
         gs = g.getGridStatistics(handleOutOfMemoryError);
         long nonZeroAndNonNoDataValueCount;

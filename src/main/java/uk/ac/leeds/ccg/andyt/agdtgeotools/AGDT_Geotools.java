@@ -395,7 +395,7 @@ public class AGDT_Geotools {
                     outputImageFile,
                     outputType);
         } catch (OutOfMemoryError oome) {
-            if (ge.HandleOutOfMemoryError_boolean) {
+            if (ge._HandleOutOfMemoryError_boolean) {
                 ge.clear_MemoryReserve();
                 ge.swapToFile_Grid2DSquareCellChunk(true);
                 ge.init_MemoryReserve(true);
