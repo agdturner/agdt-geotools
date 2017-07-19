@@ -84,8 +84,8 @@ public abstract class AGDT_Maps {
     protected File mapDirectory;
     protected ShapefileDataStoreFactory sdsf;
     protected ArrayList<AGDT_Shapefile> foregroundDW_Shapefile0;
-    protected AGDT_Shapefile foregroundDW_Shapefile1;
-    protected AGDT_Shapefile backgroundDW_Shapefile;
+    protected AGDT_Shapefile ForegroundDW_Shapefile1;
+    protected AGDT_Shapefile BackgroundDW_Shapefile;
 
     public AGDT_Maps() {
     }
