@@ -679,6 +679,7 @@ public class AGDT_Style {
      * @param type
      * @param nClasses
      * @param paletteName
+     * @param paletteName2
      * @param addWhiteForZero
      * @return
      */
