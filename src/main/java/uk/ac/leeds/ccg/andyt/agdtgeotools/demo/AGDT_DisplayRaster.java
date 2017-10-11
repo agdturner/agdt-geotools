@@ -33,7 +33,7 @@ import uk.ac.leeds.ccg.andyt.grids.core.Grids_GridStatistics0;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.grids.exchange.Grids_ESRIAsciiGridExporter;
 import uk.ac.leeds.ccg.andyt.grids.exchange.Grids_ImageExporter;
-import uk.ac.leeds.ccg.andyt.grids.process.Grid2DSquareCellProcessorGWS;
+import uk.ac.leeds.ccg.andyt.grids.process.Grids_ProcessorGWS;
 import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Geotools;
 import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Maps;
 import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_StyleParameters;
@@ -47,7 +47,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
     protected Grids_Environment ge;
     protected Grids_ESRIAsciiGridExporter eage;
     protected Grids_ImageExporter ie;
-    protected Grid2DSquareCellProcessorGWS gp;
+    protected Grids_ProcessorGWS gp;
     protected Grids_Grid2DSquareCellDoubleFactory gf;
     protected Grids_AbstractGrid2DSquareCellDoubleChunkFactory gcf;
     protected long nrows;
@@ -148,7 +148,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
         ge = new Grids_Environment();
         eage = new Grids_ESRIAsciiGridExporter(ge);
         ie = new Grids_ImageExporter(ge);
-        gp = new Grid2DSquareCellProcessorGWS(ge);
+        gp = new Grids_ProcessorGWS(ge);
         gp.set_Directory(processorDir, false, handleOutOfMemoryErrors);
         gcf = new Grids_Grid2DSquareCellDoubleChunkArrayFactory();
         chunkNRows = 300;//250; //64
@@ -300,7 +300,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
         ge = new Grids_Environment();
         eage = new Grids_ESRIAsciiGridExporter(ge);
         ie = new Grids_ImageExporter(ge);
-        gp = new Grid2DSquareCellProcessorGWS(ge);
+        gp = new Grids_ProcessorGWS(ge);
         gp.set_Directory(processorDir, false, handleOutOfMemoryErrors);
         gcf = new Grids_Grid2DSquareCellDoubleChunkArrayFactory();
         chunkNRows = 300;//250; //64
