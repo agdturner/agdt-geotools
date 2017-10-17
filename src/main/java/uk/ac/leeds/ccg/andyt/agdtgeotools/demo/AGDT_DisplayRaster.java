@@ -161,7 +161,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
                 -9999d,
                 ge,
                 handleOutOfMemoryErrors);
-        gf.set_GridStatistics(new Grids_GridStatistics0());
+        gf.set_GridStatistics(new Grids_GridStatistics0(ge));
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
