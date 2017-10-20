@@ -541,8 +541,8 @@ public class AGDT_Style {
         String[] classNames;
         double[] breaks;
         Generic_double d = new Generic_double();
-        double min = g.getGridStatistics(true).getMinDouble(true);
-        double max = g.getGridStatistics(true).getMaxDouble(true);
+        double min = g.getGridStatistics(true).getMinDouble(true, true);
+        double max = g.getGridStatistics(true).getMaxDouble(true, true);
         double interval = (max - min) / (double) nClasses;
         double minInterval = min;
         double maxInterval = min + interval;
@@ -740,8 +740,8 @@ public class AGDT_Style {
         String[] classNames;
         double[] breaks;
         Generic_double d = new Generic_double();
-        double min = g.getGridStatistics(true).getMinDouble(true);
-        double max = g.getGridStatistics(true).getMaxDouble(true);
+        double min = g.getGridStatistics(true).getMinDouble(true, true);
+        double max = g.getGridStatistics(true).getMaxDouble(true, true);
         double interval = (max - min) / (double) nClasses;
         double minInterval = min;
         double maxInterval = min + interval;
@@ -870,7 +870,7 @@ public class AGDT_Style {
         String[] classNames;
         double[] breaks;
         Generic_double d = new Generic_double();
-        double min = g.getGridStatistics(true).getMinDouble(true);
+        double min = g.getGridStatistics(true).getMinDouble(true, true);
         if (min >= 0.0d) {
             return getEqualIntervalStyleAndLegendItems(
                     normalisation,
@@ -880,7 +880,7 @@ public class AGDT_Style {
                     paletteName,
                     addWhiteForZero);
         }
-        double max = g.getGridStatistics(true).getMaxDouble(true);
+        double max = g.getGridStatistics(true).getMaxDouble(true, true);
         int numberOfPositiveClasses;
         int numberOfNegativeClasses;
         double interval;
@@ -1075,8 +1075,8 @@ public class AGDT_Style {
         }
 
         nClasses = newClassCount;
-        double min = gs.getMinDouble(true);
-        double max = gs.getMaxDouble(true);
+        double min = gs.getMinDouble(true, true);
+        double max = gs.getMaxDouble(true, true);
         if (addWhiteForZero) {
             nClasses++;
             classNames = new String[nClasses];
