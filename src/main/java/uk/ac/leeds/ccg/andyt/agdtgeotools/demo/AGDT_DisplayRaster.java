@@ -149,7 +149,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
         eage = new Grids_ESRIAsciiGridExporter(ge);
         ie = new Grids_ImageExporter(ge);
         gp = new Grids_ProcessorGWS(ge);
-        gp.set_Directory(processorDir, false, handleOutOfMemoryErrors);
+        gp.setDirectory(processorDir, false, handleOutOfMemoryErrors);
         gcf = new Grids_Grid2DSquareCellDoubleChunkArrayFactory();
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
@@ -161,7 +161,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
                 -9999d,
                 ge,
                 handleOutOfMemoryErrors);
-        gf.set_GridStatistics(new Grids_GridStatistics0(ge));
+        gf.setGridStatistics(new Grids_GridStatistics0(ge));
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
@@ -301,7 +301,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
         eage = new Grids_ESRIAsciiGridExporter(ge);
         ie = new Grids_ImageExporter(ge);
         gp = new Grids_ProcessorGWS(ge);
-        gp.set_Directory(processorDir, false, handleOutOfMemoryErrors);
+        gp.setDirectory(processorDir, false, handleOutOfMemoryErrors);
         gcf = new Grids_Grid2DSquareCellDoubleChunkArrayFactory();
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
