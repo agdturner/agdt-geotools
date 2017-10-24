@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.ac.leeds.ccg.andyt.agdtgeotools.demo;
+package uk.ac.leeds.ccg.andyt.geotools.demo;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,20 +24,25 @@ import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
 import org.geotools.swing.JMapFrame;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Geotools;
-import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Shapefile;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
+import uk.ac.leeds.ccg.andyt.geotools.Geotools_Shapefile;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
 
 /**
  *
  * @author geoagdt
  */
-public class AGDT_DisplayShapefile {
+public class Geotools_DisplayShapefile extends Geotools_Object {
 
-    public AGDT_DisplayShapefile() {
+    public Geotools_DisplayShapefile() {
+    }
+
+    public Geotools_DisplayShapefile(Geotools_Environment ge) {
+        super(ge);
     }
 
     public static void main(String[] args) {
-        new AGDT_DisplayShapefile().run();
+        new Geotools_DisplayShapefile().run();
     }
 
     public void run() {
@@ -63,26 +68,32 @@ public class AGDT_DisplayShapefile {
         name = "high_water_polyline.shp";
         dir = new File(
                 "M:/Projects/PFIHack/data/input/OrdnanceSurvey/bdline_essh_gb/Data/GB/");
-        f = AGDT_Geotools.getShapefile(dir, name, false);
+        f = ge.getShapefile(dir, name, false);
         files.add(f);
 
         name = "test.shp";
         dir = new File(
                 "M:/test/");
-        f = AGDT_Geotools.getShapefile(dir, name, false);
+        f = ge.getShapefile(dir, name, false);
         files.add(f);
 
         try {
             displayShapefiles(files);
         } catch (Exception ex) {
-            Logger.getLogger(AGDT_DisplayShapefile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Geotools_DisplayShapefile.class.getName()).log(Level.SEVERE, null, ex);
         }
-//        AGDT_Shapefile aAGDT_Shapefile = new AGDT_Shapefile(shapefile);
+//        Geotools_Shapefile aAGDT_Shapefile = new Geotools_Shapefile(shapefile);
 //        MapContent mc;
-//        mc = AGDT_Geotools.createMapContent(aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile);
-//        AGDT_Shapefile aAGDT_Shapefile = new AGDT_Shapefile(shapefile);
+//        mc = Geotools_Environment.createMapContent(aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile);
+//        Geotools_Shapefile aAGDT_Shapefile = new Geotools_Shapefile(shapefile);
 //        MapContent mc;
-//        mc = AGDT_Geotools.createMapContent(aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile);
+//        mc = Geotools_Environment.createMapContent(aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile);
+//        Geotools_Shapefile aAGDT_Shapefile = new Geotools_Shapefile(shapefile);
+//        MapContent mc;
+//        mc = Geotools_Environment.createMapContent(aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile);
+//        Geotools_Shapefile aAGDT_Shapefile = new Geotools_Shapefile(shapefile);
+//        MapContent mc;
+//        mc = Geotools_Environment.createMapContent(aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile, aAGDT_Shapefile);
     }
 
     protected void displayShapefiles(ArrayList<File> files) throws Exception {

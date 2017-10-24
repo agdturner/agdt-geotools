@@ -1,4 +1,4 @@
-package uk.ac.leeds.ccg.andyt.agdtgeotools;
+package uk.ac.leeds.ccg.andyt.geotools;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -16,12 +16,12 @@ import org.geotools.map.MapContent;
 import org.geotools.map.MapViewport;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_double;
 
-public class AGDT_LegendLayer extends DirectLayer {
+public class Geotools_LegendLayer extends DirectLayer {
 
-    private final AGDT_StyleParametersAbstract styleParameters;
+    private final Geotools_AbstractStyleParameters styleParameters;
     //private final AGDT_StyleParameters styleParameters;
 
-    private List<AGDT_LegendItem> legendItems;
+    private List<Geotools_LegendItem> legendItems;
     private MapContent mc;
     ReferencedEnvelope bounds;
 
@@ -66,11 +66,11 @@ public class AGDT_LegendLayer extends DirectLayer {
     private int legendUpperLeftX;
     private int legendUpperLeftY;
 
-    public AGDT_LegendLayer(
-            AGDT_StyleParametersAbstract styleParameters,
+    public Geotools_LegendLayer(
+            Geotools_AbstractStyleParameters styleParameters,
             //AGDT_StyleParameters styleParameters,
             String legendTitle,
-            List<AGDT_LegendItem> legendItems,
+            List<Geotools_LegendItem> legendItems,
             MapContent mc,
             int imageWidth,
             int imageHeight,
@@ -105,7 +105,7 @@ public class AGDT_LegendLayer extends DirectLayer {
      */
     public final void init(
             String legendTitle,
-            List<AGDT_LegendItem> legendItems,
+            List<Geotools_LegendItem> legendItems,
             MapContent mc,
             int imageWidth,
             int imageHeight,
@@ -223,8 +223,8 @@ public class AGDT_LegendLayer extends DirectLayer {
         int maxWidth = 0;
         int maxHeight = 0;
 //        for (int i = 0; i < legendItems.size(); i++) {
-//            AGDT_LegendItem li = legendItems.get(i);
-        for (AGDT_LegendItem li : legendItems) {
+//            Geotools_LegendItem li = legendItems.get(i);
+        for (Geotools_LegendItem li : legendItems) {
             Rectangle2D b;
             b = legendItemFont.getStringBounds(
                     li.getLabel(),

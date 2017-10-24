@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package uk.ac.leeds.ccg.andyt.agdtgeotools;
+package uk.ac.leeds.ccg.andyt.geotools;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,25 +42,32 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.styling.Style;
 import org.opengis.feature.simple.SimpleFeatureType;
 import uk.ac.leeds.ccg.andyt.generic.utilities.Generic_Execution;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
 //import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.mapping.DW_Style;
 
 /**
  *
  * @author geoagdt
  */
-public class AGDT_Shapefile {
+public class Geotools_Shapefile extends Geotools_Object {
 
     private File file;
     private FileDataStore fileDataStore;
 
+    protected Geotools_Shapefile(){}
     
-    protected AGDT_Shapefile() {
+    public Geotools_Shapefile(Geotools_Environment ge) {
+        super(ge);
     }
     
 //    public DW_Shapefile(File shapefile) throws MalformedURLException {
 //        this(shapefile.toURI().toURL());
 //    }
-    public AGDT_Shapefile(File shapefile) {
+    public Geotools_Shapefile(
+            Geotools_Environment ge,
+            File shapefile) {
+        super(ge);
         this.file = shapefile;
         initFileDataStore();
     }
@@ -84,13 +91,13 @@ public class AGDT_Shapefile {
         try {
             fs = getFileDataStore().getFeatureSource();
         } catch (IOException ex) {
-            Logger.getLogger(AGDT_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Geotools_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
         }
         return fs;
     }
 
     public FeatureLayer getFeatureLayer() {
-        Style style = AGDT_Style.createStyle(getFeatureSource());
+        Style style = new Geotools_Style(ge).createStyle(getFeatureSource());
         return getFeatureLayer(style);
     }
 
@@ -201,7 +208,7 @@ public class AGDT_Shapefile {
         try {
             result = FileDataStoreFinder.getDataStore(f);
         } catch (IOException ex) {
-            Logger.getLogger(AGDT_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Geotools_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
             //} catch (NullPointerException e) {
         } catch (Exception e) {
             System.err.println("Exception (not an IOException) in DW_ShapefileDataStore.getFileDataStore(File)");
@@ -256,7 +263,7 @@ public class AGDT_Shapefile {
         try {
             result = fds.getFeatureSource().getFeatures();
         } catch (IOException ex) {
-            Logger.getLogger(AGDT_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Geotools_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }
@@ -282,7 +289,7 @@ public class AGDT_Shapefile {
             String typeName = sds.getTypeNames()[0];
             simpleFeatureSource = sds.getFeatureSource(typeName);
         } catch (IOException ex) {
-            Logger.getLogger(AGDT_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Geotools_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
             simpleFeatureSource = null;
         }
         Transaction transaction = new DefaultTransaction("create");
@@ -293,7 +300,7 @@ public class AGDT_Shapefile {
             try {
                 sfs.addFeatures(fc);
             } catch (IOException ex) {
-                Logger.getLogger(AGDT_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Geotools_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         commitTransaction(transaction);
@@ -314,21 +321,21 @@ public class AGDT_Shapefile {
                         transaction.wait(2000L);
                     }
                 } catch (InterruptedException ie) {
-                    Logger.getLogger(AGDT_Shapefile.class.getName()).log(Level.SEVERE, null, ie);
+                    Logger.getLogger(Geotools_Shapefile.class.getName()).log(Level.SEVERE, null, ie);
                 }
                 commitTransaction(transaction); // This may recurse infinitely!
             } catch (IOException ex1) {
                 System.out.println("Oh help gromit!");
-                Logger.getLogger(AGDT_Shapefile.class.getName()).log(Level.SEVERE, null, ex1);
+                Logger.getLogger(Geotools_Shapefile.class.getName()).log(Level.SEVERE, null, ex1);
             }
         } finally {
             if (transaction != null) {
                 try {
                     transaction.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(AGDT_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Geotools_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (NullPointerException ex) {
-                    Logger.getLogger(AGDT_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Geotools_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (Exception e) {
                     System.err.println("Exception (not IOException or NullPointerException) in DW_ShapefileDataStore.commitTransaction(Transaction))");
                 } catch (Error e) {
@@ -356,7 +363,7 @@ public class AGDT_Shapefile {
         try {
             params.put("url", f.toURI().toURL());
         } catch (MalformedURLException ex) {
-            Logger.getLogger(AGDT_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Geotools_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
         }
         params.put("create spatial index", Boolean.TRUE);
         try {
@@ -364,7 +371,7 @@ public class AGDT_Shapefile {
             result.forceSchemaCRS(DefaultGeographicCRS.WGS84);
             result.createSchema(sft);
         } catch (IOException ex) {
-            Logger.getLogger(AGDT_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Geotools_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package uk.ac.leeds.ccg.andyt.agdtgeotools;
+package uk.ac.leeds.ccg.andyt.geotools;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import org.geotools.styling.Style;
  *
  * @author geoagdt
  */
-public class AGDT_StyleParameters extends AGDT_StyleParametersAbstract {
+public class Geotools_StyleParameters extends Geotools_AbstractStyleParameters {
 
     private HashMap<String, List<Style>> styles;
     private String classificationFunctionName;
@@ -46,7 +46,7 @@ public class AGDT_StyleParameters extends AGDT_StyleParametersAbstract {
     private ArrayList<String> foregroundStyleNames;
     private Style foregroundStyle1;
     private String foregroundStyleTitle1;
-    private ArrayList<ArrayList<AGDT_LegendItem>> legendItems;
+    private ArrayList<ArrayList<Geotools_LegendItem>> legendItems;
 
     public void setMaxForTheLastLegendItem(
             double max,
@@ -54,10 +54,10 @@ public class AGDT_StyleParameters extends AGDT_StyleParametersAbstract {
         int maxInt = (int) max;
         BigDecimal maxBD;
         maxBD = BigDecimal.valueOf(max);
-        ArrayList<AGDT_LegendItem> legendItems;
+        ArrayList<Geotools_LegendItem> legendItems;
         legendItems = getLegendItems(styleIndex);
         if (legendItems != null) {
-            AGDT_LegendItem legendItem;
+            Geotools_LegendItem legendItem;
             legendItem = legendItems.get(legendItems.size() - 1);
             String currentLabel = legendItem.getLabel();
             String[] splitCurrentLabel = currentLabel.split("-");
@@ -386,9 +386,9 @@ public class AGDT_StyleParameters extends AGDT_StyleParametersAbstract {
      * @param index
      * @return a specific list of legendItems
      */
-    public ArrayList<AGDT_LegendItem> getLegendItems(int index) {
-        ArrayList<AGDT_LegendItem> result;
-        ArrayList<ArrayList<AGDT_LegendItem>> legendItems0;
+    public ArrayList<Geotools_LegendItem> getLegendItems(int index) {
+        ArrayList<Geotools_LegendItem> result;
+        ArrayList<ArrayList<Geotools_LegendItem>> legendItems0;
         legendItems0 = getLegendItems();
         try {
             result = legendItems0.get(index);
@@ -396,8 +396,8 @@ public class AGDT_StyleParameters extends AGDT_StyleParametersAbstract {
             result = null;
             int i = legendItems0.size();
             while (i <= index) {
-                ArrayList<AGDT_LegendItem> newLegendItem;
-                newLegendItem = new ArrayList<AGDT_LegendItem>();
+                ArrayList<Geotools_LegendItem> newLegendItem;
+                newLegendItem = new ArrayList<Geotools_LegendItem>();
                 legendItems0.add(i, result);
                 i++;
                 result = newLegendItem;
@@ -411,9 +411,9 @@ public class AGDT_StyleParameters extends AGDT_StyleParametersAbstract {
      * @param index
      * @return
      */
-    public ArrayList<AGDT_LegendItem> setLegendItems(
-            ArrayList<AGDT_LegendItem> legendItems, int index) {
-        ArrayList<AGDT_LegendItem> result;
+    public ArrayList<Geotools_LegendItem> setLegendItems(
+            ArrayList<Geotools_LegendItem> legendItems, int index) {
+        ArrayList<Geotools_LegendItem> result;
         result = getLegendItems(index); // This ensures that legendItems is initialised to the right length.
         getLegendItems().set(index, legendItems);
         return result;
@@ -422,9 +422,9 @@ public class AGDT_StyleParameters extends AGDT_StyleParametersAbstract {
     /**
      * @return the legendItems
      */
-    public ArrayList<ArrayList<AGDT_LegendItem>> getLegendItems() {
+    public ArrayList<ArrayList<Geotools_LegendItem>> getLegendItems() {
         if (legendItems == null) {
-            legendItems = new ArrayList<ArrayList<AGDT_LegendItem>>();
+            legendItems = new ArrayList<ArrayList<Geotools_LegendItem>>();
         }
         return legendItems;
     }
@@ -432,11 +432,11 @@ public class AGDT_StyleParameters extends AGDT_StyleParametersAbstract {
     /**
      * @param legendItems the legendItems to set
      */
-    public void setLegendItems(ArrayList<ArrayList<AGDT_LegendItem>> legendItems) {
+    public void setLegendItems(ArrayList<ArrayList<Geotools_LegendItem>> legendItems) {
         this.legendItems = legendItems;
     }
 
-    public AGDT_StyleParameters() {
+    public Geotools_StyleParameters() {
 //        this.classificationFunctionName = "";
 //        this.nClasses = 0;
 //        this.paletteName = "";
@@ -445,7 +445,7 @@ public class AGDT_StyleParameters extends AGDT_StyleParametersAbstract {
 //        this.backgroundStyleTitle = "";
     }
 
-    public AGDT_StyleParameters(
+    public Geotools_StyleParameters(
             String classificationFunctionName,
             int nClasses,
             String paletteName,
@@ -467,7 +467,7 @@ public class AGDT_StyleParameters extends AGDT_StyleParametersAbstract {
      *
      * @param styleParameters
      */
-    public AGDT_StyleParameters(AGDT_StyleParameters styleParameters) {
+    public Geotools_StyleParameters(Geotools_StyleParameters styleParameters) {
         this.addWhiteForZero = styleParameters.addWhiteForZero;
         this.backgroundStyle = styleParameters.backgroundStyle;
         this.backgroundStyleTitle = styleParameters.backgroundStyleTitle;

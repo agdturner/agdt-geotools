@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package uk.ac.leeds.ccg.andyt.agdtgeotools;
+package uk.ac.leeds.ccg.andyt.geotools;
 
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -24,6 +24,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Color;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -62,6 +63,8 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_double;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGrid2DSquareCell;
 import uk.ac.leeds.ccg.andyt.grids.core.statistics.Grids_AbstractGridStatistics;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_Grid2DSquareCellDouble;
@@ -72,18 +75,24 @@ import uk.ac.leeds.ccg.andyt.grids.core.statistics.Grids_GridStatistics1;
  *
  * @author geoagdt
  */
-public class AGDT_Style {
+public class Geotools_Style extends Geotools_Object {
 
-    public static final StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
-    public static final FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
-    public static StyleBuilder styleBuilder = new StyleBuilder(styleFactory, filterFactory);
+    public final StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
+    public final FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
+    public StyleBuilder styleBuilder = new StyleBuilder(styleFactory, filterFactory);
 
+    protected Geotools_Style(){}
+    
+    public Geotools_Style(Geotools_Environment ge) {
+        super(ge);
+    }
+    
     /**
      *
      * @param styleParameters
      * @param style
      */
-    public static void setStyleParametersStyle(
+    public void setStyleParametersStyle(
             Object[] styleParameters,
             Style style) {
         styleParameters[0] = style;
@@ -95,7 +104,7 @@ public class AGDT_Style {
      * @param file
      * @return
      */
-    public static File toSLDFile(File file) {
+    public File toSLDFile(File file) {
         String path = file.getAbsolutePath();
         String base = path.substring(0, path.length() - 4);
         String newPath = base + ".sld";
@@ -117,13 +126,12 @@ public class AGDT_Style {
      * @param sld
      * @return
      */
-    public static org.geotools.styling.Style createFromSLD(File sld) {
+    public org.geotools.styling.Style createFromSLD(File sld) {
         try {
             SLDParser stylereader = new SLDParser(styleFactory, sld.toURI().toURL());
             org.geotools.styling.Style[] style = stylereader.readXML();
             return style[0];
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             JExceptionReporter.showDialog(e, "Problem creating style");
         }
         return null;
@@ -133,7 +141,7 @@ public class AGDT_Style {
      * @param featureSource
      * @return
      */
-    public static Style createStyle(
+    public Style createStyle(
             FeatureSource featureSource) {
         SimpleFeatureType schema = (SimpleFeatureType) featureSource.getSchema();
         Class geomType = schema.getGeometryDescriptor().getType().getBinding();
@@ -152,7 +160,7 @@ public class AGDT_Style {
         }
     }
 
-    public static Style getPointStyle(
+    public Style getPointStyle(
             int size,
             String type,
             Color fill,
@@ -196,7 +204,7 @@ public class AGDT_Style {
      * @return A Style to draw point features as circles with blue outlines and
      * cyan fill.
      */
-    public static Style createPointStyle(
+    public Style createPointStyle(
             Mark mark,
             int size) {
         Graphic gr = styleFactory.createDefaultGraphic();
@@ -223,7 +231,7 @@ public class AGDT_Style {
      * @return A Style to draw point features as circles with blue outlines and
      * cyan fill.
      */
-    public static Style createDefaultPointStyle() {
+    public Style createDefaultPointStyle() {
         Graphic gr = styleFactory.createDefaultGraphic();
         Mark mark = styleFactory.getCircleMark();
         mark.setStroke(styleFactory.createStroke(
@@ -249,9 +257,10 @@ public class AGDT_Style {
      * Creates and returns a Style to draw line features as thin c coloured
      * lines.
      *
+     * @param c
      * @return A Style to draw line features as thin c coloured lines.
      */
-    public static Style createDefaultLineStyle(Color c) {
+    public Style createDefaultLineStyle(Color c) {
         Style style;
         Stroke stroke = getDefaultStroke(c);
         /*
@@ -274,11 +283,11 @@ public class AGDT_Style {
      *
      * @return A Style to draw line features as thin blue lines.
      */
-    public static Style createDefaultLineStyle() {
+    public Style createDefaultLineStyle() {
         return createDefaultLineStyle(Color.BLUE);
     }
 
-    public static Stroke getDefaultStroke(Color c) {
+    public Stroke getDefaultStroke(Color c) {
         Stroke result;
         double opacity;
         // Stroke
@@ -302,7 +311,7 @@ public class AGDT_Style {
      * @param fill_Color
      * @return
      */
-    public static Style createDefaultPolygonStyle(
+    public Style createDefaultPolygonStyle(
             Color outline_Color,
             Color fill_Color) {
 
@@ -348,10 +357,10 @@ public class AGDT_Style {
      * @param styleParameters
      * @return
      */
-    public static Object[] createPolygonStyle(
+    public Object[] createPolygonStyle(
             FeatureCollection featureCollection,
             String attributeName,
-            AGDT_StyleParameters styleParameters) {
+            Geotools_StyleParameters styleParameters) {
         return createPolygonStyle(
                 featureCollection,
                 attributeName,
@@ -366,12 +375,13 @@ public class AGDT_Style {
      * @param featureCollection
      * @param attributeName
      * @param styleParameters
+     * @param doDebug
      * @return
      */
-    public static Object[] createPolygonStyle(
+    public Object[] createPolygonStyle(
             FeatureCollection featureCollection,
             String attributeName,
-            AGDT_StyleParameters styleParameters,
+            Geotools_StyleParameters styleParameters,
             boolean doDebug) {
         Object[] result = new Object[2];
 
@@ -421,11 +431,11 @@ public class AGDT_Style {
                     colorsForLegend = colorsForRenderingFeatures;
                 }
                 // STEP 2b Sort Legend Items
-                ArrayList<AGDT_LegendItem> legendItems = new ArrayList<AGDT_LegendItem>();
+                ArrayList<Geotools_LegendItem> legendItems = new ArrayList<>();
                 if (addWhiteForZero) {
                     String newLabel = "0";
-                    AGDT_LegendItem li;
-                    li = new AGDT_LegendItem(
+                    Geotools_LegendItem li;
+                    li = new Geotools_LegendItem(
                             newLabel,
                             colorsForLegend[0]);
                     legendItems.add(li);
@@ -458,11 +468,11 @@ public class AGDT_Style {
 
                     //legendItemName = "title " + title + ", min " + min + ", max " + max;
                     //System.out.println(legendItemName);
-                    AGDT_LegendItem li;
+                    Geotools_LegendItem li;
                     if (addWhiteForZero) {
-                        li = new AGDT_LegendItem(newLabel, colorsForLegend[i + 1]);
+                        li = new Geotools_LegendItem(newLabel, colorsForLegend[i + 1]);
                     } else {
-                        li = new AGDT_LegendItem(newLabel, colorsForLegend[i]);
+                        li = new Geotools_LegendItem(newLabel, colorsForLegend[i]);
                     }
                     legendItems.add(li);
                 }
@@ -501,7 +511,7 @@ public class AGDT_Style {
         style = styleFactory.createStyle();
         if (groups != null) {
             FeatureTypeStyle featureTypeStyle;
-            featureTypeStyle = AGDT_StyleGenerator.createFeatureTypeStyle(
+            featureTypeStyle = Geotools_StyleGenerator.createFeatureTypeStyle(
                     groups,
                     propertyName,
                     colorsForRenderingFeatures,
@@ -532,7 +542,7 @@ public class AGDT_Style {
      * @param addWhiteForZero
      * @return
      */
-    public static Style getStyle(
+    public Style getStyle(
             Grids_AbstractGrid2DSquareCell g,
             GridCoverage cov,
             int nClasses,
@@ -642,7 +652,7 @@ public class AGDT_Style {
      * @param addWhiteForZero
      * @return
      */
-    public static Object[] getStyleAndLegendItems(
+    public Object[] getStyleAndLegendItems(
             double normalisation,
             Grids_AbstractGrid2DSquareCell g,
             GridCoverage cov,
@@ -683,7 +693,7 @@ public class AGDT_Style {
      * @param addWhiteForZero
      * @return
      */
-    public static Object[] getStyleAndLegendItems(
+    public Object[] getStyleAndLegendItems(
             double normalisation,
             Grids_AbstractGrid2DSquareCell g,
             GridCoverage cov,
@@ -727,7 +737,7 @@ public class AGDT_Style {
      * @param addWhiteForZero
      * @return
      */
-    public static Object[] getEqualIntervalStyleAndLegendItems(
+    public Object[] getEqualIntervalStyleAndLegendItems(
             double normalisation,
             Grids_AbstractGrid2DSquareCell g,
             GridCoverage cov,
@@ -735,8 +745,8 @@ public class AGDT_Style {
             String paletteName,
             boolean addWhiteForZero) {
         Object[] result = new Object[2];
-        ArrayList<AGDT_LegendItem> legendItems;
-        legendItems = new ArrayList<AGDT_LegendItem>();
+        ArrayList<Geotools_LegendItem> legendItems;
+        legendItems = new ArrayList<>();
         String[] classNames;
         double[] breaks;
         Generic_double d = new Generic_double();
@@ -835,8 +845,8 @@ public class AGDT_Style {
         style = sb.createStyle(sb.createRasterSymbolizer(cm, 1));
         result[0] = style;
         for (int i = 0; i < nClasses; i++) {
-            AGDT_LegendItem li;
-            li = new AGDT_LegendItem(classNames[i], colors[i]);
+            Geotools_LegendItem li;
+            li = new Geotools_LegendItem(classNames[i], colors[i]);
             legendItems.add(li);
         }
         result[1] = legendItems;
@@ -851,12 +861,11 @@ public class AGDT_Style {
      * @param cov
      * @param nClasses
      * @param paletteName
-     * @param nClasses2
      * @param paletteName2
      * @param addWhiteForZero
      * @return
      */
-    public static Object[] getEqualIntervalStyleAndLegendItems(
+    public Object[] getEqualIntervalStyleAndLegendItems(
             double normalisation,
             Grids_AbstractGrid2DSquareCell g,
             GridCoverage cov,
@@ -865,8 +874,8 @@ public class AGDT_Style {
             String paletteName2,
             boolean addWhiteForZero) {
         Object[] result = new Object[2];
-        ArrayList<AGDT_LegendItem> legendItems;
-        legendItems = new ArrayList<AGDT_LegendItem>();
+        ArrayList<Geotools_LegendItem> legendItems;
+        legendItems = new ArrayList<>();
         String[] classNames;
         double[] breaks;
         Generic_double d = new Generic_double();
@@ -1004,8 +1013,8 @@ public class AGDT_Style {
             style = sb.createStyle(sb.createRasterSymbolizer(cm, 1));
             result[0] = style;
             for (j = 0; j < totalClasses; j++) {
-                AGDT_LegendItem li;
-                li = new AGDT_LegendItem(classNames[j], colors[j]);
+                Geotools_LegendItem li;
+                li = new Geotools_LegendItem(classNames[j], colors[j]);
                 legendItems.add(li);
             }
         }
@@ -1024,7 +1033,7 @@ public class AGDT_Style {
      * @param addWhiteForZero
      * @return
      */
-    public static Object[] getQuantileStyleAndLegendItems(
+    public Object[] getQuantileStyleAndLegendItems(
             double normalisation,
             //AbstractGrid2DSquareCell g,
             Grids_Grid2DSquareCellDouble g,
@@ -1033,8 +1042,8 @@ public class AGDT_Style {
             String paletteName,
             boolean addWhiteForZero) {
         Object[] result = new Object[2];
-        ArrayList<AGDT_LegendItem> legendItems;
-        legendItems = new ArrayList<AGDT_LegendItem>();
+        ArrayList<Geotools_LegendItem> legendItems;
+        legendItems = new ArrayList<>();
         String[] classNames;
         double[] breaks;
         Generic_double d = new Generic_double();
@@ -1167,15 +1176,15 @@ public class AGDT_Style {
         style = sb.createStyle(sb.createRasterSymbolizer(cm, 1));
         result[0] = style;
         for (int i = 0; i < nClasses; i++) {
-            AGDT_LegendItem li;
-            li = new AGDT_LegendItem(classNames[i], colors[i]);
+            Geotools_LegendItem li;
+            li = new Geotools_LegendItem(classNames[i], colors[i]);
             legendItems.add(li);
         }
         result[1] = legendItems;
         return result;
     }
 
-    private static String getRoundedValue(
+    private String getRoundedValue(
             double normalisation,
             double interval) {
         String result;

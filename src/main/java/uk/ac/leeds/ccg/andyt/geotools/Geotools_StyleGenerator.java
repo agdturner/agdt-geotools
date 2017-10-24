@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package uk.ac.leeds.ccg.andyt.agdtgeotools;
+package uk.ac.leeds.ccg.andyt.geotools;
 
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiPoint;
@@ -54,7 +54,7 @@ import org.opengis.filter.expression.Expression;
  *
  * @author geoagdt
  */
-public class AGDT_StyleGenerator extends StyleGenerator {
+public class Geotools_StyleGenerator extends StyleGenerator {
 
     private static final java.util.logging.Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.geotools.brewer.color");
 

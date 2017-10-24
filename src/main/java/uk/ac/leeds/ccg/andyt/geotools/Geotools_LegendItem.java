@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package uk.ac.leeds.ccg.andyt.agdtgeotools;
+package uk.ac.leeds.ccg.andyt.geotools;
 
 import java.awt.Color;
 
@@ -24,15 +24,15 @@ import java.awt.Color;
  *
  * @author geoagdt
  */
-public class AGDT_LegendItem {
+public class Geotools_LegendItem {
 
     private String label;
     private Color color;
 
-    public AGDT_LegendItem() {
+    public Geotools_LegendItem() {
     }
 
-    public AGDT_LegendItem(String l, Color c) {
+    public Geotools_LegendItem(String l, Color c) {
         label = l;
         color = c;
     }

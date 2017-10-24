@@ -16,12 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package uk.ac.leeds.ccg.andyt.agdtgeotools;
+package uk.ac.leeds.ccg.andyt.geotools;
 
 //import uk.ac.leeds.ccg.andyt.agdtgeotools.DW_Shapefile;
-//import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Geotools;
+//import uk.ac.leeds.ccg.andyt.agdtgeotools.Geotools_Environment;
 //import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.mapping.DW_Shapefile;
-//import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.mapping.AGDT_Geotools;
+//import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.mapping.Geotools_Environment;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
@@ -54,6 +55,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_StaticIO;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
 //import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.data.census.Deprivation_DataHandler;
 //import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.data.census.Deprivation_DataRecord;
 //import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.data.postcode.PostcodeGeocoder;
@@ -64,14 +66,11 @@ import uk.ac.leeds.ccg.andyt.generic.io.Generic_StaticIO;
  *
  * @author geoagdt
  */
-public abstract class AGDT_Maps {
+public class Geotools_Maps extends Geotools_Object {
 
-    public static final String png_String = "png";
-    public static final String defaultSRID = "27700";
-
-    private static HashMap<String, SimpleFeatureType> pointSimpleFeatureTypes;
-    private static HashMap<String, SimpleFeatureType> lineSimpleFeatureTypes;
-    private static HashMap<String, SimpleFeatureType> polygonSimpleFeatureTypes;
+    private HashMap<String, SimpleFeatureType> pointSimpleFeatureTypes;
+    private HashMap<String, SimpleFeatureType> lineSimpleFeatureTypes;
+    private HashMap<String, SimpleFeatureType> polygonSimpleFeatureTypes;
 
     /**
      * If showMapsInJMapPane is true, maps are presented in individual JMapPanes
@@ -83,11 +82,15 @@ public abstract class AGDT_Maps {
     protected ArrayList<String> classificationFunctionNames;
     protected File mapDirectory;
     protected ShapefileDataStoreFactory sdsf;
-    protected ArrayList<AGDT_Shapefile> foregroundDW_Shapefile0;
-    protected AGDT_Shapefile ForegroundDW_Shapefile1;
-    protected AGDT_Shapefile BackgroundDW_Shapefile;
+    protected ArrayList<Geotools_Shapefile> foregroundDW_Shapefile0;
+    protected Geotools_Shapefile ForegroundDW_Shapefile1;
+    protected Geotools_Shapefile BackgroundDW_Shapefile;
 
-    public AGDT_Maps() {
+    protected Geotools_Maps() {
+    }
+
+    public Geotools_Maps(Geotools_Environment ge) {
+        super(ge);
     }
 
     public ShapefileDataStoreFactory getShapefileDataStoreFactory() {
@@ -104,7 +107,7 @@ public abstract class AGDT_Maps {
      * @param srid
      * @return null if type is not one of "Point", "LineString", or "Polygon"
      */
-    public static SimpleFeatureType getSimpleFeatureType(
+    public SimpleFeatureType getSimpleFeatureType(
             String type,
             String srid) {
         if (srid == null) {
@@ -122,19 +125,19 @@ public abstract class AGDT_Maps {
         return null;
     }
 
-    public static String getDefaultSRID() {
-        return defaultSRID;//"27700";
+    public String getDefaultSRID() {
+        return ge.getGeotools_Strings().defaultSRID;//"27700";
     }
 
-    public static HashMap<String, SimpleFeatureType> getPointSimpleFeatureTypes() {
+    public HashMap<String, SimpleFeatureType> getPointSimpleFeatureTypes() {
         if (pointSimpleFeatureTypes == null) {
-            pointSimpleFeatureTypes = new HashMap<String, SimpleFeatureType>();
+            pointSimpleFeatureTypes = new HashMap<>();
             //pointSimpleFeatureTypes = initPointSimpleFeatureTypes();
         }
         return pointSimpleFeatureTypes;
     }
 
-    public static SimpleFeatureType getPointSimpleFeatureType(String srid) {
+    public SimpleFeatureType getPointSimpleFeatureType(String srid) {
         if (!getPointSimpleFeatureTypes().containsKey(srid)) {
             SimpleFeatureType sft;
             sft = initSimpleFeatureType(
@@ -146,30 +149,31 @@ public abstract class AGDT_Maps {
         return pointSimpleFeatureTypes.get(srid);
     }
 
-    private static SimpleFeatureType initSimpleFeatureType(
+    private SimpleFeatureType initSimpleFeatureType(
             String type,
             String srid) {
         SimpleFeatureType result = null;
         try {
             result = DataUtilities.createType(
                     "Location",
-                    "the_geom:" + type + ":srid=" + srid + "," + // <- the geometry attribute
+                    "the_geom:" + type + ":srid=" + srid + ","
+                    + // <- the geometry attribute
                     "name:String," // <- a String attribute
             );
         } catch (SchemaException ex) {
-            Logger.getLogger(AGDT_Maps.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Geotools_Maps.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }
 
-    public static HashMap<String, SimpleFeatureType> getLineSimpleFeatureTypes() {
+    public HashMap<String, SimpleFeatureType> getLineSimpleFeatureTypes() {
         if (lineSimpleFeatureTypes == null) {
-            lineSimpleFeatureTypes = new HashMap<String, SimpleFeatureType>();
+            lineSimpleFeatureTypes = new HashMap<>();
         }
         return lineSimpleFeatureTypes;
     }
 
-    public static SimpleFeatureType getLineSimpleFeatureType(String srid) {
+    public SimpleFeatureType getLineSimpleFeatureType(String srid) {
         if (!getLineSimpleFeatureTypes().containsKey(srid)) {
             SimpleFeatureType sft;
             sft = initSimpleFeatureType(
@@ -181,14 +185,14 @@ public abstract class AGDT_Maps {
         return lineSimpleFeatureTypes.get(srid);
     }
 
-    public static HashMap<String, SimpleFeatureType> getPolygonSimpleFeatureTypes() {
+    public HashMap<String, SimpleFeatureType> getPolygonSimpleFeatureTypes() {
         if (polygonSimpleFeatureTypes == null) {
-            polygonSimpleFeatureTypes = new HashMap<String, SimpleFeatureType>();
+            polygonSimpleFeatureTypes = new HashMap<>();
         }
         return polygonSimpleFeatureTypes;
     }
 
-    public static SimpleFeatureType getPolygonSimpleFeatureType(String srid) {
+    public SimpleFeatureType getPolygonSimpleFeatureType(String srid) {
         if (!getPolygonSimpleFeatureTypes().containsKey(srid)) {
             SimpleFeatureType sft;
             sft = initSimpleFeatureType(
@@ -210,7 +214,7 @@ public abstract class AGDT_Maps {
 //     * @param targetPropertyName
 //     * @param outputFile
 //     */
-//    public static void selectAndCreateNewShapefile(
+//    public void selectAndCreateNewShapefile(
 //            ShapefileDataStoreFactory sdsf,
 //            FeatureCollection fc,
 //            SimpleFeatureType sft,
@@ -262,7 +266,7 @@ public abstract class AGDT_Maps {
 //            }
 //        }
 //        featureIterator.close();
-//        AGDT_Shapefile.transact(outputFile, sft, tsfc, sdsf);
+//        Geotools_Shapefile.transact(outputFile, sft, tsfc, sdsf);
 //    }
     public SimpleFeatureType getFeatureType(
             SimpleFeatureType sft,
@@ -284,7 +288,7 @@ public abstract class AGDT_Maps {
         return result;
     }
 
-    public static File getOutputImageFile(
+    public File getOutputImageFile(
             File outputFile,
             String outputType) {
         File result;
@@ -336,7 +340,7 @@ public abstract class AGDT_Maps {
      * @param id Null permitted. This will be the id assigned to the built
      * feature.
      */
-    public static void addFeatureAttributeAndAddToFeatureCollection(
+    public void addFeatureAttributeAndAddToFeatureCollection(
             SimpleFeature sf,
             SimpleFeatureBuilder sfb,
             Integer value,
@@ -360,7 +364,7 @@ public abstract class AGDT_Maps {
      * @param id Null permitted. This will be the id assigned to the built
      * feature.
      */
-    public static void addFeatureAttributeAndAddToFeatureCollection(
+    public void addFeatureAttributeAndAddToFeatureCollection(
             SimpleFeature sf,
             SimpleFeatureBuilder sfb,
             Double value,
@@ -381,7 +385,7 @@ public abstract class AGDT_Maps {
      * @param id Null permitted. This will be the id assigned to the built
      * feature.
      */
-    public static void addFeatureToFeatureCollection(
+    public void addFeatureToFeatureCollection(
             SimpleFeature sf,
             SimpleFeatureBuilder sfb,
             TreeSetFeatureCollection fc,
@@ -418,7 +422,7 @@ public abstract class AGDT_Maps {
      * ---------------------------- result[1] is the max of all the maximum
      * counts.
      */
-    protected static Object[] getLevelData(
+    protected Object[] getLevelData(
             File dir,
             String[] filenames,
             ArrayList<Integer> include) {
@@ -460,11 +464,11 @@ public abstract class AGDT_Maps {
      * {@code TreeMap<String, Integer>} with keys which are Area Codes and
      * values that are counts; result[1] is the max count.
      */
-    protected static Object[] getLevelData(
+    protected Object[] getLevelData(
             File dir,
             String filename) {
         Object[] result = new Object[2];
-        TreeMap<String, Integer> map = new TreeMap<String, Integer>();
+        TreeMap<String, Integer> map = new TreeMap<>();
         result[0] = map;
         File file = new File(
                 dir,
@@ -475,48 +479,48 @@ public abstract class AGDT_Maps {
         }
 //        System.out.println("Reading data from file " + file);
         try {
-            BufferedReader br = Generic_StaticIO.getBufferedReader(file);
-            StreamTokenizer st = new StreamTokenizer(br);
-            Generic_StaticIO.setStreamTokenizerSyntax1(st);
-            int token = st.nextToken();
-            //Need skip some header lines
-            st.nextToken();
-            st.nextToken();
+            try (BufferedReader br = Generic_StaticIO.getBufferedReader(file)) {
+                StreamTokenizer st = new StreamTokenizer(br);
+                Generic_StaticIO.setStreamTokenizerSyntax1(st);
+                int token = st.nextToken();
+                //Need skip some header lines
+                st.nextToken();
+                st.nextToken();
 //            st.nextToken();
 //            st.nextToken();
-            int max = Integer.MIN_VALUE;
-            long RecordID = 0;
-            String line = "";
-            while (!(token == StreamTokenizer.TT_EOF)) {
-                switch (token) {
-                    case StreamTokenizer.TT_EOL:
+                int max = Integer.MIN_VALUE;
+                long RecordID = 0;
+                String line = "";
+                while (!(token == StreamTokenizer.TT_EOF)) {
+                    switch (token) {
+                        case StreamTokenizer.TT_EOL:
 //                        if (RecordID % 100 == 0) {
 //                            System.out.println(line);
 //                        }
-                        RecordID++;
-                        break;
-                    case StreamTokenizer.TT_WORD:
-                        line = st.sval;
-                        if (line != null) {
-                            String[] split = line.split(",");
-                            if (split.length > 1) {
-                                String n = split[1].trim();
-                                Integer value;
-                                if (n.equalsIgnoreCase("null")) {
-                                    value = 0;
-                                } else {
-                                    value = new Integer(split[1].trim());
+                            RecordID++;
+                            break;
+                        case StreamTokenizer.TT_WORD:
+                            line = st.sval;
+                            if (line != null) {
+                                String[] split = line.split(",");
+                                if (split.length > 1) {
+                                    String n = split[1].trim();
+                                    Integer value;
+                                    if (n.equalsIgnoreCase("null")) {
+                                        value = 0;
+                                    } else {
+                                        value = new Integer(split[1].trim());
+                                    }
+                                    map.put(split[0], value);
+                                    max = Math.max(max, value);
                                 }
-                                map.put(split[0], value);
-                                max = Math.max(max, value);
                             }
-                        }
-                        break;
+                            break;
+                    }
+                    token = st.nextToken();
                 }
-                token = st.nextToken();
+                result[1] = max;
             }
-            result[1] = max;
-            br.close();
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
@@ -639,7 +643,7 @@ public abstract class AGDT_Maps {
 //            }
 //        }
 //        featureIterator.close();
-//        AGDT_Shapefile.transact(outputFile, sft, tsfc, sdsf);
+//        Geotools_Shapefile.transact(outputFile, sft, tsfc, sdsf);
 //        return inAndOutOfRegionCount;
 //    }
 //    /*
@@ -796,7 +800,7 @@ public abstract class AGDT_Maps {
 //            }
 //        }
 //        featureIterator.close();
-//        AGDT_Shapefile.transact(outputFile, sft, tsfc, sdsf);
+//        Geotools_Shapefile.transact(outputFile, sft, tsfc, sdsf);
 //        return inAndOutOfRegionCount;
 //    }
 //    /*
@@ -952,7 +956,7 @@ public abstract class AGDT_Maps {
 //            }
 //        }
 //        featureIterator.close();
-//        AGDT_Shapefile.transact(outputFile, sft, tsfc, sdsf);
+//        Geotools_Shapefile.transact(outputFile, sft, tsfc, sdsf);
 //        return inAndOutOfRegionCount;
 //    }
 //    /*
@@ -1032,7 +1036,7 @@ public abstract class AGDT_Maps {
 //            }
 //        }
 //        featureIterator.close();
-//        AGDT_Shapefile.transact(outputFile, sft, tsfc, sdsf);
+//        Geotools_Shapefile.transact(outputFile, sft, tsfc, sdsf);
 //    }
     public String getOutName(String filename, String attributeName, int filter) {
         String result = filename.substring(0, filename.length() - 4);
@@ -1052,8 +1056,8 @@ public abstract class AGDT_Maps {
         return result;
     }
 
-    protected static void addPointFeature(
-            AGDT_Point p,
+    protected void addPointFeature(
+            Geotools_Point p,
             GeometryFactory gf,
             SimpleFeatureBuilder sfb,
             String name,
@@ -1065,9 +1069,9 @@ public abstract class AGDT_Maps {
         tsfc.add(feature);
     }
 
-    protected static void addLineFeature(
-            AGDT_Point p1,
-            AGDT_Point p2,
+    protected void addLineFeature(
+            Geotools_Point p1,
+            Geotools_Point p2,
             GeometryFactory gf,
             SimpleFeatureBuilder sfb,
             String name,
@@ -1083,11 +1087,11 @@ public abstract class AGDT_Maps {
         tsfc.add(feature);
     }
 
-    protected static void addQuadFeature(
-            AGDT_Point p1,
-            AGDT_Point p2,
-            AGDT_Point p3,
-            AGDT_Point p4,
+    protected void addQuadFeature(
+            Geotools_Point p1,
+            Geotools_Point p2,
+            Geotools_Point p3,
+            Geotools_Point p4,
             GeometryFactory gf,
             SimpleFeatureBuilder sfb,
             String name,
@@ -1113,7 +1117,7 @@ public abstract class AGDT_Maps {
         tsfc.add(feature);
     }
 
-    public static TreeSetFeatureCollection getLineGridFeatureCollection(
+    public TreeSetFeatureCollection getLineGridFeatureCollection(
             SimpleFeatureType sft,
             long nrows,
             long ncols,
@@ -1135,7 +1139,7 @@ public abstract class AGDT_Maps {
         return result;
     }
 
-    public static TreeSetFeatureCollection getLineGridFeatureCollection(
+    public TreeSetFeatureCollection getLineGridFeatureCollection(
             SimpleFeatureType sft,
             long nrows,
             long ncols,
@@ -1152,28 +1156,28 @@ public abstract class AGDT_Maps {
             y = yllcorner + (row * cellsize);
             double x;
             x = xllcorner + (ncols * cellsize);
-            AGDT_Point p1;
-            AGDT_Point p2;
-            p1 = new AGDT_Point((int) xllcorner, (int) y);
-            p2 = new AGDT_Point((int) x, (int) y);
+            Geotools_Point p1;
+            Geotools_Point p2;
+            p1 = new Geotools_Point((int) xllcorner, (int) y);
+            p2 = new Geotools_Point((int) x, (int) y);
             addLineFeature(p1, p2, gf, sfb, "", result);
         }
         // add col lines
         for (long col = 0; col <= ncols; col++) {
             double x;
             x = xllcorner + (col * cellsize);
-            AGDT_Point p1;
-            AGDT_Point p2;
+            Geotools_Point p1;
+            Geotools_Point p2;
             double y;
             y = yllcorner + (nrows * cellsize);
-            p1 = new AGDT_Point((int) x, (int) yllcorner);
-            p2 = new AGDT_Point((int) x, (int) y);
+            p1 = new Geotools_Point((int) x, (int) yllcorner);
+            p2 = new Geotools_Point((int) x, (int) y);
             addLineFeature(p1, p2, gf, sfb, "", result);
         }
         return result;
     }
 
-    public static TreeSetFeatureCollection getPolyGridFeatureCollection(
+    public TreeSetFeatureCollection getPolyGridFeatureCollection(
             SimpleFeatureType sft,
             long nrows,
             long ncols,
@@ -1195,7 +1199,7 @@ public abstract class AGDT_Maps {
         return result;
     }
 
-    public static TreeSetFeatureCollection getPolyGridFeatureCollection(
+    public TreeSetFeatureCollection getPolyGridFeatureCollection(
             SimpleFeatureType sft,
             long nrows,
             long ncols,
@@ -1219,14 +1223,14 @@ public abstract class AGDT_Maps {
                 y2 = y1 + cellsize;
                 x1 = xllcorner + (col * cellsize);
                 x2 = x1 + cellsize;
-                AGDT_Point p1;
-                AGDT_Point p2;
-                AGDT_Point p3;
-                AGDT_Point p4;
-                p1 = new AGDT_Point((int) x1, (int) y1);
-                p2 = new AGDT_Point((int) x2, (int) y1);
-                p3 = new AGDT_Point((int) x2, (int) y2);
-                p4 = new AGDT_Point((int) x1, (int) y2);
+                Geotools_Point p1;
+                Geotools_Point p2;
+                Geotools_Point p3;
+                Geotools_Point p4;
+                p1 = new Geotools_Point((int) x1, (int) y1);
+                p2 = new Geotools_Point((int) x2, (int) y1);
+                p3 = new Geotools_Point((int) x2, (int) y2);
+                p4 = new Geotools_Point((int) x1, (int) y2);
                 addQuadFeature(p1, p2, p3, p4, gf, sfb, "", result, csf);
             }
         }
@@ -1240,13 +1244,13 @@ public abstract class AGDT_Maps {
      * @param sft
      * @return shapefile File
      */
-    public static File createShapefileIfItDoesNotExist(
+    public File createShapefileIfItDoesNotExist(
             File dir,
             String shapefileFilename,
             TreeSetFeatureCollection fc,
             SimpleFeatureType sft) {
         File result;
-        ShapefileDataStoreFactory sdsf;
+        //ShapefileDataStoreFactory sdsf;
         sdsf = new ShapefileDataStoreFactory();
         result = createShapefileIfItDoesNotExist(
                 dir,
@@ -1265,16 +1269,16 @@ public abstract class AGDT_Maps {
      * @param sdsf
      * @return shapefile File
      */
-    public static File createShapefileIfItDoesNotExist(
+    public File createShapefileIfItDoesNotExist(
             File dir,
             String shapefileFilename,
             TreeSetFeatureCollection fc,
             SimpleFeatureType sft,
             ShapefileDataStoreFactory sdsf) {
         File result;
-        result = AGDT_Geotools.getShapefile(dir, shapefileFilename, true);
+        result = ge.getShapefile(dir, shapefileFilename, true);
         if (!result.exists()) {
-            AGDT_Shapefile.transact(
+            Geotools_Shapefile.transact(
                     result,
                     sft,
                     fc,
@@ -1283,7 +1287,7 @@ public abstract class AGDT_Maps {
         return result;
     }
 
-    public static File createLineGridShapefileIfItDoesNotExist(
+    public File createLineGridShapefileIfItDoesNotExist(
             File dir,
             String shapefileFilename, // Better to internally generate this from other parameters?
             long nrows,
@@ -1295,7 +1299,7 @@ public abstract class AGDT_Maps {
         SimpleFeatureType sft;
         sft = getLineSimpleFeatureType(getDefaultSRID());
         TreeSetFeatureCollection fc;
-        fc = AGDT_Maps.getLineGridFeatureCollection(
+        fc = getLineGridFeatureCollection(
                 sft,
                 nrows,
                 ncols,
@@ -1310,7 +1314,7 @@ public abstract class AGDT_Maps {
         return result;
     }
 
-    public static File createPolyGridShapefileIfItDoesNotExist(
+    public File createPolyGridShapefileIfItDoesNotExist(
             File dir,
             String shapefileFilename, // Better to internally generate this from other parameters?
             long nrows,
@@ -1341,12 +1345,12 @@ public abstract class AGDT_Maps {
      * @param f
      * @return ArcGridReader
      */
-    public static ArcGridReader getArcGridReader(File f) {
+    public ArcGridReader getArcGridReader(File f) {
         ArcGridReader result = null;
         try {
             result = new ArcGridReader(f);
         } catch (DataSourceException ex) {
-            Logger.getLogger(AGDT_Maps.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Geotools_Maps.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("f.toString()" + f.toString());
         }
         return result;
@@ -1357,7 +1361,7 @@ public abstract class AGDT_Maps {
      * @param agr
      * @return
      */
-    public static GridCoverage2D getGridCoverage2D(
+    public GridCoverage2D getGridCoverage2D(
             ArcGridReader agr) {
         GridCoverage2D result = null;
         try {
@@ -1365,7 +1369,7 @@ public abstract class AGDT_Maps {
                 result = agr.read(null);
             }
         } catch (IOException ex) {
-            Logger.getLogger(AGDT_Maps.class
+            Logger.getLogger(Geotools_Maps.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
         return result;

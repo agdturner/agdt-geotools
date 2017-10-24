@@ -1,4 +1,4 @@
-package uk.ac.leeds.ccg.andyt.agdtgeotools;
+package uk.ac.leeds.ccg.andyt.geotools;
 
 import java.io.Serializable;
 
@@ -6,12 +6,12 @@ import java.io.Serializable;
  * For storing a 2D point with int value of x and y.
  * @author geoagdt
  */
-public class AGDT_Point implements Serializable {
+public class Geotools_Point implements Serializable {
 
     private int x;
     private int y;
 
-    public AGDT_Point(int x, int y) {
+    public Geotools_Point(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -29,7 +29,7 @@ public class AGDT_Point implements Serializable {
         return "x " + x + ", y " + y;
     }
 
-    public double getDistance(AGDT_Point p) {
+    public double getDistance(Geotools_Point p) {
         double result;
         double xdiff = (double) (getX() - p.getX());
         double ydiff = (double) (getY() - p.getY());
@@ -50,9 +50,9 @@ public class AGDT_Point implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (obj instanceof AGDT_Point) {
-            AGDT_Point o;
-            o = (AGDT_Point) obj;
+        if (obj instanceof Geotools_Point) {
+            Geotools_Point o;
+            o = (Geotools_Point) obj;
             if (this.hashCode() == o.hashCode()) {
                 return this.x == o.x && this.y == o.y;
             }

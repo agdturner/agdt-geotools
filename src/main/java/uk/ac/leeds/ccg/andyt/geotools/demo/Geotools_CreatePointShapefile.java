@@ -3,15 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.ac.leeds.ccg.andyt.agdtgeotools.demo;
+package uk.ac.leeds.ccg.andyt.geotools.demo;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import java.io.File;
-import java.util.Iterator;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotools.data.DataUtilities;
@@ -21,22 +18,26 @@ import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Geotools;
-import static uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Maps.png_String;
-import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Point;
-import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Shapefile;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
+import uk.ac.leeds.ccg.andyt.geotools.Geotools_Point;
+import uk.ac.leeds.ccg.andyt.geotools.Geotools_Shapefile;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
 
 /**
  *
  * @author geoagdt
  */
-public class AGDT_CreatePointShapefile {
+public class Geotools_CreatePointShapefile extends Geotools_Object {
 
-    public AGDT_CreatePointShapefile() {
+    protected Geotools_CreatePointShapefile() {
+    }
+
+    protected Geotools_CreatePointShapefile(Geotools_Environment ge) {
+        super(ge);
     }
 
     public static void main(String[] args) {
-        new AGDT_CreatePointShapefile().run();
+        new Geotools_CreatePointShapefile().run();
     }
 
     public void run() {
@@ -52,7 +53,7 @@ public class AGDT_CreatePointShapefile {
                     "the_geom:Point:srid=27700," + "name:String," + "number:Integer," + "number2:Integer");
             //srid=27700 is the Great_Britain_National_Grid
         } catch (SchemaException ex) {
-            Logger.getLogger(AGDT_CreatePointShapefile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Geotools_CreatePointShapefile.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         TreeSetFeatureCollection tsfc;
@@ -71,16 +72,16 @@ public class AGDT_CreatePointShapefile {
         int y2 = 360000;
         int y3 = 355000;
         
-        AGDT_Point p1;
-        AGDT_Point p2;
-        AGDT_Point p3;
-        AGDT_Point p4;
-        AGDT_Point p5;
-        p1 = new AGDT_Point(x1, y1);
-        p2 = new AGDT_Point(x1, y2);
-        p3 = new AGDT_Point(x2, y2);
-        p4 = new AGDT_Point(x2, y1);
-        p5 = new AGDT_Point(x3, y3);
+        Geotools_Point p1;
+        Geotools_Point p2;
+        Geotools_Point p3;
+        Geotools_Point p4;
+        Geotools_Point p5;
+        p1 = new Geotools_Point(x1, y1);
+        p2 = new Geotools_Point(x1, y2);
+        p3 = new Geotools_Point(x2, y2);
+        p4 = new Geotools_Point(x2, y1);
+        p5 = new Geotools_Point(x3, y3);
 
         Coordinate[] coords;
         Point point;
@@ -102,10 +103,10 @@ public class AGDT_CreatePointShapefile {
             feature = sfb.buildFeature(name);
             tsfc.add(feature);
         }
-        File outputShapeFile = AGDT_Geotools.getOutputShapefile(
+        File outputShapeFile = ge.getOutputShapefile(
                 dir,
                 "test");
-        AGDT_Shapefile.transact(
+        Geotools_Shapefile.transact(
                 outputShapeFile,
                 aPointSFT,
                 tsfc,

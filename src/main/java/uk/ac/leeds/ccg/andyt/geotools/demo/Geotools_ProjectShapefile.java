@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.ac.leeds.ccg.andyt.agdtgeotools.demo;
+package uk.ac.leeds.ccg.andyt.geotools.demo;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.File;
@@ -33,14 +33,20 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
 
 /**
  *
  * @author geoagdt
  */
-public class AGDT_ProjectShapefile {
+public class Geotools_ProjectShapefile extends Geotools_Object {
 
-    public AGDT_ProjectShapefile() {
+    public Geotools_ProjectShapefile() {
+    }
+    
+    public Geotools_ProjectShapefile(Geotools_Environment ge) {
+        super(ge);
     }
 
     public static void main(String[] args) {
@@ -72,7 +78,7 @@ public class AGDT_ProjectShapefile {
                 outdir2,
                 roadsFilename);
         outfile.getParentFile().mkdirs();
-        new AGDT_ProjectShapefile().run(infile, outfile);
+        new Geotools_ProjectShapefile().run(infile, outfile);
     }
 
     /**
@@ -100,14 +106,14 @@ public class AGDT_ProjectShapefile {
             try {
                 worldCRS = CRS.decode("EPSG:27700");
             } catch (FactoryException ex) {
-                Logger.getLogger(AGDT_ProjectShapefile.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Geotools_ProjectShapefile.class.getName()).log(Level.SEVERE, null, ex);
             }
             boolean lenient = true; // allow for some error due to different datums
             MathTransform transform = null;
             try {
                 transform = CRS.findMathTransform(dataCRS, worldCRS, lenient);
             } catch (FactoryException ex) {
-                Logger.getLogger(AGDT_ProjectShapefile.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Geotools_ProjectShapefile.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             DataStoreFactorySpi factory = new ShapefileDataStoreFactory();
@@ -115,7 +121,7 @@ public class AGDT_ProjectShapefile {
             try {
                 create.put("url", outFile.toURI().toURL());
             } catch (MalformedURLException ex) {
-                Logger.getLogger(AGDT_ProjectShapefile.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Geotools_ProjectShapefile.class.getName()).log(Level.SEVERE, null, ex);
             }
             create.put("create spatial index", Boolean.TRUE);
             DataStore dataStore = factory.createNewDataStore(create);
@@ -151,7 +157,7 @@ public class AGDT_ProjectShapefile {
             transaction.close();
             dataStore.dispose();
         } catch (IOException ex) {
-            Logger.getLogger(AGDT_ProjectShapefile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Geotools_ProjectShapefile.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

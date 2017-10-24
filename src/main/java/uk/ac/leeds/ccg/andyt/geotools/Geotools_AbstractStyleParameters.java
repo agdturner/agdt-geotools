@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package uk.ac.leeds.ccg.andyt.agdtgeotools;
+package uk.ac.leeds.ccg.andyt.geotools;
 
 //import java.util.ArrayList;
 //import java.util.HashMap;
@@ -28,7 +28,7 @@ package uk.ac.leeds.ccg.andyt.agdtgeotools;
  *
  * @author geoagdt
  */
-public abstract class AGDT_StyleParametersAbstract {
+public abstract class Geotools_AbstractStyleParameters {
 
 //    private HashMap<String, List<Style>> styles;
 //    private String classificationFunctionName;
@@ -369,7 +369,7 @@ public abstract class AGDT_StyleParametersAbstract {
 //        this.legendItems = legendItems;
 //    }
 //
-//    public AGDT_StyleParametersAbstract() {
+//    public Geotools_AbstractStyleParameters() {
 ////        this.classificationFunctionName = "";
 ////        this.nClasses = 0;
 ////        this.paletteName = "";
@@ -378,7 +378,7 @@ public abstract class AGDT_StyleParametersAbstract {
 ////        this.backgroundStyleTitle = "";
 //    }
 //
-//    public AGDT_StyleParametersAbstract(
+//    public Geotools_AbstractStyleParameters(
 //            String classificationFunctionName,
 //            int nClasses,
 //            String paletteName,
@@ -400,7 +400,7 @@ public abstract class AGDT_StyleParametersAbstract {
 //     *
 //     * @param styleParameters
 //     */
-//    public AGDT_StyleParametersAbstract(AGDT_StyleParametersAbstract styleParameters) {
+//    public Geotools_AbstractStyleParameters(Geotools_AbstractStyleParameters styleParameters) {
 //        this.addWhiteForZero = styleParameters.addWhiteForZero;
 //        this.backgroundStyle = styleParameters.backgroundStyle;
 //        this.backgroundStyleTitle = styleParameters.backgroundStyleTitle;

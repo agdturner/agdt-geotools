@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package uk.ac.leeds.ccg.andyt.agdtgeotools.demo;
+package uk.ac.leeds.ccg.andyt.geotools.demo;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -34,17 +34,16 @@ import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.grids.exchange.Grids_ESRIAsciiGridExporter;
 import uk.ac.leeds.ccg.andyt.grids.exchange.Grids_ImageExporter;
 import uk.ac.leeds.ccg.andyt.grids.process.Grids_ProcessorGWS;
-import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Geotools;
-import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_Maps;
-import uk.ac.leeds.ccg.andyt.agdtgeotools.AGDT_StyleParameters;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
+import uk.ac.leeds.ccg.andyt.geotools.Geotools_Maps;
+import uk.ac.leeds.ccg.andyt.geotools.Geotools_StyleParameters;
 
 /**
  *
  * @author geoagdt
  */
-public class AGDT_DisplayRaster extends AGDT_Maps {
+public class Geotools_DisplayRaster extends Geotools_Maps {
 
-    protected Grids_Environment ge;
     protected Grids_ESRIAsciiGridExporter eage;
     protected Grids_ImageExporter ie;
     protected Grids_ProcessorGWS gp;
@@ -60,21 +59,24 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
     protected long yllcorner;
     protected TreeMap<String, String> tLookupFromPostcodeToCensusCodes;
 
-    protected AGDT_StyleParameters styleParameters;
+    protected Geotools_StyleParameters styleParameters;
     protected int maxCellDistanceForGeneralisation;
 
     //protected boolean outputESRIAsciigrids;
     protected boolean handleOutOfMemoryErrors;
 
-    public AGDT_DisplayRaster() {
+    protected Geotools_DisplayRaster() {}
+    
+    public Geotools_DisplayRaster(Geotools_Environment ge) {
+        super(ge);
     }
-
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         try {
-            new AGDT_DisplayRaster().run();
+            new Geotools_DisplayRaster().run();
         } catch (Exception e) {
             System.err.println(e.getLocalizedMessage());
             e.printStackTrace();
@@ -124,7 +126,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
 //        for (int i = 0; i < paletteNames.length; i++) {
 //            System.out.println(paletteNames[i]);
 //        }
-        styleParameters = new AGDT_StyleParameters();
+        styleParameters = new Geotools_StyleParameters();
         styleParameters.setnClasses(5);
         styleParameters.setPaletteName("Reds");
         styleParameters.setPaletteName2("Blues");
@@ -145,10 +147,11 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
                 mapDirectory,
                 "processor");
         processorDir.mkdirs();
-        ge = new Grids_Environment(processorDir);
-        eage = new Grids_ESRIAsciiGridExporter(ge);
-        ie = new Grids_ImageExporter(ge);
-        gp = new Grids_ProcessorGWS(ge);
+        ge.initGrids_Environment(processorDir);
+        Grids_Environment grids_environment = ge.getGrids_Environment();
+        eage = new Grids_ESRIAsciiGridExporter(grids_environment);
+        ie = new Grids_ImageExporter(grids_environment);
+        gp = new Grids_ProcessorGWS(grids_environment);
         gp.setDirectory(processorDir, false, handleOutOfMemoryErrors);
         gcf = new Grids_Grid2DSquareCellDoubleChunkArrayFactory();
         chunkNRows = 300;//250; //64
@@ -159,9 +162,9 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
                 chunkNCols,
                 gcf,
                 -9999d,
-                ge,
+                grids_environment,
                 handleOutOfMemoryErrors);
-        gf.setGridStatistics(new Grids_GridStatistics0(ge));
+        gf.setGridStatistics(new Grids_GridStatistics0(grids_environment));
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
@@ -233,7 +236,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
         String outname = nameOfGrid + "GeoToolsOutput";
         double normalisation;
         normalisation = 100.0d;
-        AGDT_Geotools.outputToImageUsingGeoToolsAndSetCommonStyle(
+        ge.outputToImageUsingGeoToolsAndSetCommonStyle(
                 normalisation,
                 styleParameters,
                 index,
@@ -275,7 +278,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
 //        for (int i = 0; i < paletteNames.length; i++) {
 //            System.out.println(paletteNames[i]);
 //        }
-        styleParameters = new AGDT_StyleParameters();
+        styleParameters = new Geotools_StyleParameters();
         styleParameters.setnClasses(9);
         styleParameters.setPaletteName("Reds");
         styleParameters.setnClasses(9);
@@ -297,10 +300,11 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
                 mapDirectory,
                 "processor");
         processorDir.mkdirs();
-        ge = new Grids_Environment(processorDir);
-        eage = new Grids_ESRIAsciiGridExporter(ge);
-        ie = new Grids_ImageExporter(ge);
-        gp = new Grids_ProcessorGWS(ge);
+        ge.initGrids_Environment(processorDir);
+        Grids_Environment grids_environment = ge.getGrids_Environment();
+        eage = new Grids_ESRIAsciiGridExporter(grids_environment);
+        ie = new Grids_ImageExporter(grids_environment);
+        gp = new Grids_ProcessorGWS(grids_environment);
         gp.setDirectory(processorDir, false, handleOutOfMemoryErrors);
         gcf = new Grids_Grid2DSquareCellDoubleChunkArrayFactory();
         chunkNRows = 300;//250; //64
@@ -311,7 +315,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
                 chunkNCols,
                 gcf,
                 -9999d,
-                ge,
+                grids_environment,
                 handleOutOfMemoryErrors);
 //        Currently only equal interval implemented
 //        // Jenks runs
@@ -353,7 +357,7 @@ public class AGDT_DisplayRaster extends AGDT_Maps {
         String outname = nameOfGrid + "GeoToolsOutput";
         double normalisation;
         normalisation = 100.0d;
-        AGDT_Geotools.outputToImageUsingGeoToolsAndSetCommonStyle(
+        ge.outputToImageUsingGeoToolsAndSetCommonStyle(
                 normalisation,
                 styleParameters,
                 index,
