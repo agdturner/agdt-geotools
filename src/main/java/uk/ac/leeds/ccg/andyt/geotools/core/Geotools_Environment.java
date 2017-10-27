@@ -43,7 +43,7 @@ import uk.ac.leeds.ccg.andyt.geotools.Geotools_Maps;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_Shapefile;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_Style;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_StyleParameters;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGrid2DSquareCell;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGridNumber;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 
 /**
@@ -520,7 +520,7 @@ public class Geotools_Environment {
             Geotools_StyleParameters styleParameters,
             int index,
             String outname,
-            Grids_AbstractGrid2DSquareCell g,
+            Grids_AbstractGridNumber g,
             GridCoverage2D gc,
             ArrayList<Geotools_Shapefile> foregroundDW_Shapefile0,
             Geotools_Shapefile foregroundDW_Shapefile1,
@@ -606,7 +606,7 @@ public class Geotools_Environment {
             Geotools_StyleParameters styleParameters,
             int index,
             String outname,
-            Grids_AbstractGrid2DSquareCell g,
+            Grids_AbstractGridNumber g,
             GridCoverage2D gc,
             File outputDir,
             int imageWidth,
@@ -670,7 +670,7 @@ public class Geotools_Environment {
     private MapContent createMapContent(
             double normalisation,
             String name,
-            Grids_AbstractGrid2DSquareCell g,
+            Grids_AbstractGridNumber g,
             GridCoverage2D gc,
             int imageWidth,
             Geotools_StyleParameters styleParameters,
@@ -745,7 +745,7 @@ public class Geotools_Environment {
     private MapContent createMapContent(
             double normalisation,
             String name,
-            Grids_AbstractGrid2DSquareCell g,
+            Grids_AbstractGridNumber g,
             GridCoverage2D gc,
             ArrayList<Geotools_Shapefile> foregroundShapefiles,
             Geotools_Shapefile foregroundDW_Shapefile1,

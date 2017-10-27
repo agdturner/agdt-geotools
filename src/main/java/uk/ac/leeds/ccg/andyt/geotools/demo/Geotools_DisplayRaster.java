@@ -24,11 +24,11 @@ import java.util.TreeMap;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.geometry.Envelope2D;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGrid2DSquareCell;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_AbstractGrid2DSquareCellDoubleChunkFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_Grid2DSquareCellDouble;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_Grid2DSquareCellDoubleChunkArrayFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_Grid2DSquareCellDoubleFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGridNumber;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_AbstractGridChunkDoubleFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_GridChunkDoubleArrayFactory;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDoubleFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.statistics.Grids_GridStatistics0;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.grids.exchange.Grids_ESRIAsciiGridExporter;
@@ -47,8 +47,8 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
     protected Grids_ESRIAsciiGridExporter eage;
     protected Grids_ImageExporter ie;
     protected Grids_ProcessorGWS gp;
-    protected Grids_Grid2DSquareCellDoubleFactory gf;
-    protected Grids_AbstractGrid2DSquareCellDoubleChunkFactory gcf;
+    protected Grids_GridDoubleFactory gf;
+    protected Grids_AbstractGridChunkDoubleFactory gcf;
     protected long nrows;
     protected long ncols;
     protected int chunkNRows;
@@ -153,10 +153,10 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         ie = new Grids_ImageExporter(grids_environment);
         gp = new Grids_ProcessorGWS(grids_environment);
         gp.setDirectory(processorDir, false, handleOutOfMemoryErrors);
-        gcf = new Grids_Grid2DSquareCellDoubleChunkArrayFactory();
+        gcf = new Grids_GridChunkDoubleArrayFactory();
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
-        gf = new Grids_Grid2DSquareCellDoubleFactory(
+        gf = new Grids_GridDoubleFactory(
                 processorDir,
                 chunkNRows,
                 chunkNCols,
@@ -194,8 +194,8 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
 //        File asciigridFile = new File(
 //                dirIn,
 //                nameOfGrid + ".asc");
-//        Grids_Grid2DSquareCellDouble g;
-//        g = (Grids_Grid2DSquareCellDouble) gf.create(asciigridFile);
+//        Grids_GridDouble g;
+//        g = (Grids_GridDouble) gf.create(asciigridFile);
 //
 //        System.out.println(g.toString(handleOutOfMemoryErrors));
 //        String nameOfGrid2;
@@ -204,8 +204,8 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
 //                dirIn,
 //                nameOfGrid2 + ".asc");
 //
-//        Grids_Grid2DSquareCellDouble g2;
-//        g2 = (Grids_Grid2DSquareCellDouble) gf.create(asciigridFile2);
+//        Grids_GridDouble g2;
+//        g2 = (Grids_GridDouble) gf.create(asciigridFile2);
 //
 //        System.out.println(g2.toString(handleOutOfMemoryErrors));
 
@@ -216,8 +216,8 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
                 dirIn,
                 nameOfGrid + ".asc");
 
-        Grids_Grid2DSquareCellDouble g;
-        g = (Grids_Grid2DSquareCellDouble) gf.create(differenceAsciigridFile);
+        Grids_GridDouble g;
+        g = (Grids_GridDouble) gf.create(differenceAsciigridFile);
 
 //        gp.addToGrid(g, g2, -1.0d, handleOutOfMemoryErrors);
 //        
@@ -306,10 +306,10 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         ie = new Grids_ImageExporter(grids_environment);
         gp = new Grids_ProcessorGWS(grids_environment);
         gp.setDirectory(processorDir, false, handleOutOfMemoryErrors);
-        gcf = new Grids_Grid2DSquareCellDoubleChunkArrayFactory();
+        gcf = new Grids_GridChunkDoubleArrayFactory();
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
-        gf = new Grids_Grid2DSquareCellDoubleFactory(
+        gf = new Grids_GridDoubleFactory(
                 processorDir,
                 chunkNRows,
                 chunkNCols,
@@ -350,8 +350,8 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         agr = getArcGridReader(asciigridFile);
         GridCoverage2D gc;
         gc = getGridCoverage2D(agr);
-        Grids_Grid2DSquareCellDouble g;
-        g = (Grids_Grid2DSquareCellDouble) gf.create(asciigridFile);
+        Grids_GridDouble g;
+        g = (Grids_GridDouble) gf.create(asciigridFile);
         int index = 0;
         boolean scaleToFirst = false;
         String outname = nameOfGrid + "GeoToolsOutput";

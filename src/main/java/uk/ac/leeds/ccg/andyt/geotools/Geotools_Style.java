@@ -65,9 +65,9 @@ import uk.ac.leeds.ccg.andyt.generic.math.Generic_BigDecimal;
 import uk.ac.leeds.ccg.andyt.generic.math.Generic_double;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGrid2DSquareCell;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGridNumber;
 import uk.ac.leeds.ccg.andyt.grids.core.statistics.Grids_AbstractGridStatistics;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_Grid2DSquareCellDouble;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
 import uk.ac.leeds.ccg.andyt.grids.core.statistics.Grids_GridStatistics0;
 import uk.ac.leeds.ccg.andyt.grids.core.statistics.Grids_GridStatistics1;
 
@@ -543,7 +543,7 @@ public class Geotools_Style extends Geotools_Object {
      * @return
      */
     public Style getStyle(
-            Grids_AbstractGrid2DSquareCell g,
+            Grids_AbstractGridNumber g,
             GridCoverage cov,
             int nClasses,
             String paletteName,
@@ -654,7 +654,7 @@ public class Geotools_Style extends Geotools_Object {
      */
     public Object[] getStyleAndLegendItems(
             double normalisation,
-            Grids_AbstractGrid2DSquareCell g,
+            Grids_AbstractGridNumber g,
             GridCoverage cov,
             String type,
             int nClasses,
@@ -671,7 +671,7 @@ public class Geotools_Style extends Geotools_Object {
         }
         if (type.equalsIgnoreCase("Quantile")) {
             return getQuantileStyleAndLegendItems(normalisation,
-                    (Grids_Grid2DSquareCellDouble) g,
+                    (Grids_GridDouble) g,
                     cov,
                     nClasses,
                     paletteName,
@@ -695,7 +695,7 @@ public class Geotools_Style extends Geotools_Object {
      */
     public Object[] getStyleAndLegendItems(
             double normalisation,
-            Grids_AbstractGrid2DSquareCell g,
+            Grids_AbstractGridNumber g,
             GridCoverage cov,
             String type,
             int nClasses,
@@ -715,7 +715,7 @@ public class Geotools_Style extends Geotools_Object {
 //        if (type.equalsIgnoreCase("Quantile")) {
 //            return getQuantileStyleAndLegendItems(
 //                    normalisation,
-//                    (Grids_Grid2DSquareCellDouble) g,
+//                    (Grids_GridDouble) g,
 //                    cov,
 //                    nClasses,
 //                    paletteName,
@@ -739,7 +739,7 @@ public class Geotools_Style extends Geotools_Object {
      */
     public Object[] getEqualIntervalStyleAndLegendItems(
             double normalisation,
-            Grids_AbstractGrid2DSquareCell g,
+            Grids_AbstractGridNumber g,
             GridCoverage cov,
             int nClasses,
             String paletteName,
@@ -867,7 +867,7 @@ public class Geotools_Style extends Geotools_Object {
      */
     public Object[] getEqualIntervalStyleAndLegendItems(
             double normalisation,
-            Grids_AbstractGrid2DSquareCell g,
+            Grids_AbstractGridNumber g,
             GridCoverage cov,
             int nClasses,
             String paletteName,
@@ -1036,7 +1036,7 @@ public class Geotools_Style extends Geotools_Object {
     public Object[] getQuantileStyleAndLegendItems(
             double normalisation,
             //AbstractGrid2DSquareCell g,
-            Grids_Grid2DSquareCellDouble g,
+            Grids_GridDouble g,
             GridCoverage cov,
             int nClasses,
             String paletteName,
