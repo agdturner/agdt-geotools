@@ -66,10 +66,10 @@ import uk.ac.leeds.ccg.andyt.generic.math.Generic_double;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGridNumber;
-import uk.ac.leeds.ccg.andyt.grids.core.statistics.Grids_AbstractGridStatistics;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_AbstractGridNumberStatistics;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
-import uk.ac.leeds.ccg.andyt.grids.core.statistics.Grids_GridStatistics0;
-import uk.ac.leeds.ccg.andyt.grids.core.statistics.Grids_GridStatistics1;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridStatistics;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridStatisticsNotUpdatedAsDataChanged;
 
 /**
  *
@@ -551,8 +551,8 @@ public class Geotools_Style extends Geotools_Object {
         String[] classNames;
         double[] breaks;
         Generic_double d = new Generic_double();
-        double min = g.getGridStatistics(true).getMinDouble(true, true);
-        double max = g.getGridStatistics(true).getMaxDouble(true, true);
+        double min = g.getStatistics(true).getMin(true, true).doubleValue();
+        double max = g.getStatistics(true).getMax(true, true).doubleValue();
         double interval = (max - min) / (double) nClasses;
         double minInterval = min;
         double maxInterval = min + interval;
@@ -750,8 +750,8 @@ public class Geotools_Style extends Geotools_Object {
         String[] classNames;
         double[] breaks;
         Generic_double d = new Generic_double();
-        double min = g.getGridStatistics(true).getMinDouble(true, true);
-        double max = g.getGridStatistics(true).getMaxDouble(true, true);
+        double min = g.getStatistics(true).getMin(true, true).doubleValue();
+        double max = g.getStatistics(true).getMax(true, true).doubleValue();
         double interval = (max - min) / (double) nClasses;
         double minInterval = min;
         double maxInterval = min + interval;
@@ -879,7 +879,7 @@ public class Geotools_Style extends Geotools_Object {
         String[] classNames;
         double[] breaks;
         Generic_double d = new Generic_double();
-        double min = g.getGridStatistics(true).getMinDouble(true, true);
+        double min = g.getStatistics(true).getMinDouble(true, true);
         if (min >= 0.0d) {
             return getEqualIntervalStyleAndLegendItems(
                     normalisation,
@@ -889,7 +889,7 @@ public class Geotools_Style extends Geotools_Object {
                     paletteName,
                     addWhiteForZero);
         }
-        double max = g.getGridStatistics(true).getMaxDouble(true, true);
+        double max = g.getStatistics(true).getMaxDouble(true, true);
         int numberOfPositiveClasses;
         int numberOfNegativeClasses;
         double interval;
@@ -1048,11 +1048,11 @@ public class Geotools_Style extends Geotools_Object {
         double[] breaks;
         Generic_double d = new Generic_double();
         boolean handleOutOfMemoryError = true;
-        Grids_AbstractGridStatistics gs;
-        Grids_GridStatistics1 gs1;
-        Grids_GridStatistics0 gs0;
+        Grids_AbstractGridNumberStatistics gs;
+        Grids_GridStatisticsNotUpdatedAsDataChanged gs1;
+        Grids_GridStatistics gs0;
         //gs1.
-        gs = g.getGridStatistics(handleOutOfMemoryError);
+        gs = g.getStatistics(handleOutOfMemoryError);
         long nonZeroAndNonNoDataValueCount;
         nonZeroAndNonNoDataValueCount = gs.getNonZeroAndNonNoDataValueCountLong(
                 handleOutOfMemoryError);

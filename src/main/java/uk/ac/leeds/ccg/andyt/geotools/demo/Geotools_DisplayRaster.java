@@ -29,7 +29,7 @@ import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_AbstractGridChunkDouble
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_GridChunkDoubleArrayFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDoubleFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.statistics.Grids_GridStatistics0;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridStatistics;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.grids.io.Grids_ESRIAsciiGridExporter;
 import uk.ac.leeds.ccg.andyt.grids.io.Grids_ImageExporter;
@@ -164,7 +164,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
                 -9999d,
                 grids_environment,
                 handleOutOfMemoryErrors);
-        gf.setGridStatistics(new Grids_GridStatistics0(grids_environment));
+        gf.setGridStatistics(new Grids_GridStatistics(grids_environment));
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
