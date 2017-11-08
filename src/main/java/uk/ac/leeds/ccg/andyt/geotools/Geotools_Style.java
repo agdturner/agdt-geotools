@@ -66,10 +66,8 @@ import uk.ac.leeds.ccg.andyt.generic.math.Generic_double;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGridNumber;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_AbstractGridNumberStatistics;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridStatistics;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridStatisticsNotUpdatedAsDataChanged;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridDoubleStatistics;
 
 /**
  *
@@ -1049,17 +1047,14 @@ public class Geotools_Style extends Geotools_Object {
         double[] breaks;
         Generic_double d = new Generic_double();
         boolean handleOutOfMemoryError = true;
-        Grids_AbstractGridNumberStatistics gs;
-        Grids_GridStatisticsNotUpdatedAsDataChanged gs1;
-        Grids_GridStatistics gs0;
-        //gs1.
-        gs = g.getStatistics(handleOutOfMemoryError);
+        Grids_GridDoubleStatistics gs;
+        gs = g.getStatistics();
         long nonZeroAndNonNoDataValueCount;
         nonZeroAndNonNoDataValueCount = gs.getN(
                 handleOutOfMemoryError).longValue();
         System.out.println("nonZeroAndNonNoDataValueCount " + nonZeroAndNonNoDataValueCount);
         Object[] quantileClassMap;
-        quantileClassMap = gs.getQuantileClassMap(nClasses, handleOutOfMemoryError);
+        quantileClassMap = gs.getQuantileClassMap(nClasses);
         TreeMap<Integer, Double> minDouble;
         minDouble = (TreeMap<Integer, Double>) quantileClassMap[0];
         TreeMap<Integer, Double> maxDouble;
@@ -1085,8 +1080,8 @@ public class Geotools_Style extends Geotools_Object {
         }
 
         nClasses = newClassCount;
-        double min = gs.getMinDouble(true, true);
-        double max = gs.getMaxDouble(true, true);
+        double min = gs.getMin(true, true).doubleValue();
+        double max = gs.getMax(true, true).doubleValue();
         if (addWhiteForZero) {
             nClasses++;
             classNames = new String[nClasses];

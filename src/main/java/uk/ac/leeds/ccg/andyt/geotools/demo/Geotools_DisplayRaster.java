@@ -23,13 +23,10 @@ import java.math.BigDecimal;
 import java.util.TreeMap;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridReader;
-import org.geotools.geometry.Envelope2D;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGridNumber;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_AbstractGridChunkDoubleFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_GridChunkDoubleArrayFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDoubleFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridStatistics;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.grids.io.Grids_ESRIAsciiGridExporter;
 import uk.ac.leeds.ccg.andyt.grids.io.Grids_ImageExporter;
@@ -37,6 +34,8 @@ import uk.ac.leeds.ccg.andyt.grids.process.Grids_ProcessorGWS;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_Maps;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_StyleParameters;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Dimensions;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridDoubleStatisticsNotUpdated;
 
 /**
  *
@@ -157,14 +156,14 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
         gf = new Grids_GridDoubleFactory(
+                grids_environment,
                 processorDir,
+                -9999d,
                 chunkNRows,
                 chunkNCols,
-                gcf,
-                -9999d,
-                grids_environment,
-                handleOutOfMemoryErrors);
-        gf.setGridStatistics(new Grids_GridStatistics(grids_environment));
+                new Grids_Dimensions(chunkNRows, chunkNCols),
+                new Grids_GridDoubleStatisticsNotUpdated(grids_environment),
+                gcf);
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
@@ -310,13 +309,14 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
         gf = new Grids_GridDoubleFactory(
+                grids_environment,
                 processorDir,
+                -9999d,
                 chunkNRows,
                 chunkNCols,
-                gcf,
-                -9999d,
-                grids_environment,
-                handleOutOfMemoryErrors);
+                new Grids_Dimensions(chunkNRows, chunkNCols),
+                new Grids_GridDoubleStatisticsNotUpdated(grids_environment),
+                gcf);
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
