@@ -64,12 +64,13 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
     //protected boolean outputESRIAsciigrids;
     protected boolean handleOutOfMemoryErrors;
 
-    protected Geotools_DisplayRaster() {}
-    
+    protected Geotools_DisplayRaster() {
+    }
+
     public Geotools_DisplayRaster(Geotools_Environment ge) {
         super(ge);
     }
-    
+
     /**
      * @param args the command line arguments
      */
@@ -157,13 +158,15 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         chunkNCols = 350;//300; //64
         gf = new Grids_GridDoubleFactory(
                 grids_environment,
-                processorDir,
+                //processorDir,
+                grids_environment.getFiles().getGeneratedGridDoubleDir(),
+                gp.GridChunkDoubleFactory,
+                gp.DefaultGridChunkDoubleFactory,
                 -9999d,
                 chunkNRows,
                 chunkNCols,
                 new Grids_Dimensions(chunkNRows, chunkNCols),
-                new Grids_GridDoubleStatisticsNotUpdated(grids_environment),
-                gcf);
+                new Grids_GridDoubleStatisticsNotUpdated(grids_environment));
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
@@ -310,13 +313,15 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         chunkNCols = 350;//300; //64
         gf = new Grids_GridDoubleFactory(
                 grids_environment,
-                processorDir,
+                //processorDir,
+                grids_environment.getFiles().getGeneratedGridDoubleDir(),
+                gp.GridChunkDoubleFactory,
+                gp.DefaultGridChunkDoubleFactory,
                 -9999d,
                 chunkNRows,
                 chunkNCols,
                 new Grids_Dimensions(chunkNRows, chunkNCols),
-                new Grids_GridDoubleStatisticsNotUpdated(grids_environment),
-                gcf);
+                new Grids_GridDoubleStatisticsNotUpdated(grids_environment));
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
