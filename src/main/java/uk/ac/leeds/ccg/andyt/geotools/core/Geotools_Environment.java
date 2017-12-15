@@ -423,7 +423,7 @@ public class Geotools_Environment {
                     outputImageFile,
                     outputType);
         } catch (OutOfMemoryError oome) {
-            if (ge.HandleOutOfMemoryError) {
+            if (ge.HOOME) {
                 ge.clearMemoryReserve();
                 ge.swapChunk(true);
                 ge.initMemoryReserve(true);
