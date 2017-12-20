@@ -67,7 +67,7 @@ import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGridNumber;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridDoubleStatistics;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.stats.Grids_GridDoubleStats;
 
 /**
  *
@@ -1047,8 +1047,8 @@ public class Geotools_Style extends Geotools_Object {
         double[] breaks;
         Generic_double d = new Generic_double();
         boolean handleOutOfMemoryError = true;
-        Grids_GridDoubleStatistics gs;
-        gs = g.getStatistics();
+        Grids_GridDoubleStats gs;
+        gs = g.getStats();
         long nonZeroAndNonNoDataValueCount;
         nonZeroAndNonNoDataValueCount = gs.getN(
                 handleOutOfMemoryError).longValue();

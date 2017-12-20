@@ -35,7 +35,7 @@ import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_Maps;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_StyleParameters;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Dimensions;
-import uk.ac.leeds.ccg.andyt.grids.core.grid.statistics.Grids_GridDoubleStatisticsNotUpdated;
+import uk.ac.leeds.ccg.andyt.grids.core.grid.stats.Grids_GridDoubleStatsNotUpdated;
 
 /**
  *
@@ -166,7 +166,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
                 chunkNRows,
                 chunkNCols,
                 new Grids_Dimensions(chunkNRows, chunkNCols),
-                new Grids_GridDoubleStatisticsNotUpdated(grids_environment));
+                new Grids_GridDoubleStatsNotUpdated(grids_environment));
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
@@ -321,7 +321,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
                 chunkNRows,
                 chunkNCols,
                 new Grids_Dimensions(chunkNRows, chunkNCols),
-                new Grids_GridDoubleStatisticsNotUpdated(grids_environment));
+                new Grids_GridDoubleStatsNotUpdated(grids_environment));
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
