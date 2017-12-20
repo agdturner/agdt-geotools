@@ -549,8 +549,8 @@ public class Geotools_Style extends Geotools_Object {
         String[] classNames;
         double[] breaks;
         Generic_double d = new Generic_double();
-        double min = g.getStatistics(true).getMin(true, true).doubleValue();
-        double max = g.getStatistics(true).getMax(true, true).doubleValue();
+        double min = g.getStats(true).getMin(true, true).doubleValue();
+        double max = g.getStats(true).getMax(true, true).doubleValue();
         double interval = (max - min) / (double) nClasses;
         double minInterval = min;
         double maxInterval = min + interval;
@@ -748,8 +748,8 @@ public class Geotools_Style extends Geotools_Object {
         String[] classNames;
         double[] breaks;
         Generic_double d = new Generic_double();
-        double min = g.getStatistics(true).getMin(true, true).doubleValue();
-        double max = g.getStatistics(true).getMax(true, true).doubleValue();
+        double min = g.getStats(true).getMin(true, true).doubleValue();
+        double max = g.getStats(true).getMax(true, true).doubleValue();
         double interval = (max - min) / (double) nClasses;
         double minInterval = min;
         double maxInterval = min + interval;
@@ -878,7 +878,7 @@ public class Geotools_Style extends Geotools_Object {
         double[] breaks;
         Generic_double d = new Generic_double();
         
-        double min = g.getStatistics(true).getMin(true, true).doubleValue();
+        double min = g.getStats(true).getMin(true, true).doubleValue();
         if (min >= 0.0d) {
             return getEqualIntervalStyleAndLegendItems(
                     normalisation,
@@ -888,7 +888,7 @@ public class Geotools_Style extends Geotools_Object {
                     paletteName,
                     addWhiteForZero);
         }
-        double max = g.getStatistics(true).getMax(true, true).doubleValue();
+        double max = g.getStats(true).getMax(true, true).doubleValue();
         int numberOfPositiveClasses;
         int numberOfNegativeClasses;
         double interval;
