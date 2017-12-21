@@ -48,21 +48,21 @@ import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 
 /**
  * A class for holding various useful methods for doing things with
- Geotools_Environment Objects.
+ * Geotools_Environment Objects.
  *
  * @author geoagdt
  */
 public class Geotools_Environment {
-    
+
     protected Geotools_Maps Maps;
-    
+
     protected Grids_Environment ge;
-    
+
     protected Geotools_Style Style;
-    
+
     protected Geotools_Strings gs;
-    
-    public Geotools_Maps getMaps(){
+
+    public Geotools_Maps getMaps() {
         if (Maps == null) {
             Maps = new Geotools_Maps(this);
         }
@@ -71,31 +71,32 @@ public class Geotools_Environment {
 
     /**
      * Initialises ge.
+     *
      * @param dir
      */
-    public final void initGrids_Environment(File dir){
+    public final void initGrids_Environment(File dir) {
         ge = new Grids_Environment(dir);
     }
 
-        public Grids_Environment getGrids_Environment(){
+    public Grids_Environment getGrids_Environment() {
         return ge;
     }
-    
-        public Geotools_Style getStyle(){
+
+    public Geotools_Style getStyle() {
         if (Style == null) {
             Style = new Geotools_Style(this);
         }
         return Style;
     }
-    
-    public Geotools_Strings getGeotools_Strings(){
+
+    public Geotools_Strings getGeotools_Strings() {
         if (gs == null) {
             gs = new Geotools_Strings();
         }
         return gs;
     }
-    
-        public int getMapContentImageHeight(
+
+    public int getMapContentImageHeight(
             MapContent mc,
             int imageWidth) {
         int result;
@@ -237,7 +238,7 @@ public class Geotools_Environment {
         result.addLayer(pointsFeatureLayer1);
         return result;
     }
-    
+
     /**
      * polygon0 PostcodeSector polygon1 OA polygon2 LSOA polygon3
      * postcodeUnitPoly / MSOA polygon4 polyGrid, line0 lineGrid points0
@@ -426,14 +427,9 @@ public class Geotools_Environment {
             if (ge.HOOME) {
                 ge.clearMemoryReserve();
                 ge.swapChunk(true);
-                ge.initMemoryReserve(true);
-                writeImageFile(
-                        ge,
-                        mapContent,
-                        imageWidth,
-                        imageHeight,
-                        outputImageFile,
-                        outputType);
+                ge.initMemoryReserve();
+                writeImageFile(ge, mapContent, imageWidth, imageHeight,
+                        outputImageFile, outputType);
             } else {
                 throw oome;
             }
@@ -542,8 +538,11 @@ public class Geotools_Environment {
                 styleParameters,
                 index,
                 scaleToFirst);
-        // Set g to null as it is no longer needed. 
-        // This is done to prevent any unwanted OutOfMemory Errors being encountered.
+        /**
+         * Set g to null as it is no longer needed. This is also done to free
+         * memory and help prevent any unwanted OutOfMemory Errors being
+         * encountered.
+         */
         g = null;
 
         int imageHeight = getMapContentImageHeight(mc, imageWidth);

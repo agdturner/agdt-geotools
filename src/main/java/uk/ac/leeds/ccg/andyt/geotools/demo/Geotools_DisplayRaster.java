@@ -152,7 +152,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         eage = new Grids_ESRIAsciiGridExporter(grids_environment);
         ie = new Grids_ImageExporter(grids_environment);
         gp = new Grids_ProcessorGWS(grids_environment);
-        gp.setDirectory(processorDir, false, handleOutOfMemoryErrors);
+        gp.setDirectory(processorDir, false);
         gcf = new Grids_GridChunkDoubleArrayFactory();
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
@@ -307,7 +307,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         eage = new Grids_ESRIAsciiGridExporter(grids_environment);
         ie = new Grids_ImageExporter(grids_environment);
         gp = new Grids_ProcessorGWS(grids_environment);
-        gp.setDirectory(processorDir, false, handleOutOfMemoryErrors);
+        gp.setDirectory(processorDir, false);
         gcf = new Grids_GridChunkDoubleArrayFactory();
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64

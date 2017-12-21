@@ -549,8 +549,8 @@ public class Geotools_Style extends Geotools_Object {
         String[] classNames;
         double[] breaks;
         Generic_double d = new Generic_double();
-        double min = g.getStats(true).getMin(true, true).doubleValue();
-        double max = g.getStats(true).getMax(true, true).doubleValue();
+        double min = g.getStats(true).getMin(true).doubleValue();
+        double max = g.getStats(true).getMax(true).doubleValue();
         double interval = (max - min) / (double) nClasses;
         double minInterval = min;
         double maxInterval = min + interval;
@@ -748,8 +748,8 @@ public class Geotools_Style extends Geotools_Object {
         String[] classNames;
         double[] breaks;
         Generic_double d = new Generic_double();
-        double min = g.getStats(true).getMin(true, true).doubleValue();
-        double max = g.getStats(true).getMax(true, true).doubleValue();
+        double min = g.getStats(true).getMin(true).doubleValue();
+        double max = g.getStats(true).getMax(true).doubleValue();
         double interval = (max - min) / (double) nClasses;
         double minInterval = min;
         double maxInterval = min + interval;
@@ -878,7 +878,7 @@ public class Geotools_Style extends Geotools_Object {
         double[] breaks;
         Generic_double d = new Generic_double();
         
-        double min = g.getStats(true).getMin(true, true).doubleValue();
+        double min = g.getStats(true).getMin(true).doubleValue();
         if (min >= 0.0d) {
             return getEqualIntervalStyleAndLegendItems(
                     normalisation,
@@ -888,7 +888,7 @@ public class Geotools_Style extends Geotools_Object {
                     paletteName,
                     addWhiteForZero);
         }
-        double max = g.getStats(true).getMax(true, true).doubleValue();
+        double max = g.getStats(true).getMax(true).doubleValue();
         int numberOfPositiveClasses;
         int numberOfNegativeClasses;
         double interval;
@@ -1050,8 +1050,7 @@ public class Geotools_Style extends Geotools_Object {
         Grids_GridDoubleStats gs;
         gs = g.getStats();
         long nonZeroAndNonNoDataValueCount;
-        nonZeroAndNonNoDataValueCount = gs.getN(
-                handleOutOfMemoryError).longValue();
+        nonZeroAndNonNoDataValueCount = gs.getN();
         System.out.println("nonZeroAndNonNoDataValueCount " + nonZeroAndNonNoDataValueCount);
         Object[] quantileClassMap;
         quantileClassMap = gs.getQuantileClassMap(nClasses);
@@ -1080,8 +1079,8 @@ public class Geotools_Style extends Geotools_Object {
         }
 
         nClasses = newClassCount;
-        double min = gs.getMin(true, true).doubleValue();
-        double max = gs.getMax(true, true).doubleValue();
+        double min = gs.getMin(true).doubleValue();
+        double max = gs.getMax(true).doubleValue();
         if (addWhiteForZero) {
             nClasses++;
             classNames = new String[nClasses];
