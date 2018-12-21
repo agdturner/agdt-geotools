@@ -60,7 +60,7 @@ public class Geotools_DisplayShapefile extends Geotools_Object {
         //File dir = new File("/scratch02/DigitalWelfare/Generated/Postcode/");
 //        String name = "county_region.shp";
         ArrayList<File> files;
-        files = new ArrayList<File>();
+        files = new ArrayList<>();
         String name;
         File dir;
         File f;

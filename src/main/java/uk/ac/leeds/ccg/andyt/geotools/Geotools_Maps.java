@@ -54,7 +54,7 @@ import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import uk.ac.leeds.ccg.andyt.generic.io.Generic_StaticIO;
+import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
 //import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.data.census.Deprivation_DataHandler;
 //import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.data.census.Deprivation_DataRecord;
@@ -479,9 +479,9 @@ public class Geotools_Maps extends Geotools_Object {
         }
 //        System.out.println("Reading data from file " + file);
         try {
-            try (BufferedReader br = Generic_StaticIO.getBufferedReader(file)) {
+            try (BufferedReader br = Generic_IO.getBufferedReader(file)) {
                 StreamTokenizer st = new StreamTokenizer(br);
-                Generic_StaticIO.setStreamTokenizerSyntax1(st);
+                Generic_IO.setStreamTokenizerSyntax1(st);
                 int token = st.nextToken();
                 //Need skip some header lines
                 st.nextToken();

@@ -14,7 +14,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.DirectLayer;
 import org.geotools.map.MapContent;
 import org.geotools.map.MapViewport;
-import uk.ac.leeds.ccg.andyt.generic.math.Generic_double;
+import uk.ac.leeds.ccg.andyt.math.Generic_double;
 
 public class Geotools_LegendLayer extends DirectLayer {
 
