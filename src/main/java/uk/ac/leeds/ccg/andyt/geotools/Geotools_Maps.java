@@ -18,20 +18,7 @@
  */
 package uk.ac.leeds.ccg.andyt.geotools;
 
-//import uk.ac.leeds.ccg.andyt.agdtgeotools.DW_Shapefile;
-//import uk.ac.leeds.ccg.andyt.agdtgeotools.Geotools_Environment;
-//import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.mapping.DW_Shapefile;
-//import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.mapping.Geotools_Environment;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequenceFactory;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -51,16 +38,20 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequenceFactory;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.impl.CoordinateArraySequenceFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
-//import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.data.census.Deprivation_DataHandler;
-//import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.data.census.Deprivation_DataRecord;
-//import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.data.postcode.PostcodeGeocoder;
-//import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.io.DW_Files;
-//import uk.ac.leeds.ccg.andyt.projects.digitalwelfare.process.DW_Processor;
 
 /**
  *
@@ -107,9 +98,7 @@ public class Geotools_Maps extends Geotools_Object {
      * @param srid
      * @return null if type is not one of "Point", "LineString", or "Polygon"
      */
-    public SimpleFeatureType getSimpleFeatureType(
-            String type,
-            String srid) {
+    public SimpleFeatureType getSimpleFeatureType(String type, String srid) {
         if (srid == null) {
             srid = getDefaultSRID();
         }
@@ -140,22 +129,17 @@ public class Geotools_Maps extends Geotools_Object {
     public SimpleFeatureType getPointSimpleFeatureType(String srid) {
         if (!getPointSimpleFeatureTypes().containsKey(srid)) {
             SimpleFeatureType sft;
-            sft = initSimpleFeatureType(
-                    "Point", srid);
-            pointSimpleFeatureTypes.put(
-                    srid, sft);
+            sft = initSimpleFeatureType("Point", srid);
+            pointSimpleFeatureTypes.put(srid, sft);
             return sft;
         }
         return pointSimpleFeatureTypes.get(srid);
     }
 
-    private SimpleFeatureType initSimpleFeatureType(
-            String type,
-            String srid) {
+    private SimpleFeatureType initSimpleFeatureType(String type, String srid) {
         SimpleFeatureType result = null;
         try {
-            result = DataUtilities.createType(
-                    "Location",
+            result = DataUtilities.createType("Location",
                     "the_geom:" + type + ":srid=" + srid + ","
                     + // <- the geometry attribute
                     "name:String," // <- a String attribute
@@ -176,10 +160,8 @@ public class Geotools_Maps extends Geotools_Object {
     public SimpleFeatureType getLineSimpleFeatureType(String srid) {
         if (!getLineSimpleFeatureTypes().containsKey(srid)) {
             SimpleFeatureType sft;
-            sft = initSimpleFeatureType(
-                    "LineString", srid);
-            lineSimpleFeatureTypes.put(
-                    srid, sft);
+            sft = initSimpleFeatureType(                    "LineString", srid);
+            lineSimpleFeatureTypes.put(                    srid, sft);
             return sft;
         }
         return lineSimpleFeatureTypes.get(srid);
@@ -195,10 +177,8 @@ public class Geotools_Maps extends Geotools_Object {
     public SimpleFeatureType getPolygonSimpleFeatureType(String srid) {
         if (!getPolygonSimpleFeatureTypes().containsKey(srid)) {
             SimpleFeatureType sft;
-            sft = initSimpleFeatureType(
-                    "Polygon", srid);
-            polygonSimpleFeatureTypes.put(
-                    srid, sft);
+            sft = initSimpleFeatureType(                    "Polygon", srid);
+            polygonSimpleFeatureTypes.put(                    srid, sft);
             return sft;
         }
         return polygonSimpleFeatureTypes.get(srid);
@@ -268,12 +248,9 @@ public class Geotools_Maps extends Geotools_Object {
 //        featureIterator.close();
 //        Geotools_Shapefile.transact(outputFile, sft, tsfc, sdsf);
 //    }
-    public SimpleFeatureType getFeatureType(
-            SimpleFeatureType sft,
-            Class<?> binding,
-            String attributeName,
-            String name) {
-        SimpleFeatureType result = null;
+    public SimpleFeatureType getFeatureType(SimpleFeatureType sft,
+            Class<?> binding, String attributeName, String name) {
+        SimpleFeatureType r;
         SimpleFeatureTypeBuilder sftb;
         sftb = getNewSimpleFeatureTypeBuilder(sft, name);
         if (binding.equals(Integer.class)) {
@@ -284,22 +261,18 @@ public class Geotools_Maps extends Geotools_Object {
             // Add the new attribute
             sftb.add(attributeName, Double.class);
         }
-        result = sftb.buildFeatureType();
-        return result;
+        r = sftb.buildFeatureType();
+        return r;
     }
 
-    public File getOutputImageFile(
-            File outputFile,
-            String outputType) {
-        File result;
+    public File getOutputImageFile(File outputFile, String outputType) {
+        File r;
         String filename = outputFile.getName();
         String outputImageFilename;
         outputImageFilename = filename.substring(0, filename.length() - 4)
                 + "." + outputType;
-        result = new File(
-                outputFile.getParent(),
-                outputImageFilename);
-        return result;
+        r = new File(outputFile.getParent(), outputImageFilename);
+        return r;
     }
 
     /**
@@ -309,12 +282,11 @@ public class Geotools_Maps extends Geotools_Object {
      * @return
      */
     public SimpleFeatureTypeBuilder getNewSimpleFeatureTypeBuilder(
-            SimpleFeatureType sft,
-            String name) {
-        SimpleFeatureTypeBuilder result = new SimpleFeatureTypeBuilder();
-        result.init(sft);
-        result.setName(name);
-        return result;
+            SimpleFeatureType sft, String name) {
+        SimpleFeatureTypeBuilder r = new SimpleFeatureTypeBuilder();
+        r.init(sft);
+        r.setName(name);
+        return r;
     }
 
     public void summariseAttributes(SimpleFeatureType sft) {
@@ -341,11 +313,8 @@ public class Geotools_Maps extends Geotools_Object {
      * feature.
      */
     public void addFeatureAttributeAndAddToFeatureCollection(
-            SimpleFeature sf,
-            SimpleFeatureBuilder sfb,
-            Integer value,
-            TreeSetFeatureCollection fc,
-            String id) {
+            SimpleFeature sf, SimpleFeatureBuilder sfb, Integer value,
+            TreeSetFeatureCollection fc, String id) {
         sfb.addAll(sf.getAttributes());
         sfb.add(value);
         fc.add(sfb.buildFeature(id));
@@ -365,11 +334,8 @@ public class Geotools_Maps extends Geotools_Object {
      * feature.
      */
     public void addFeatureAttributeAndAddToFeatureCollection(
-            SimpleFeature sf,
-            SimpleFeatureBuilder sfb,
-            Double value,
-            TreeSetFeatureCollection fc,
-            String id) {
+            SimpleFeature sf, SimpleFeatureBuilder sfb, Double value,
+            TreeSetFeatureCollection fc, String id) {
         sfb.addAll(sf.getAttributes());
         sfb.add(value);
         fc.add(sfb.buildFeature(id));
@@ -385,11 +351,8 @@ public class Geotools_Maps extends Geotools_Object {
      * @param id Null permitted. This will be the id assigned to the built
      * feature.
      */
-    public void addFeatureToFeatureCollection(
-            SimpleFeature sf,
-            SimpleFeatureBuilder sfb,
-            TreeSetFeatureCollection fc,
-            String id) {
+    public void addFeatureToFeatureCollection(SimpleFeature sf,
+            SimpleFeatureBuilder sfb, TreeSetFeatureCollection fc, String id) {
         sfb.addAll(sf.getAttributes());
         fc.add(sfb.buildFeature(id));
     }
@@ -422,11 +385,9 @@ public class Geotools_Maps extends Geotools_Object {
      * ---------------------------- result[1] is the max of all the maximum
      * counts.
      */
-    protected Object[] getLevelData(
-            File dir,
-            String[] filenames,
+    protected Object[] getLevelData(File dir, String[] filenames,
             ArrayList<Integer> include) {
-        Object[] result = new Object[2];
+        Object[] r = new Object[2];
         int length = filenames.length;
         Object[] resultPart0 = new Object[length];
         int max = Integer.MIN_VALUE;
@@ -441,9 +402,7 @@ public class Geotools_Maps extends Geotools_Object {
                 doLevel = true;
             }
             if (doLevel) {
-                Object[] levelData = getLevelData(
-                        dir,
-                        filenames[i]);
+                Object[] levelData = getLevelData(dir, filenames[i]);
                 if (levelData != null) {
                     resultPart0[i] = levelData;
                     max = Math.max(max, (Integer) levelData[1]);
@@ -452,9 +411,9 @@ public class Geotools_Maps extends Geotools_Object {
                 }
             }
         }
-        result[0] = resultPart0;
-        result[1] = max;
-        return result;
+        r[0] = resultPart0;
+        r[1] = max;
+        return r;
     }
 
     /**
@@ -464,15 +423,11 @@ public class Geotools_Maps extends Geotools_Object {
      * {@code TreeMap<String, Integer>} with keys which are Area Codes and
      * values that are counts; result[1] is the max count.
      */
-    protected Object[] getLevelData(
-            File dir,
-            String filename) {
+    protected Object[] getLevelData(File dir, String filename) {
         Object[] result = new Object[2];
         TreeMap<String, Integer> map = new TreeMap<>();
         result[0] = map;
-        File file = new File(
-                dir,
-                filename);
+        File file = new File(dir, filename);
         if (!file.exists()) {
             System.out.println("file " + file + " does not exist.");
             return null;
@@ -1056,11 +1011,8 @@ public class Geotools_Maps extends Geotools_Object {
         return result;
     }
 
-    protected void addPointFeature(
-            Geotools_Point p,
-            GeometryFactory gf,
-            SimpleFeatureBuilder sfb,
-            String name,
+    protected void addPointFeature(Geotools_Point p, GeometryFactory gf,
+            SimpleFeatureBuilder sfb, String name,
             TreeSetFeatureCollection tsfc) {
         Point point = gf.createPoint(new Coordinate(p.getX(), p.getY()));
         sfb.add(point);
@@ -1069,12 +1021,8 @@ public class Geotools_Maps extends Geotools_Object {
         tsfc.add(feature);
     }
 
-    protected void addLineFeature(
-            Geotools_Point p1,
-            Geotools_Point p2,
-            GeometryFactory gf,
-            SimpleFeatureBuilder sfb,
-            String name,
+    protected void addLineFeature(Geotools_Point p1, Geotools_Point p2,
+            GeometryFactory gf, SimpleFeatureBuilder sfb, String name,
             TreeSetFeatureCollection tsfc) {
         Coordinate[] coordinates;
         coordinates = new Coordinate[2];
@@ -1087,14 +1035,9 @@ public class Geotools_Maps extends Geotools_Object {
         tsfc.add(feature);
     }
 
-    protected void addQuadFeature(
-            Geotools_Point p1,
-            Geotools_Point p2,
-            Geotools_Point p3,
-            Geotools_Point p4,
-            GeometryFactory gf,
-            SimpleFeatureBuilder sfb,
-            String name,
+    protected void addQuadFeature(Geotools_Point p1, Geotools_Point p2,
+            Geotools_Point p3, Geotools_Point p4, GeometryFactory gf,
+            SimpleFeatureBuilder sfb, String name,
             TreeSetFeatureCollection tsfc,
             CoordinateSequenceFactory csf) {
         Coordinate[] coordinates;
@@ -1118,35 +1061,19 @@ public class Geotools_Maps extends Geotools_Object {
     }
 
     public TreeSetFeatureCollection getLineGridFeatureCollection(
-            SimpleFeatureType sft,
-            long nrows,
-            long ncols,
-            double xllcorner,
-            double yllcorner,
-            double cellsize) {
+            SimpleFeatureType sft, long nrows, long ncols,
+            double xllcorner, double yllcorner, double cellsize) {
         TreeSetFeatureCollection result;
         GeometryFactory gf = JTSFactoryFinder.getGeometryFactory();
         SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
-        result = getLineGridFeatureCollection(
-                sft,
-                nrows,
-                ncols,
-                xllcorner,
-                yllcorner,
-                cellsize,
-                gf,
-                sfb);
+        result = getLineGridFeatureCollection(sft, nrows, ncols, xllcorner,
+                yllcorner, cellsize, gf, sfb);
         return result;
     }
 
     public TreeSetFeatureCollection getLineGridFeatureCollection(
-            SimpleFeatureType sft,
-            long nrows,
-            long ncols,
-            double xllcorner,
-            double yllcorner,
-            double cellsize,
-            GeometryFactory gf,
+            SimpleFeatureType sft, long nrows, long ncols, double xllcorner,
+            double yllcorner, double cellsize, GeometryFactory gf,
             SimpleFeatureBuilder sfb) {
         TreeSetFeatureCollection result;
         result = new TreeSetFeatureCollection();
@@ -1187,26 +1114,14 @@ public class Geotools_Maps extends Geotools_Object {
         TreeSetFeatureCollection result;
         GeometryFactory gf = JTSFactoryFinder.getGeometryFactory();
         SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
-        result = getPolyGridFeatureCollection(
-                sft,
-                nrows,
-                ncols,
-                xllcorner,
-                yllcorner,
-                cellsize,
-                gf,
-                sfb);
+        result = getPolyGridFeatureCollection(sft, nrows, ncols, xllcorner,
+                yllcorner, cellsize, gf, sfb);
         return result;
     }
 
     public TreeSetFeatureCollection getPolyGridFeatureCollection(
-            SimpleFeatureType sft,
-            long nrows,
-            long ncols,
-            double xllcorner,
-            double yllcorner,
-            double cellsize,
-            GeometryFactory gf,
+            SimpleFeatureType sft, long nrows, long ncols, double xllcorner,
+            double yllcorner, double cellsize, GeometryFactory gf,
             SimpleFeatureBuilder sfb) {
         TreeSetFeatureCollection result;
         result = new TreeSetFeatureCollection();
@@ -1239,106 +1154,84 @@ public class Geotools_Maps extends Geotools_Object {
 
     /**
      * @param dir The directory in which the shapefile is stored.
-     * @param shapefileFilename The shapefile filename.
+     * @param name The shapefile filename.
      * @param fc The feature collection to be turned into a shapefile.
      * @param sft
      * @return shapefile File
      */
-    public File createShapefileIfItDoesNotExist(
-            File dir,
-            String shapefileFilename,
-            TreeSetFeatureCollection fc,
-            SimpleFeatureType sft) {
-        File result;
+    public File createShapefileIfItDoesNotExist(File dir, String name,
+            TreeSetFeatureCollection fc, SimpleFeatureType sft) {
+        File r;
         //ShapefileDataStoreFactory sdsf;
         sdsf = new ShapefileDataStoreFactory();
-        result = createShapefileIfItDoesNotExist(
-                dir,
-                shapefileFilename,
-                fc,
-                sft,
-                sdsf);
-        return result;
+        r = createShapefileIfItDoesNotExist(dir, name, fc, sft, sdsf);
+        return r;
     }
 
     /**
      * @param dir The directory in which the shapefile is stored.
-     * @param shapefileFilename The shapefile filename.
+     * @param name The shapefile filename.
      * @param fc The feature collection to be turned into a shapefile.
      * @param sft
      * @param sdsf
      * @return shapefile File
      */
-    public File createShapefileIfItDoesNotExist(
-            File dir,
-            String shapefileFilename,
-            TreeSetFeatureCollection fc,
-            SimpleFeatureType sft,
+    public File createShapefileIfItDoesNotExist(File dir, String name,
+            TreeSetFeatureCollection fc, SimpleFeatureType sft,
             ShapefileDataStoreFactory sdsf) {
-        File result;
-        result = ge.getShapefile(dir, shapefileFilename, true);
-        if (!result.exists()) {
-            Geotools_Shapefile.transact(
-                    result,
-                    sft,
-                    fc,
-                    sdsf);
+        File r;
+        r = ge.getShapefile(dir, name, true);
+        if (!r.exists()) {
+            Geotools_Shapefile.transact(r, sft, fc, sdsf);
         }
-        return result;
+        return r;
     }
 
-    public File createLineGridShapefileIfItDoesNotExist(
-            File dir,
-            String shapefileFilename, // Better to internally generate this from other parameters?
-            long nrows,
-            long ncols,
-            double xllcorner,
-            double yllcorner,
+    /**
+     *
+     * @param dir
+     * @param name Better to internally generate this from other parameters?
+     * @param nrows
+     * @param ncols
+     * @param xllcorner
+     * @param yllcorner
+     * @param cellsize
+     * @return
+     */
+    public File createLineGridShapefileIfItDoesNotExist(File dir, String name,
+            long nrows, long ncols, double xllcorner, double yllcorner,
             double cellsize) {
-        File result;
+        File r;
         SimpleFeatureType sft;
         sft = getLineSimpleFeatureType(getDefaultSRID());
         TreeSetFeatureCollection fc;
-        fc = getLineGridFeatureCollection(
-                sft,
-                nrows,
-                ncols,
-                xllcorner,
-                yllcorner,
-                cellsize);
-        result = createShapefileIfItDoesNotExist(
-                dir,
-                shapefileFilename,
-                fc,
-                sft);
-        return result;
+        fc = getLineGridFeatureCollection(sft, nrows, ncols, xllcorner, yllcorner, cellsize);
+        r = createShapefileIfItDoesNotExist(dir, name, fc, sft);
+        return r;
     }
 
-    public File createPolyGridShapefileIfItDoesNotExist(
-            File dir,
-            String shapefileFilename, // Better to internally generate this from other parameters?
-            long nrows,
-            long ncols,
-            double xllcorner,
-            double yllcorner,
+    /**
+     *
+     * @param dir
+     * @param name Better to internally generate this from other parameters?
+     * @param nrows
+     * @param ncols
+     * @param xllcorner
+     * @param yllcorner
+     * @param cellsize
+     * @return
+     */
+    public File createPolyGridShapefileIfItDoesNotExist(File dir, String name,
+            long nrows, long ncols, double xllcorner, double yllcorner,
             double cellsize) {
-        File result;
+        File r;
         SimpleFeatureType sft;
         sft = getPolygonSimpleFeatureType(getDefaultSRID());
         TreeSetFeatureCollection fc;
-        fc = getPolyGridFeatureCollection(
-                sft,
-                nrows,
-                ncols,
-                xllcorner,
-                yllcorner,
-                cellsize);
-        result = createShapefileIfItDoesNotExist(
-                dir,
-                shapefileFilename,
-                fc,
-                sft);
-        return result;
+        fc = getPolyGridFeatureCollection(sft, nrows, ncols, xllcorner,
+                yllcorner, cellsize);
+        r = createShapefileIfItDoesNotExist(dir, name, fc, sft);
+        return r;
     }
 
     /**
@@ -1363,16 +1256,15 @@ public class Geotools_Maps extends Geotools_Object {
      */
     public GridCoverage2D getGridCoverage2D(
             ArcGridReader agr) {
-        GridCoverage2D result = null;
+        GridCoverage2D r = null;
         try {
             if (agr != null) {
-                result = agr.read(null);
+                r = agr.read(null);
             }
         } catch (IOException ex) {
-            Logger.getLogger(Geotools_Maps.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Geotools_Maps.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return result;
+        return r;
     }
 
 }

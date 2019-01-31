@@ -5,7 +5,6 @@
  */
 package uk.ac.leeds.ccg.andyt.geotools.demo;
 
-import com.vividsolutions.jts.geom.Geometry;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -26,13 +25,16 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.JTS;
-import org.geotools.map.MapContent;
+//import org.geotools.map.MapContent;
 import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
 
@@ -92,13 +94,13 @@ public class Geotools_ProjectShapefile extends Geotools_Object {
             FileDataStore store;
             SimpleFeatureSource featureSource;
             SimpleFeatureCollection featureCollection;
-            MapContent map;
+            //MapContent map;
             SimpleFeatureType schema;
 
             store = FileDataStoreFinder.getDataStore(inFile);
             featureSource = store.getFeatureSource();
             featureCollection = featureSource.getFeatures();
-            map = new MapContent();
+            //map = new MapContent();
             schema = featureSource.getSchema();
 
             CoordinateReferenceSystem dataCRS = schema.getCoordinateReferenceSystem();
@@ -117,7 +119,7 @@ public class Geotools_ProjectShapefile extends Geotools_Object {
             }
 
             DataStoreFactorySpi factory = new ShapefileDataStoreFactory();
-            HashMap<String, Serializable> create = new HashMap<String, Serializable>();
+            HashMap<String, Serializable> create = new HashMap<>();
             try {
                 create.put("url", outFile.toURI().toURL());
             } catch (MalformedURLException ex) {
@@ -147,8 +149,8 @@ public class Geotools_ProjectShapefile extends Geotools_Object {
                 try {
                     Geometry geometry2 = JTS.transform(geometry, transform);
                     copy.setDefaultGeometry(geometry2);
-                } catch (Exception problem) {
-                    problem.printStackTrace();
+                } catch (MismatchedDimensionException | TransformException problem) {
+                    problem.printStackTrace(System.err);
                     transaction.rollback();
                 }
                 writer.write();
