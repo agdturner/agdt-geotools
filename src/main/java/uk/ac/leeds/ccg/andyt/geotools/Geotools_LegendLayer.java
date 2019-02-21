@@ -14,7 +14,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.DirectLayer;
 import org.geotools.map.MapContent;
 import org.geotools.map.MapViewport;
-import uk.ac.leeds.ccg.andyt.math.Generic_double;
+import uk.ac.leeds.ccg.andyt.math.Math_double;
 
 public class Geotools_LegendLayer extends DirectLayer {
 
@@ -166,7 +166,7 @@ public class Geotools_LegendLayer extends DirectLayer {
         int result;
         double h;
         h = r.getHeight();
-        result = Generic_double.roundUpToNearestInt(h);
+        result = Math_double.roundUpToNearestInt(h);
         return result;
     }
 
@@ -180,7 +180,7 @@ public class Geotools_LegendLayer extends DirectLayer {
         int result;
         double w;
         w = r.getWidth();
-        result = Generic_double.roundUpToNearestInt(w);
+        result = Math_double.roundUpToNearestInt(w);
         return result;
     }
 

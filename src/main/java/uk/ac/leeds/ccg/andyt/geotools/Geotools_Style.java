@@ -61,8 +61,8 @@ import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
-import uk.ac.leeds.ccg.andyt.math.Generic_BigDecimal;
-import uk.ac.leeds.ccg.andyt.math.Generic_double;
+import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
+import uk.ac.leeds.ccg.andyt.math.Math_double;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGridNumber;
@@ -548,7 +548,7 @@ public class Geotools_Style extends Geotools_Object {
             boolean addWhiteForZero) {
         String[] classNames;
         double[] breaks;
-        Generic_double d = new Generic_double();
+        Math_double d = new Math_double();
         double min = g.getStats(true).getMin(true).doubleValue();
         double max = g.getStats(true).getMax(true).doubleValue();
         double interval = (max - min) / (double) nClasses;
@@ -747,7 +747,7 @@ public class Geotools_Style extends Geotools_Object {
         legendItems = new ArrayList<>();
         String[] classNames;
         double[] breaks;
-        Generic_double d = new Generic_double();
+        Math_double d = new Math_double();
         double min = g.getStats(true).getMin(true).doubleValue();
         double max = g.getStats(true).getMax(true).doubleValue();
         double interval = (max - min) / (double) nClasses;
@@ -766,11 +766,11 @@ public class Geotools_Style extends Geotools_Object {
             for (int i = 1; i < nClasses; i++) {
                 if (i < nClasses - 1) {
                     double roundedMinInterval;
-                    roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                    roundedMinInterval = Math_BigDecimal.roundIfNecessary(
                             new BigDecimal("" + minInterval * 100 / normalisation),
                             2, RoundingMode.UP).doubleValue();
                     double roundedMaxInterval;
-                    roundedMaxInterval = Generic_BigDecimal.roundIfNecessary(
+                    roundedMaxInterval = Math_BigDecimal.roundIfNecessary(
                             new BigDecimal("" + maxInterval * 100 / normalisation),
                             2, RoundingMode.UP).doubleValue();
                     classNames[i] = "" + roundedMinInterval + " - " + roundedMaxInterval;
@@ -779,11 +779,11 @@ public class Geotools_Style extends Geotools_Object {
                     maxInterval += interval;
                 } else {
                     double roundedMinInterval;
-                    roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                    roundedMinInterval = Math_BigDecimal.roundIfNecessary(
                             new BigDecimal("" + minInterval * 100 / normalisation),
                             2, RoundingMode.UP).doubleValue();
                     double roundedMax;
-                    roundedMax = Generic_BigDecimal.roundIfNecessary(
+                    roundedMax = Math_BigDecimal.roundIfNecessary(
                             new BigDecimal("" + max * 100 / normalisation),
                             2, RoundingMode.UP).doubleValue();
                     classNames[i] = "" + roundedMinInterval + " - " + roundedMax;
@@ -796,11 +796,11 @@ public class Geotools_Style extends Geotools_Object {
             for (int i = 0; i < nClasses; i++) {
                 if (i < nClasses - 1) {
                     double roundedMinInterval;
-                    roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                    roundedMinInterval = Math_BigDecimal.roundIfNecessary(
                             new BigDecimal("" + minInterval * 100 / normalisation),
                             2, RoundingMode.UP).doubleValue();
                     double roundedMaxInterval;
-                    roundedMaxInterval = Generic_BigDecimal.roundIfNecessary(
+                    roundedMaxInterval = Math_BigDecimal.roundIfNecessary(
                             new BigDecimal("" + maxInterval * 100 / normalisation),
                             2, RoundingMode.UP).doubleValue();
                     classNames[i] = "" + roundedMinInterval + " - " + roundedMaxInterval;
@@ -809,12 +809,12 @@ public class Geotools_Style extends Geotools_Object {
                     maxInterval += interval;
                 } else {
                     double roundedMinInterval;
-                    roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                    roundedMinInterval = Math_BigDecimal.roundIfNecessary(
                             new BigDecimal("" + minInterval * 100 / normalisation),
                             2, RoundingMode.UP).doubleValue();
 
                     double roundedMax;
-                    roundedMax = Generic_BigDecimal.roundIfNecessary(
+                    roundedMax = Math_BigDecimal.roundIfNecessary(
                             new BigDecimal("" + max * 100 / normalisation),
                             2, RoundingMode.UP).doubleValue();
                     classNames[i] = "" + roundedMinInterval + " - " + roundedMax;
@@ -876,7 +876,7 @@ public class Geotools_Style extends Geotools_Object {
         legendItems = new ArrayList<>();
         String[] classNames;
         double[] breaks;
-        Generic_double d = new Generic_double();
+        Math_double d = new Math_double();
         
         double min = g.getStats(true).getMin(true).doubleValue();
         if (min >= 0.0d) {
@@ -911,11 +911,11 @@ public class Geotools_Style extends Geotools_Object {
             double maxInterval = min + interval;
             classNames = new String[totalClasses];
             double roundedMinInterval;
-            roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+            roundedMinInterval = Math_BigDecimal.roundIfNecessary(
                     new BigDecimal("" + minInterval * 100 / normalisation),
                     2, RoundingMode.UP).doubleValue();
             double roundedMaxInterval;
-            roundedMaxInterval = Generic_BigDecimal.roundIfNecessary(
+            roundedMaxInterval = Math_BigDecimal.roundIfNecessary(
                     new BigDecimal("" + maxInterval * 100 / normalisation),
                     2, RoundingMode.UP).doubleValue();
             breaks = new double[totalClasses];
@@ -928,10 +928,10 @@ public class Geotools_Style extends Geotools_Object {
             minInterval = maxInterval;
             maxInterval = minInterval + interval;
             for (i = 1; i < numberOfNegativeClasses - 1; i++) {
-                roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                roundedMinInterval = Math_BigDecimal.roundIfNecessary(
                         new BigDecimal("" + minInterval * 100 / normalisation),
                         2, RoundingMode.UP).doubleValue();
-                roundedMaxInterval = Generic_BigDecimal.roundIfNecessary(
+                roundedMaxInterval = Math_BigDecimal.roundIfNecessary(
                         new BigDecimal("" + maxInterval * 100 / normalisation),
                         2, RoundingMode.UP).doubleValue();
                 classNames[i] = "" + roundedMinInterval + " - " + roundedMaxInterval;
@@ -940,7 +940,7 @@ public class Geotools_Style extends Geotools_Object {
                 minInterval = maxInterval;
                 maxInterval += interval;
             }
-            roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+            roundedMinInterval = Math_BigDecimal.roundIfNecessary(
                     new BigDecimal("" + minInterval * 100 / normalisation),
                     2, RoundingMode.UP).doubleValue();
             classNames[i] = "" + roundedMinInterval + " - 0";
@@ -960,7 +960,7 @@ public class Geotools_Style extends Geotools_Object {
             minInterval = maxInterval;
             maxInterval = 0.0d + interval;
             i++;
-            roundedMaxInterval = Generic_BigDecimal.roundIfNecessary(
+            roundedMaxInterval = Math_BigDecimal.roundIfNecessary(
                     new BigDecimal("" + maxInterval * 100 / normalisation),
                     2, RoundingMode.UP).doubleValue();
             classNames[i] = "0 - " + roundedMaxInterval;
@@ -970,10 +970,10 @@ public class Geotools_Style extends Geotools_Object {
             maxInterval += interval;
             int j;
             for (j = 1; j < numberOfPositiveClasses - 1; j++) {
-                roundedMinInterval = Generic_BigDecimal.roundIfNecessary(
+                roundedMinInterval = Math_BigDecimal.roundIfNecessary(
                         new BigDecimal("" + minInterval * 100 / normalisation),
                         2, RoundingMode.UP).doubleValue();
-                roundedMaxInterval = Generic_BigDecimal.roundIfNecessary(
+                roundedMaxInterval = Math_BigDecimal.roundIfNecessary(
                         new BigDecimal("" + maxInterval * 100 / normalisation),
                         2, RoundingMode.UP).doubleValue();
                 classNames[i + j] = "" + roundedMinInterval + " - " + roundedMaxInterval;
@@ -1045,7 +1045,7 @@ public class Geotools_Style extends Geotools_Object {
         legendItems = new ArrayList<>();
         String[] classNames;
         double[] breaks;
-        Generic_double d = new Generic_double();
+        Math_double d = new Math_double();
         boolean handleOutOfMemoryError = true;
         Grids_GridDoubleStats gs;
         gs = g.getStats();
@@ -1188,7 +1188,7 @@ public class Geotools_Style extends Geotools_Object {
                 || interval == Double.NaN) {
             result = "NaN";
         } else {
-            result = Double.toString(Generic_BigDecimal.roundIfNecessary(
+            result = Double.toString(Math_BigDecimal.roundIfNecessary(
                     new BigDecimal("" + interval * normalisation),
                     2, RoundingMode.UP).doubleValue());
         }
