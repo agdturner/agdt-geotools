@@ -62,7 +62,6 @@ import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import uk.ac.leeds.ccg.andyt.math.Math_BigDecimal;
-import uk.ac.leeds.ccg.andyt.math.Math_double;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGridNumber;
@@ -79,20 +78,19 @@ public class Geotools_Style extends Geotools_Object {
     public final FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
     public StyleBuilder styleBuilder = new StyleBuilder(styleFactory, filterFactory);
 
-    protected Geotools_Style(){}
-    
+    protected Geotools_Style() {
+    }
+
     public Geotools_Style(Geotools_Environment ge) {
         super(ge);
     }
-    
+
     /**
      *
      * @param styleParameters
      * @param style
      */
-    public void setStyleParametersStyle(
-            Object[] styleParameters,
-            Style style) {
+    public void setStyleParametersStyle(Object[] styleParameters, Style style) {
         styleParameters[0] = style;
     }
 
@@ -126,8 +124,8 @@ public class Geotools_Style extends Geotools_Object {
      */
     public org.geotools.styling.Style createFromSLD(File sld) {
         try {
-            SLDParser stylereader = new SLDParser(styleFactory, sld.toURI().toURL());
-            org.geotools.styling.Style[] style = stylereader.readXML();
+            SLDParser sldp = new SLDParser(styleFactory, sld.toURI().toURL());
+            org.geotools.styling.Style[] style = sldp.readXML();
             return style[0];
         } catch (IOException e) {
             JExceptionReporter.showDialog(e, "Problem creating style");
@@ -136,32 +134,25 @@ public class Geotools_Style extends Geotools_Object {
     }
 
     /**
-     * @param featureSource
+     * @param fs
      * @return
      */
-    public Style createStyle(
-            FeatureSource featureSource) {
-        SimpleFeatureType schema = (SimpleFeatureType) featureSource.getSchema();
+    public Style createStyle(FeatureSource fs) {
+        SimpleFeatureType schema = (SimpleFeatureType) fs.getSchema();
         Class geomType = schema.getGeometryDescriptor().getType().getBinding();
 
         if (Polygon.class.isAssignableFrom(geomType)
                 || MultiPolygon.class.isAssignableFrom(geomType)) {
-            return createDefaultPolygonStyle(
-                    Color.BLUE,
-                    Color.CYAN);
+            return createDefaultPolygonStyle(Color.BLUE, Color.CYAN);
         } else if (LineString.class.isAssignableFrom(geomType)
                 || MultiLineString.class.isAssignableFrom(geomType)) {
             return createDefaultLineStyle();
-
         } else {
             return createDefaultPointStyle();
         }
     }
 
-    public Style getPointStyle(
-            int size,
-            String type,
-            Color fill,
+    public Style getPointStyle(int size, String type, Color fill, 
             Color outline) {
         Style result;
         Mark mark;
@@ -548,7 +539,6 @@ public class Geotools_Style extends Geotools_Object {
             boolean addWhiteForZero) {
         String[] classNames;
         double[] breaks;
-        Math_double d = new Math_double();
         double min = g.getStats(true).getMin(true).doubleValue();
         double max = g.getStats(true).getMax(true).doubleValue();
         double interval = (max - min) / (double) nClasses;
@@ -747,7 +737,6 @@ public class Geotools_Style extends Geotools_Object {
         legendItems = new ArrayList<>();
         String[] classNames;
         double[] breaks;
-        Math_double d = new Math_double();
         double min = g.getStats(true).getMin(true).doubleValue();
         double max = g.getStats(true).getMax(true).doubleValue();
         double interval = (max - min) / (double) nClasses;
@@ -876,8 +865,6 @@ public class Geotools_Style extends Geotools_Object {
         legendItems = new ArrayList<>();
         String[] classNames;
         double[] breaks;
-        Math_double d = new Math_double();
-        
         double min = g.getStats(true).getMin(true).doubleValue();
         if (min >= 0.0d) {
             return getEqualIntervalStyleAndLegendItems(
@@ -1045,7 +1032,6 @@ public class Geotools_Style extends Geotools_Object {
         legendItems = new ArrayList<>();
         String[] classNames;
         double[] breaks;
-        Math_double d = new Math_double();
         boolean handleOutOfMemoryError = true;
         Grids_GridDoubleStats gs;
         gs = g.getStats();

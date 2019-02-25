@@ -14,7 +14,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.DirectLayer;
 import org.geotools.map.MapContent;
 import org.geotools.map.MapViewport;
-import uk.ac.leeds.ccg.andyt.math.Math_double;
+import uk.ac.leeds.ccg.andyt.math.Math_Double;
 
 public class Geotools_LegendLayer extends DirectLayer {
 
@@ -158,16 +158,15 @@ public class Geotools_LegendLayer extends DirectLayer {
 
     /**
      * @TODO Move to somewhere general.
-     * @param r
+     * @param r2
      * @return
      */
-    public static int getMaxHeight(
-            Rectangle2D r) {
-        int result;
+    public static int getMaxHeight(Rectangle2D r2) {
+        int r;
         double h;
-        h = r.getHeight();
-        result = Math_double.roundUpToNearestInt(h);
-        return result;
+        h = r2.getHeight();
+        r = Math_Double.roundUpToNearestInt(h);
+        return r;
     }
 
     /**
@@ -175,13 +174,12 @@ public class Geotools_LegendLayer extends DirectLayer {
      * @param r
      * @return
      */
-    public static int getMaxWidth(
-            Rectangle2D r) {
-        int result;
+    public static int getMaxWidth(Rectangle2D r2) {
+        int r;
         double w;
-        w = r.getWidth();
-        result = Math_double.roundUpToNearestInt(w);
-        return result;
+        w = r2.getWidth();
+        r = Math_Double.roundUpToNearestInt(w);
+        return r;
     }
 
     /**
@@ -191,14 +189,12 @@ public class Geotools_LegendLayer extends DirectLayer {
      * @return
      */
     public int[] getLegendTitleMaxWidthAndHeight() {
-        int[] result = new int[2];
+        int[] r = new int[2];
         int width = 0;
         int height = 0;
         //FontMetrics.stringWidth(String str)
         Rectangle2D b;
-        b = legendTitleFont.getStringBounds(
-                legendTitle,
-                frc);
+        b = legendTitleFont.getStringBounds(legendTitle, frc);
         TextLayout tl = new TextLayout(legendTitle, legendTitleFont, frc);
         b = tl.getBounds();
 //        LineMetrics lm = legendTitleFont.getLineMetrics(title, frc);
@@ -209,9 +205,9 @@ public class Geotools_LegendLayer extends DirectLayer {
         // height
         height = getMaxHeight(b);
         height += 5; // This is a terrible hack and should be removed. The hack is there because the height is not what is wanted probably as a result of the frc AffineTransform.
-        result[0] = width;
-        result[1] = height;
-        return result;
+        r[0] = width;
+        r[1] = height;
+        return r;
     }
 
     /**
@@ -219,38 +215,30 @@ public class Geotools_LegendLayer extends DirectLayer {
      * @return
      */
     public int[] getLegendItemLabelMaxWidthAndHeight() {
-        int[] result = new int[2];
+        int[] r = new int[2];
         int maxWidth = 0;
         int maxHeight = 0;
 //        for (int i = 0; i < legendItems.size(); i++) {
 //            Geotools_LegendItem li = legendItems.get(i);
         for (Geotools_LegendItem li : legendItems) {
             Rectangle2D b;
-            b = legendItemFont.getStringBounds(
-                    li.getLabel(),
-                    frc);
+            b = legendItemFont.getStringBounds(li.getLabel(), frc);
             // width
             int w;
             w = getMaxWidth(b);
-            maxWidth = Math.max(
-                    maxWidth,
-                    w);
+            maxWidth = Math.max(maxWidth, w);
             // height
             int h;
             h = getMaxHeight(b);
-            maxHeight = Math.max(
-                    maxHeight,
-                    h);
+            maxHeight = Math.max(maxHeight, h);
         }
-        result[0] = maxWidth;
-        result[1] = maxHeight;
-        return result;
+        r[0] = maxWidth;
+        r[1] = maxHeight;
+        return r;
     }
 
     @Override
-    public void draw(
-            Graphics2D graphics,
-            MapContent mapContent,
+    public void draw(Graphics2D graphics, MapContent mapContent,
             MapViewport viewport) {
         try {
 //			//Wait for the viewport transform to finish loading
@@ -289,11 +277,8 @@ public class Geotools_LegendLayer extends DirectLayer {
             int startLegendX;
             startLegendX = legendUpperLeftX + marginWidth;
             int startLegendTitleY;
-            startLegendTitleY = legendUpperLeftY + marginHeight + legendTitleHeight; // legendTitleHeight added as I think we start drawing strings from the bottom left!
-            graphics.drawString(
-                    legendTitle,
-                    startLegendX,
-                    startLegendTitleY);
+            startLegendTitleY = legendUpperLeftY + marginHeight + legendTitleHeight;
+            graphics.drawString(legendTitle, startLegendX, startLegendTitleY);
             graphics.setFont(legendItemFont);
             for (int i = 0; i < legendItems.size(); i++) {
                 graphics.setColor(Color.BLACK);
@@ -370,6 +355,5 @@ public class Geotools_LegendLayer extends DirectLayer {
     public ReferencedEnvelope getBounds() {
         return bounds;
     }
-    
-    
+
 }
