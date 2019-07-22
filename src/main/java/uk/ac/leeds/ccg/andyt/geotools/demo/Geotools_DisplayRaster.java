@@ -147,8 +147,8 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
                 mapDirectory,
                 "processor");
         processorDir.mkdirs();
-        ge.initGrids_Environment(processorDir);
-        Grids_Environment grids_environment = ge.getGrids_Environment();
+        env.initGrids_Environment(processorDir);
+        Grids_Environment grids_environment = env.getGrids_Environment();
         eage = new Grids_ESRIAsciiGridExporter(grids_environment);
         ie = new Grids_ImageExporter(grids_environment);
         gp = new Grids_ProcessorGWS(grids_environment);
@@ -230,7 +230,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         String outname = nameOfGrid + "GeoToolsOutput";
         double normalisation;
         normalisation = 100.0d;
-        ge.outputToImageUsingGeoToolsAndSetCommonStyle(
+        env.outputToImageUsingGeoToolsAndSetCommonStyle(
                 normalisation,
                 styleParameters,
                 index,
@@ -294,8 +294,8 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
                 mapDirectory,
                 "processor");
         processorDir.mkdirs();
-        ge.initGrids_Environment(processorDir);
-        Grids_Environment grids_environment = ge.getGrids_Environment();
+        env.initGrids_Environment(processorDir);
+        Grids_Environment grids_environment = env.getGrids_Environment();
         eage = new Grids_ESRIAsciiGridExporter(grids_environment);
         ie = new Grids_ImageExporter(grids_environment);
         gp = new Grids_ProcessorGWS(grids_environment);
@@ -348,7 +348,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         String outname = nameOfGrid + "GeoToolsOutput";
         double normalisation;
         normalisation = 100.0d;
-        ge.outputToImageUsingGeoToolsAndSetCommonStyle(
+        env.outputToImageUsingGeoToolsAndSetCommonStyle(
                 normalisation,
                 styleParameters,
                 index,

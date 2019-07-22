@@ -50,8 +50,8 @@ import org.locationtech.jts.geom.impl.CoordinateArraySequenceFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import uk.ac.leeds.ccg.andyt.generic.io.Generic_IO;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
+import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Strings;
 
 /**
  *
@@ -115,7 +115,7 @@ public class Geotools_Maps extends Geotools_Object {
     }
 
     public String getDefaultSRID() {
-        return ge.getGeotools_Strings().defaultSRID;//"27700";
+        return Geotools_Strings.defaultSRID;//"27700";
     }
 
     public HashMap<String, SimpleFeatureType> getPointSimpleFeatureTypes() {
@@ -434,9 +434,9 @@ public class Geotools_Maps extends Geotools_Object {
         }
 //        System.out.println("Reading data from file " + file);
         try {
-            try (BufferedReader br = Generic_IO.getBufferedReader(file)) {
+            try (BufferedReader br = env.io.getBufferedReader(file)) {
                 StreamTokenizer st = new StreamTokenizer(br);
-                Generic_IO.setStreamTokenizerSyntax1(st);
+                env.io.setStreamTokenizerSyntax1(st);
                 int token = st.nextToken();
                 //Need skip some header lines
                 st.nextToken();
@@ -1180,7 +1180,7 @@ public class Geotools_Maps extends Geotools_Object {
             TreeSetFeatureCollection fc, SimpleFeatureType sft,
             ShapefileDataStoreFactory sdsf) {
         File r;
-        r = ge.getShapefile(dir, name, true);
+        r = env.getShapefile(dir, name, true);
         if (!r.exists()) {
             Geotools_Shapefile.transact(r, sft, fc, sdsf);
         }

@@ -36,6 +36,7 @@ import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.Style;
 import org.geotools.swing.JMapFrame;
 import org.opengis.feature.simple.SimpleFeature;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.generic.visualisation.Generic_Visualisation;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_LegendItem;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_LegendLayer;
@@ -52,15 +53,13 @@ import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
  *
  * @author geoagdt
  */
-public class Geotools_Environment {
+public class Geotools_Environment extends Generic_Environment {
 
     protected Geotools_Maps Maps;
 
     protected Grids_Environment ge;
 
     protected Geotools_Style Style;
-
-    protected Geotools_Strings gs;
 
     public Geotools_Maps getMaps() {
         if (Maps == null) {
@@ -87,13 +86,6 @@ public class Geotools_Environment {
             Style = new Geotools_Style(this);
         }
         return Style;
-    }
-
-    public Geotools_Strings getGeotools_Strings() {
-        if (gs == null) {
-            gs = new Geotools_Strings();
-        }
-        return gs;
     }
 
     public int getMapContentImageHeight(

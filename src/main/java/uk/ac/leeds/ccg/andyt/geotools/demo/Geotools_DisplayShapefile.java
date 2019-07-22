@@ -68,13 +68,13 @@ public class Geotools_DisplayShapefile extends Geotools_Object {
         name = "high_water_polyline.shp";
         dir = new File(
                 "M:/Projects/PFIHack/data/input/OrdnanceSurvey/bdline_essh_gb/Data/GB/");
-        f = ge.getShapefile(dir, name, false);
+        f = env.getShapefile(dir, name, false);
         files.add(f);
 
         name = "test.shp";
         dir = new File(
                 "M:/test/");
-        f = ge.getShapefile(dir, name, false);
+        f = env.getShapefile(dir, name, false);
         files.add(f);
 
         try {

@@ -97,7 +97,7 @@ public class Geotools_Shapefile extends Geotools_Object {
     }
 
     public FeatureLayer getFeatureLayer() {
-        Style style = new Geotools_Style(ge).createStyle(getFeatureSource());
+        Style style = new Geotools_Style(env).createStyle(getFeatureSource());
         return getFeatureLayer(style);
     }
 

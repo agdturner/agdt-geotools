@@ -11,12 +11,12 @@ package uk.ac.leeds.ccg.andyt.geotools.core;
  */
 public class Geotools_Object {
     
-    public Geotools_Environment ge;
+    public Geotools_Environment env;
     
     protected Geotools_Object(){}
     
-    public Geotools_Object(Geotools_Environment ge) {
-        this.ge = ge;
+    public Geotools_Object(Geotools_Environment e) {
+        this.env = e;
     }
     
 }

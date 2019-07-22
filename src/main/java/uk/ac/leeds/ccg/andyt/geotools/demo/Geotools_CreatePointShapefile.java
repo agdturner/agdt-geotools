@@ -103,7 +103,7 @@ public class Geotools_CreatePointShapefile extends Geotools_Object {
             feature = sfb.buildFeature(name);
             tsfc.add(feature);
         }
-        File outputShapeFile = ge.getOutputShapefile(
+        File outputShapeFile = env.getOutputShapefile(
                 dir,
                 "test");
         Geotools_Shapefile.transact(

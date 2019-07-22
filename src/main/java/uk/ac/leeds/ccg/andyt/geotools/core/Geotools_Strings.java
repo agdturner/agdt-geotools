@@ -5,14 +5,16 @@
  */
 package uk.ac.leeds.ccg.andyt.geotools.core;
 
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Strings;
+
 /**
  *
  * @author geoagdt
  */
-public class Geotools_Strings {
+public class Geotools_Strings extends Generic_Strings {
 
-    public final String png_String = "png";
-    public final String defaultSRID = "27700";
+    public static final String png_String = "png";
+    public static final String defaultSRID = "27700";
     
     public Geotools_Strings(){}
     
