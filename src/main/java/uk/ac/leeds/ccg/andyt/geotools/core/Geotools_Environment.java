@@ -55,17 +55,17 @@ import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
  */
 public class Geotools_Environment extends Generic_Environment {
 
-    protected Geotools_Maps Maps;
+    protected Geotools_Maps maps;
 
     protected Grids_Environment ge;
 
-    protected Geotools_Style Style;
+    protected Geotools_Style style;
 
     public Geotools_Maps getMaps() {
-        if (Maps == null) {
-            Maps = new Geotools_Maps(this);
+        if (maps == null) {
+            maps = new Geotools_Maps(this);
         }
-        return Maps;
+        return maps;
     }
 
     /**
@@ -82,10 +82,10 @@ public class Geotools_Environment extends Generic_Environment {
     }
 
     public Geotools_Style getStyle() {
-        if (Style == null) {
-            Style = new Geotools_Style(this);
+        if (style == null) {
+            style = new Geotools_Style(this);
         }
-        return Style;
+        return style;
     }
 
     public int getMapContentImageHeight(
@@ -343,7 +343,7 @@ public class Geotools_Environment extends Generic_Environment {
 //    public void addFeatureLayer(
 //            MapContent mc,
 //            File shapefile,
-//            Style style,
+//            style style,
 //            String title) {
 //        FeatureLayer fl;
 //        fl = DW_Shapefile.getFeatureLayer(shapefile, style, title);
@@ -676,7 +676,7 @@ public class Geotools_Environment extends Generic_Environment {
 
         // Add output to mc
         // ----------------
-        // If input style is null then create a basic Style to render the 
+        // If input style is null then create a basic style to render the 
         // features
         if (style == null) {
             Object[] styleAndLegendItems;
@@ -761,7 +761,7 @@ public class Geotools_Environment extends Generic_Environment {
 
         // Add output to mc
         // ----------------
-        // If input style is null then create a basic Style to render the 
+        // If input style is null then create a basic style to render the 
         // features
         if (style == null) {
             Object[] styleAndLegendItems;
