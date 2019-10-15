@@ -22,7 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,8 +33,10 @@ import org.geotools.data.FeatureSource;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.Transaction;
+import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.data.store.ContentFeatureSource;
@@ -40,6 +44,7 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.map.FeatureLayer;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.styling.Style;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import uk.ac.leeds.ccg.andyt.generic.execution.Generic_Execution;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
@@ -55,12 +60,13 @@ public class Geotools_Shapefile extends Geotools_Object {
     private File file;
     private FileDataStore fileDataStore;
 
-    protected Geotools_Shapefile(){}
-    
+    protected Geotools_Shapefile() {
+    }
+
     public Geotools_Shapefile(Geotools_Environment ge) {
         super(ge);
     }
-    
+
 //    public DW_Shapefile(File shapefile) throws MalformedURLException {
 //        this(shapefile.toURI().toURL());
 //    }
@@ -85,7 +91,7 @@ public class Geotools_Shapefile extends Geotools_Object {
             fileDataStore.dispose();
         }
     }
-    
+
     public FeatureSource getFeatureSource() {
         FeatureSource fs = null;
         try {
@@ -223,7 +229,7 @@ public class Geotools_Shapefile extends Geotools_Object {
         }
         return result;
     }
-    
+
     /**
      * @return A SimpleFeatureType derived from the Schema of
      * <code>fds.getFeatureSource()</code>.
@@ -277,11 +283,9 @@ public class Geotools_Shapefile extends Geotools_Object {
      * @param fc
      * @param sdsf
      */
-    public static void transact(
-            File f,
-            SimpleFeatureType sft,
-            FeatureCollection fc,
-            ShapefileDataStoreFactory sdsf) {
+    @Deprecated
+    public static void transact(File f, SimpleFeatureType sft, 
+            FeatureCollection fc, ShapefileDataStoreFactory sdsf) {
         ShapefileDataStore sds;
         sds = initialiseOutputDataStore(f, sft, sdsf);
         SimpleFeatureSource simpleFeatureSource;
@@ -307,6 +311,60 @@ public class Geotools_Shapefile extends Geotools_Object {
         sds.dispose();
     }
     
+    /**
+     * New way of transacting for Geotools 21.3.
+     * @param sds
+     * @param TYPE
+     * @param features
+     * @throws IOException 
+     */
+    public static void transact(ShapefileDataStore sds, SimpleFeatureType TYPE,
+            List<SimpleFeature> features) throws IOException {
+        /*
+         * Write the features to the shapefile
+         */
+        Transaction transaction = new DefaultTransaction("create");
+
+        String typeName = sds.getTypeNames()[0];
+        SimpleFeatureSource featureSource = sds.getFeatureSource(typeName);
+        SimpleFeatureType SHAPE_TYPE = featureSource.getSchema();
+        /*
+         * The Shapefile format has a couple limitations:
+         * - "the_geom" is always first, and used for the geometry attribute name
+         * - "the_geom" must be of type Point, MultiPoint, MuiltiLineString, MultiPolygon
+         * - Attribute names are limited in length
+         * - Not all data types are supported (example Timestamp represented as Date)
+         *
+         * Each data store has different limitations so check the resulting SimpleFeatureType.
+         */
+        System.out.println("SHAPE:" + SHAPE_TYPE);
+
+        if (featureSource instanceof SimpleFeatureStore) {
+            SimpleFeatureStore featureStore = (SimpleFeatureStore) featureSource;
+            /*
+             * SimpleFeatureStore has a method to add features from a
+             * SimpleFeatureCollection object, so we use the ListFeatureCollection
+             * class to wrap our list of features.
+             */
+            SimpleFeatureCollection collection;
+            collection = new ListFeatureCollection(TYPE, features);
+            featureStore.setTransaction(transaction);
+            try {
+                featureStore.addFeatures(collection);
+                transaction.commit();
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
+                transaction.rollback();
+            } finally {
+                transaction.close();
+            }
+        } else {
+            System.out.println(typeName + " does not support read/write access");
+            System.exit(1);
+        }
+    }
+
+    @Deprecated
     public static void commitTransaction(Transaction transaction) {
         try {
             transaction.commit();
@@ -359,7 +417,7 @@ public class Geotools_Shapefile extends Geotools_Object {
             ShapefileDataStoreFactory sdsf) {
         ShapefileDataStore result = null;
         //ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
-        Map<String, Serializable> params = new HashMap<String, Serializable>();
+        Map<String, Serializable> params = new HashMap<>();
         try {
             params.put("url", f.toURI().toURL());
         } catch (MalformedURLException ex) {

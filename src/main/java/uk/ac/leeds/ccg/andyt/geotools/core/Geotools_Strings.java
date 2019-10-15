@@ -15,6 +15,7 @@ public class Geotools_Strings extends Generic_Strings {
 
     public static final String png_String = "png";
     public static final String defaultSRID = "27700";
+    public static final String s_Geotools = "Geotools";
     
     public Geotools_Strings(){}
     

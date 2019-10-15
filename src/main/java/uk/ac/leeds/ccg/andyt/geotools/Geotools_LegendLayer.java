@@ -18,8 +18,7 @@ import uk.ac.leeds.ccg.andyt.math.Math_Double;
 
 public class Geotools_LegendLayer extends DirectLayer {
 
-    private final Geotools_AbstractStyleParameters styleParameters;
-    //private final AGDT_StyleParameters styleParameters;
+    private final Geotools_StyleParameters styleParameters;
 
     private List<Geotools_LegendItem> legendItems;
     private MapContent mc;
@@ -67,7 +66,7 @@ public class Geotools_LegendLayer extends DirectLayer {
     private int legendUpperLeftY;
 
     public Geotools_LegendLayer(
-            Geotools_AbstractStyleParameters styleParameters,
+            Geotools_StyleParameters styleParameters,
             //AGDT_StyleParameters styleParameters,
             String legendTitle,
             List<Geotools_LegendItem> legendItems,

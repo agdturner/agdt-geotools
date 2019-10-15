@@ -44,6 +44,7 @@ import uk.ac.leeds.ccg.andyt.geotools.Geotools_Maps;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_Shapefile;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_Style;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_StyleParameters;
+import uk.ac.leeds.ccg.andyt.geotools.io.Geotools_Files;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGridNumber;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 
@@ -53,12 +54,23 @@ import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
  *
  * @author geoagdt
  */
-public class Geotools_Environment extends Generic_Environment {
+public class Geotools_Environment {
 
+    public transient Generic_Environment ge;
+    
+    public transient Geotools_Files files;
+    
     protected Geotools_Maps maps;
 
-    protected Grids_Environment ge;
+    public transient Grids_Environment grids_env;
 
+    protected Geotools_Environment(){}
+    
+    public Geotools_Environment(Generic_Environment ge, File dataDir) {
+        this.ge = ge;
+        //Memory_Threshold = 3000000000L;
+        files = new Geotools_Files(dataDir);
+    }
     protected Geotools_Style style;
 
     public Geotools_Maps getMaps() {
@@ -69,16 +81,16 @@ public class Geotools_Environment extends Generic_Environment {
     }
 
     /**
-     * Initialises ge.
+     * Initialises grids_env.
      *
      * @param dir
      */
     public final void initGrids_Environment(File dir) {
-        ge = new Grids_Environment(dir);
+        grids_env = new Grids_Environment(ge, dir);
     }
 
     public Grids_Environment getGrids_Environment() {
-        return ge;
+        return grids_env;
     }
 
     public Geotools_Style getStyle() {

@@ -434,11 +434,11 @@ public class Geotools_Maps extends Geotools_Object {
         }
 //        System.out.println("Reading data from file " + file);
         try {
-            try (BufferedReader br = env.io.getBufferedReader(file)) {
+            try (BufferedReader br = env.ge.io.getBufferedReader(file)) {
                 StreamTokenizer st = new StreamTokenizer(br);
-                env.io.setStreamTokenizerSyntax1(st);
+                env.ge.io.setStreamTokenizerSyntax1(st);
                 int token = st.nextToken();
-                //Need skip some header lines
+                // Skip some header lines
                 st.nextToken();
                 st.nextToken();
 //            st.nextToken();

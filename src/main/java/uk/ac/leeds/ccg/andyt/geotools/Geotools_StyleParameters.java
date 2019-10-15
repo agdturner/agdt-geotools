@@ -29,7 +29,7 @@ import org.geotools.styling.Style;
  *
  * @author geoagdt
  */
-public class Geotools_StyleParameters extends Geotools_AbstractStyleParameters {
+public class Geotools_StyleParameters {
 
     private HashMap<String, List<Style>> styles;
     private String classificationFunctionName;
@@ -48,14 +48,24 @@ public class Geotools_StyleParameters extends Geotools_AbstractStyleParameters {
     private String foregroundStyleTitle1;
     private ArrayList<ArrayList<Geotools_LegendItem>> legendItems;
 
-    public void setMaxForTheLastLegendItem(
-            double max,
-            int styleIndex) {
+    /**
+     * @return the drawBoundaries
+     */
+    public boolean isDrawBoundaries() {
+        return drawBoundaries;
+    }
+
+    /**
+     * @param drawBoundaries the drawBoundaries to set
+     */
+    public void setDrawBoundaries(boolean drawBoundaries) {
+        this.drawBoundaries = drawBoundaries;
+    }
+    
+    public void setMaxForTheLastLegendItem(            double max,            int styleIndex) {
         int maxInt = (int) max;
-        BigDecimal maxBD;
-        maxBD = BigDecimal.valueOf(max);
-        ArrayList<Geotools_LegendItem> legendItems;
-        legendItems = getLegendItems(styleIndex);
+        BigDecimal maxBD = BigDecimal.valueOf(max);
+        ArrayList<Geotools_LegendItem> legendItems = getLegendItems(styleIndex);
         if (legendItems != null) {
             Geotools_LegendItem legendItem;
             legendItem = legendItems.get(legendItems.size() - 1);
@@ -95,26 +105,24 @@ public class Geotools_StyleParameters extends Geotools_AbstractStyleParameters {
      * @param index
      * @return the style at styleIndex
      */
-    public Style getStyle(
-            String key,
-            int index) {
-        Style result;
-        List<Style> styles0 = getStyles(key);
-        if (styles0 == null) {
-            styles0 = new ArrayList<Style>();
+    public Style getStyle(            String key,            int index) {
+        Style r;
+        List<Style> styles = getStyles(key);
+        if (styles == null) {
+            styles = new ArrayList<>();
         }
         try {
-            result = styles0.get(index);
+            r = styles.get(index);
         } catch (IndexOutOfBoundsException e) {
-            int i = styles0.size();
+            int i = styles.size();
             while (i <= index) {
                 //styles0.set(index, null); // Fails
-                styles0.add(i, null);
+                styles.add(i, null);
                 i++;
             }
             return null;
         }
-        return result;
+        return r;
     }
 
     public void setStylesNull() {
@@ -163,22 +171,30 @@ public class Geotools_StyleParameters extends Geotools_AbstractStyleParameters {
 //        }
 //        return styles;
 //    }
+    /**
+     * Returns the style from {@link styles} associated with {@code key}. If such style aleady exists and 
+     * @param key
+     * @return 
+     */
     public List<Style> getStyles(String key) {
-        List<Style> result;
         if (styles == null) {
-            styles = new HashMap<String, List<Style>>();
-            result = new ArrayList<Style>();
-            styles.put(key, result);
+            styles = new HashMap<>();
+            return addStyle(key);
         } else {
-            result = styles.get(key);
-            if (result == null) {
-                result = new ArrayList<Style>();
-                styles.put(key, result);
+            if (styles.containsKey(key)) {
+                return styles.get(key);
+            } else {
+                return addStyle(key);
             }
         }
-        return result;
     }
-
+    
+    private List<Style> addStyle(String key) {
+        List<Style> style = new ArrayList<>();
+        styles.put(key, style);
+        return style;
+    }
+    
     /**
      * @return the classificationFunctionName
      */
@@ -327,7 +343,7 @@ public class Geotools_StyleParameters extends Geotools_AbstractStyleParameters {
 
     public ArrayList<String> getForegroundStyleNames() {
         if (foregroundStyleNames == null) {
-            foregroundStyleNames = new ArrayList<String>();
+            foregroundStyleNames = new ArrayList<>();
         }
         return foregroundStyleNames;
     }
@@ -337,6 +353,7 @@ public class Geotools_StyleParameters extends Geotools_AbstractStyleParameters {
     }
 
     /**
+     * @param i
      * @return the foregroundStyleTitle0
      */
     public String getForegroundStyleName(int i) {
@@ -344,7 +361,8 @@ public class Geotools_StyleParameters extends Geotools_AbstractStyleParameters {
     }
 
     /**
-     * @param foregroundStyleTitle0 the foregroundStyleTitle0 to set
+     * @param i
+     * @param foregroundStyleName
      */
     public void setForegroundStyleName(int i, String foregroundStyleName) {
         ArrayList<String> fgsn = getForegroundStyleNames();
@@ -387,23 +405,22 @@ public class Geotools_StyleParameters extends Geotools_AbstractStyleParameters {
      * @return a specific list of legendItems
      */
     public ArrayList<Geotools_LegendItem> getLegendItems(int index) {
-        ArrayList<Geotools_LegendItem> result;
+        ArrayList<Geotools_LegendItem> r;
         ArrayList<ArrayList<Geotools_LegendItem>> legendItems0;
         legendItems0 = getLegendItems();
         try {
-            result = legendItems0.get(index);
+            r = legendItems0.get(index);
         } catch (IndexOutOfBoundsException e) {
-            result = null;
+            r = null;
             int i = legendItems0.size();
             while (i <= index) {
-                ArrayList<Geotools_LegendItem> newLegendItem;
-                newLegendItem = new ArrayList<Geotools_LegendItem>();
-                legendItems0.add(i, result);
+                ArrayList<Geotools_LegendItem> li = new ArrayList<>();
+                legendItems0.add(i, r);
                 i++;
-                result = newLegendItem;
+                r = li;
             }
         }
-        return result;
+        return r;
     }
 
     /**
@@ -424,7 +441,7 @@ public class Geotools_StyleParameters extends Geotools_AbstractStyleParameters {
      */
     public ArrayList<ArrayList<Geotools_LegendItem>> getLegendItems() {
         if (legendItems == null) {
-            legendItems = new ArrayList<ArrayList<Geotools_LegendItem>>();
+            legendItems = new ArrayList<>();
         }
         return legendItems;
     }

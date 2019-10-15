@@ -18,6 +18,7 @@ import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import uk.ac.leeds.ccg.andyt.generic.core.Generic_Environment;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_Point;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_Shapefile;
@@ -29,15 +30,17 @@ import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
  */
 public class Geotools_CreatePointShapefile extends Geotools_Object {
 
-    protected Geotools_CreatePointShapefile() {
-    }
+    private Geotools_CreatePointShapefile() {}
 
     protected Geotools_CreatePointShapefile(Geotools_Environment ge) {
         super(ge);
     }
 
     public static void main(String[] args) {
-        new Geotools_CreatePointShapefile().run();
+        Generic_Environment ge = new Generic_Environment();
+        File dataDir = new File(System.getProperty("user.dir"), "data");
+        Geotools_Environment env = new Geotools_Environment(ge, dataDir);
+        new Geotools_CreatePointShapefile(env).run();
     }
 
     public void run() {

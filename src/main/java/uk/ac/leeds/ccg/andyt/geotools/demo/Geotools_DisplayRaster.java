@@ -133,9 +133,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         styleParameters.setAddWhiteForZero(true);
         styleParameters.setForegroundStyleName(0, "Foreground Style 0");
 //        styleParameters.setForegroundStyles(DW_Style.createDefaultPointStyle());
-        mapDirectory = new File(
-                new File("/scratch02/"),
-                "test");
+        mapDirectory = new File(new File("/scratch02/"), "test");
         mapDirectory.mkdirs();
         imageWidth = 1000;
 
@@ -143,27 +141,20 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
          *_____________________________________________________________________
          */
         handleOutOfMemoryErrors = true;
-        File processorDir = new File(
-                mapDirectory,
-                "processor");
+        File processorDir = new File(mapDirectory, "processor");
         processorDir.mkdirs();
         env.initGrids_Environment(processorDir);
-        Grids_Environment grids_environment = env.getGrids_Environment();
-        eage = new Grids_ESRIAsciiGridExporter(grids_environment);
-        ie = new Grids_ImageExporter(grids_environment);
-        gp = new Grids_ProcessorGWS(grids_environment);
+        Grids_Environment ge = env.getGrids_Environment();
+        eage = new Grids_ESRIAsciiGridExporter(ge);
+        ie = new Grids_ImageExporter(ge);
+        gp = new Grids_ProcessorGWS(ge);
         gcf = new Grids_GridChunkDoubleArrayFactory();
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
-        gf = new Grids_GridDoubleFactory(
-                grids_environment,
-                gp.GridChunkDoubleFactory,
-                gp.DefaultGridChunkDoubleFactory,
-                -9999d,
-                chunkNRows,
-                chunkNCols,
-                new Grids_Dimensions(chunkNRows, chunkNCols),
-                new Grids_GridDoubleStatsNotUpdated(grids_environment));
+        gf = new Grids_GridDoubleFactory(ge, gp.GridChunkDoubleFactory,
+                gp.DefaultGridChunkDoubleFactory, -9999d, chunkNRows,
+                chunkNCols, new Grids_Dimensions(chunkNRows, chunkNCols),
+                new Grids_GridDoubleStatsNotUpdated(ge));
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
@@ -177,28 +168,20 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         // Equal Interval runs
         styleParameters.setClassificationFunctionName("EqualInterval");
         styleParameters.setStylesNull();
-        File dirOut;
-        dirOut = new File(mapDirectory, "output");
+        File dirOut = new File(mapDirectory, "output");
         dirOut = new File(dirOut, styleParameters.getClassificationFunctionName());
-        File dirIn;
-        dirIn = new File(mapDirectory, "input");
+        File dirIn = new File(mapDirectory, "input");
 //        String nameOfGrid;
 //        nameOfGrid = "test";
-//        File asciigridFile = new File(
-//                dirIn,
-//                nameOfGrid + ".asc");
-//        Grids_GridDouble g;
-//        g = (Grids_GridDouble) gf.create(asciigridFile);
+//        File asciigridFile = new File(dirIn, nameOfGrid + ".asc");
+//        Grids_GridDouble g = (Grids_GridDouble) gf.create(asciigridFile);
 //
 //        System.out.println(g.toString(handleOutOfMemoryErrors));
 //        String nameOfGrid2;
 //        nameOfGrid2 = "test2";
-//        File asciigridFile2 = new File(
-//                dirIn,
-//                nameOfGrid2 + ".asc");
+//        File asciigridFile2 = new File(dirIn, nameOfGrid2 + ".asc");
 //
-//        Grids_GridDouble g2;
-//        g2 = (Grids_GridDouble) gf.create(asciigridFile2);
+//        Grids_GridDouble g2 = (Grids_GridDouble) gf.create(asciigridFile2);
 //
 //        System.out.println(g2.toString(handleOutOfMemoryErrors));
 
@@ -210,8 +193,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         File dirGen;
         dirGen = new File(mapDirectory, "generated");
         File differenceGridDir = new File(dirGen, nameOfGrid);
-        Grids_GridDouble g;
-        g = (Grids_GridDouble) gf.create(differenceGridDir, differenceAsciigridFile);
+        Grids_GridDouble g = (Grids_GridDouble) gf.create(differenceGridDir, differenceAsciigridFile);
 
 //        gp.addToGrid(g, g2, -1.0d, handleOutOfMemoryErrors);
 //        
@@ -220,27 +202,17 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
 //        Grids_ESRIAsciiGridExporter eage;
 //        eage = new Grids_ESRIAsciiGridExporter();
 //        eage.toAsciiFile(g, differenceAsciigridFile, handleOutOfMemoryErrors);
-        ArcGridReader agr;
-        agr = getArcGridReader(differenceAsciigridFile);
-        GridCoverage2D gc;
-        gc = getGridCoverage2D(agr);
+        ArcGridReader agr = getArcGridReader(differenceAsciigridFile);
+        GridCoverage2D gc = getGridCoverage2D(agr);
 
         int index = 0;
         boolean scaleToFirst = false;
         String outname = nameOfGrid + "GeoToolsOutput";
         double normalisation;
         normalisation = 100.0d;
-        env.outputToImageUsingGeoToolsAndSetCommonStyle(
-                normalisation,
-                styleParameters,
-                index,
-                outname,
-                g,
-                gc,
-                dirOut,
-                imageWidth,
-                showMapsInJMapPane,
-                scaleToFirst);
+        env.outputToImageUsingGeoToolsAndSetCommonStyle(normalisation,
+                styleParameters, index, outname, g, gc, dirOut, imageWidth,
+                showMapsInJMapPane, scaleToFirst);
         if (!scaleToFirst) {
             styleParameters.setStyle(nameOfGrid, null, index);
         }
@@ -325,10 +297,10 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         styleParameters.setClassificationFunctionName("EqualInterval");
         styleParameters.setStylesNull();
         File dirOut;
-        dirOut = new File(                mapDirectory,                "output");
-        dirOut = new File(                dirOut,                styleParameters.getClassificationFunctionName());
+        dirOut = new File(mapDirectory, "output");
+        dirOut = new File(dirOut, styleParameters.getClassificationFunctionName());
         File dirIn;
-        dirIn = new File(                mapDirectory,                "input");
+        dirIn = new File(mapDirectory, "input");
         String nameOfGrid;
         nameOfGrid = "test";
         File asciigridFile = new File(
@@ -342,7 +314,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         dirGen = new File(mapDirectory, "generated");
         File dir = new File(dirGen, nameOfGrid);
         Grids_GridDouble g;
-        g = (Grids_GridDouble) gf.create(dir,asciigridFile);
+        g = (Grids_GridDouble) gf.create(dir, asciigridFile);
         int index = 0;
         boolean scaleToFirst = false;
         String outname = nameOfGrid + "GeoToolsOutput";
