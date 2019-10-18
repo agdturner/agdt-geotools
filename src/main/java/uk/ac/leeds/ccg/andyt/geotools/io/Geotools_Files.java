@@ -19,6 +19,7 @@
 package uk.ac.leeds.ccg.andyt.geotools.io;
 
 import java.io.File;
+import uk.ac.leeds.ccg.andyt.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Strings;
 
@@ -38,7 +39,7 @@ public class Geotools_Files extends Generic_Files {
      * @return A default directory called data in the user.dir.
      */
     public static File getDefaultDir() {
-        return new File(Generic_Files.getDefaultDir(), 
+        return new File(Generic_Defaults.getDefaultDir(), 
                 Geotools_Strings.s_Geotools);
     }
 

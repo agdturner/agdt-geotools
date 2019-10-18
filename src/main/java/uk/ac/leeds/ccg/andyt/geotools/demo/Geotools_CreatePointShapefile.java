@@ -9,6 +9,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotools.data.DataUtilities;
@@ -30,17 +31,22 @@ import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
  */
 public class Geotools_CreatePointShapefile extends Geotools_Object {
 
-    private Geotools_CreatePointShapefile() {}
+    private Geotools_CreatePointShapefile() {
+    }
 
     protected Geotools_CreatePointShapefile(Geotools_Environment ge) {
         super(ge);
     }
 
     public static void main(String[] args) {
-        Generic_Environment ge = new Generic_Environment();
-        File dataDir = new File(System.getProperty("user.dir"), "data");
-        Geotools_Environment env = new Geotools_Environment(ge, dataDir);
-        new Geotools_CreatePointShapefile(env).run();
+        try {
+            Generic_Environment ge = new Generic_Environment();
+            File dataDir = new File(System.getProperty("user.dir"), "data");
+            Geotools_Environment env = new Geotools_Environment(ge, dataDir);
+            new Geotools_CreatePointShapefile(env).run();
+        } catch (IOException ex) {
+            ex.printStackTrace(System.err);
+        }
     }
 
     public void run() {
@@ -74,7 +80,7 @@ public class Geotools_CreatePointShapefile extends Geotools_Object {
         int y1 = 350000;
         int y2 = 360000;
         int y3 = 355000;
-        
+
         Geotools_Point p1;
         Geotools_Point p2;
         Geotools_Point p3;
@@ -102,7 +108,7 @@ public class Geotools_CreatePointShapefile extends Geotools_Object {
             sfb.add(point);
             sfb.add(name);
             sfb.add(number);
-            sfb.add(number*number);
+            sfb.add(number * number);
             feature = sfb.buildFeature(name);
             tsfc.add(feature);
         }

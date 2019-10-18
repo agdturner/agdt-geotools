@@ -19,6 +19,7 @@
 package uk.ac.leeds.ccg.andyt.geotools.demo;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.TreeMap;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -77,27 +78,15 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
     public static void main(String[] args) {
         try {
             new Geotools_DisplayRaster().run();
-        } catch (Exception e) {
-            System.err.println(e.getLocalizedMessage());
-            e.printStackTrace();
-//            StackTraceElement[] stes = e.getStackTrace();
-//            for (StackTraceElement ste : stes) {
-//                System.err.println(ste.toString());
-//            }
-        } catch (Error e) {
-            System.err.println(e.getLocalizedMessage());
-            e.printStackTrace();
-//            StackTraceElement[] stes = e.getStackTrace();
-//            for (StackTraceElement ste : stes) {
-//                System.err.println(ste.toString());
-//            }
+        } catch (Exception | Error e) {
+            e.printStackTrace(System.err);
         }
     }
 
     /**
      *
      */
-    public void run() {
+    public void run() throws IOException {
         //runSingleColour();
         runDifference();
     }
@@ -106,7 +95,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
      * Positive values are shown in red, zero values are shown white, negative
      * values are shown in blue.
      */
-    public void runDifference() {
+    public void runDifference() throws IOException {
         // If showMapsInJMapPane is true, the maps are presented in individual 
         // JMapPanes
         //showMapsInJMapPane = false;
@@ -224,7 +213,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
     /**
      * Positive values are shown in red, zero values are shown white.
      */
-    public void runSingleColour() {
+    public void runSingleColour() throws IOException {
         // If showMapsInJMapPane is true, the maps are presented in individual 
         // JMapPanes
         //showMapsInJMapPane = false;
