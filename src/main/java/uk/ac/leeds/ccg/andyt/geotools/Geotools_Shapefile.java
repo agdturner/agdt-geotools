@@ -209,25 +209,25 @@ public class Geotools_Shapefile extends Geotools_Object {
      * @param f The File for which a FileDataStore is returned.
      * @return A FileDataStore found via a FileDataStoreFinder.
      */
-    protected static FileDataStore getFileDataStore(File f) {
-        FileDataStore result = null;
+    protected FileDataStore getFileDataStore(File f) {
+        FileDataStore r = null;
         try {
-            result = FileDataStoreFinder.getDataStore(f);
+            r = FileDataStoreFinder.getDataStore(f);
         } catch (IOException ex) {
             Logger.getLogger(Geotools_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
             //} catch (NullPointerException e) {
         } catch (Exception e) {
             System.err.println("Exception (not an IOException) in DW_ShapefileDataStore.getFileDataStore(File)");
             long timeInMilliseconds = 1000;
-            Generic_Execution.waitSychronized(f, timeInMilliseconds);
+            Generic_Execution.waitSychronized(env.env, f, timeInMilliseconds);
             return getFileDataStore(f);
         } catch (Error e) {
             System.err.println("Error in DW_ShapefileDataStore.getFileDataStore(File)");
             long timeInMilliseconds = 1000;
-            Generic_Execution.waitSychronized(f, timeInMilliseconds);
+            Generic_Execution.waitSychronized(env.env, f, timeInMilliseconds);
             return getFileDataStore(f);
         }
-        return result;
+        return r;
     }
 
     /**

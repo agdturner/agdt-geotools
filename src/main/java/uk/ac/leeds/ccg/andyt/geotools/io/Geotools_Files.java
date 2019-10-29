@@ -19,6 +19,7 @@
 package uk.ac.leeds.ccg.andyt.geotools.io;
 
 import java.io.File;
+import java.io.IOException;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.andyt.generic.io.Generic_Files;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Strings;
@@ -29,7 +30,7 @@ import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Strings;
  */
 public class Geotools_Files extends Generic_Files {
 
-    protected Geotools_Files() {
+    protected Geotools_Files() throws IOException {
         this(getDefaultDir());        
     }
         
@@ -43,7 +44,7 @@ public class Geotools_Files extends Generic_Files {
                 Geotools_Strings.s_Geotools);
     }
 
-    public Geotools_Files(File dataDir) {
+    public Geotools_Files(File dataDir) throws IOException {
         super(dataDir);
     }
     

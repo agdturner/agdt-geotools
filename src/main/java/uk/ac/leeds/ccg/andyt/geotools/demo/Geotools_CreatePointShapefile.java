@@ -24,6 +24,8 @@ import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Environment;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_Point;
 import uk.ac.leeds.ccg.andyt.geotools.Geotools_Shapefile;
 import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Object;
+import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
+import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 
 /**
  *
@@ -40,10 +42,12 @@ public class Geotools_CreatePointShapefile extends Geotools_Object {
 
     public static void main(String[] args) {
         try {
-            Generic_Environment ge = new Generic_Environment();
-            File dataDir = new File(System.getProperty("user.dir"), "data");
-            Geotools_Environment env = new Geotools_Environment(ge, dataDir);
-            new Geotools_CreatePointShapefile(env).run();
+            Vector_Environment ve = new Vector_Environment(
+                    new Grids_Environment(new Generic_Environment()));
+            Geotools_Environment env = new Geotools_Environment(ve,
+                    ve.env.files.getDir());
+            Geotools_CreatePointShapefile p = new Geotools_CreatePointShapefile(env);
+            p.run();
         } catch (IOException ex) {
             ex.printStackTrace(System.err);
         }

@@ -28,7 +28,6 @@ import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_AbstractGridChunkDouble
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDouble;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.chunk.Grids_GridChunkDoubleArrayFactory;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_GridDoubleFactory;
-import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.andyt.grids.io.Grids_ESRIAsciiGridExporter;
 import uk.ac.leeds.ccg.andyt.grids.io.Grids_ImageExporter;
 import uk.ac.leeds.ccg.andyt.grids.process.Grids_ProcessorGWS;
@@ -132,18 +131,16 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         handleOutOfMemoryErrors = true;
         File processorDir = new File(mapDirectory, "processor");
         processorDir.mkdirs();
-        env.initGrids_Environment(processorDir);
-        Grids_Environment ge = env.getGrids_Environment();
-        eage = new Grids_ESRIAsciiGridExporter(ge);
-        ie = new Grids_ImageExporter(ge);
-        gp = new Grids_ProcessorGWS(ge);
+        eage = new Grids_ESRIAsciiGridExporter(env.ge);
+        ie = new Grids_ImageExporter(env.ge);
+        gp = new Grids_ProcessorGWS(env.ge);
         gcf = new Grids_GridChunkDoubleArrayFactory();
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
-        gf = new Grids_GridDoubleFactory(ge, gp.GridChunkDoubleFactory,
+        gf = new Grids_GridDoubleFactory(env.ge, gp.GridChunkDoubleFactory,
                 gp.DefaultGridChunkDoubleFactory, -9999d, chunkNRows,
                 chunkNCols, new Grids_Dimensions(chunkNRows, chunkNCols),
-                new Grids_GridDoubleStatsNotUpdated(ge));
+                new Grids_GridDoubleStatsNotUpdated(env.ge));
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
@@ -251,27 +248,23 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
          *_____________________________________________________________________
          */
         handleOutOfMemoryErrors = true;
-        File processorDir = new File(
-                mapDirectory,
-                "processor");
+        File processorDir = new File(                mapDirectory,                "processor");
         processorDir.mkdirs();
-        env.initGrids_Environment(processorDir);
-        Grids_Environment grids_environment = env.getGrids_Environment();
-        eage = new Grids_ESRIAsciiGridExporter(grids_environment);
-        ie = new Grids_ImageExporter(grids_environment);
-        gp = new Grids_ProcessorGWS(grids_environment);
+        eage = new Grids_ESRIAsciiGridExporter(env.ge);
+        ie = new Grids_ImageExporter(env.ge);
+        gp = new Grids_ProcessorGWS(env.ge);
         gcf = new Grids_GridChunkDoubleArrayFactory();
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
         gf = new Grids_GridDoubleFactory(
-                grids_environment,
+                env.ge,
                 gp.GridChunkDoubleFactory,
                 gp.DefaultGridChunkDoubleFactory,
                 -9999d,
                 chunkNRows,
                 chunkNCols,
                 new Grids_Dimensions(chunkNRows, chunkNCols),
-                new Grids_GridDoubleStatsNotUpdated(grids_environment));
+                new Grids_GridDoubleStatsNotUpdated(env.ge));
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");

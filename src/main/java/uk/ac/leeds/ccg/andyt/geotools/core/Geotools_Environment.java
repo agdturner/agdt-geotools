@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +48,7 @@ import uk.ac.leeds.ccg.andyt.geotools.Geotools_StyleParameters;
 import uk.ac.leeds.ccg.andyt.geotools.io.Geotools_Files;
 import uk.ac.leeds.ccg.andyt.grids.core.grid.Grids_AbstractGridNumber;
 import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
+import uk.ac.leeds.ccg.andyt.vector.core.Vector_Environment;
 
 /**
  * A class for holding various useful methods for doing things with
@@ -56,18 +58,18 @@ import uk.ac.leeds.ccg.andyt.grids.core.Grids_Environment;
  */
 public class Geotools_Environment {
 
-    public transient Generic_Environment ge;
-    
+    public final transient Vector_Environment ve;
+    public final transient Grids_Environment ge;
+    public final transient Generic_Environment env;
+
     public transient Geotools_Files files;
-    
+
     protected Geotools_Maps maps;
 
-    public transient Grids_Environment grids_env;
-
-    protected Geotools_Environment(){}
-    
-    public Geotools_Environment(Generic_Environment ge, File dataDir) {
-        this.ge = ge;
+    public Geotools_Environment(Vector_Environment ve, File dataDir) throws IOException {
+        this.ve = ve;
+        this.ge = ve.ge;
+        this.env = ve.env;
         //Memory_Threshold = 3000000000L;
         files = new Geotools_Files(dataDir);
     }
@@ -78,19 +80,6 @@ public class Geotools_Environment {
             maps = new Geotools_Maps(this);
         }
         return maps;
-    }
-
-    /**
-     * Initialises grids_env.
-     *
-     * @param dir
-     */
-    public final void initGrids_Environment(File dir) {
-        grids_env = new Grids_Environment(ge, dir);
-    }
-
-    public Grids_Environment getGrids_Environment() {
-        return grids_env;
     }
 
     public Geotools_Style getStyle() {
@@ -456,18 +445,14 @@ public class Geotools_Environment {
             File outputImageFile,
             String outputType) {
         // Initialise a renderer
-        StreamingRenderer renderer;
-        renderer = new StreamingRenderer();
+        StreamingRenderer renderer = new StreamingRenderer();
         renderer.setMapContent(mapContent);
         Rectangle rectangle = new Rectangle(imageWidth, imageHeight);
         //System.out.println(rectangle.height + " " + rectangle.width);
-        BufferedImage bufferedImage;
-        bufferedImage = new BufferedImage(
-                rectangle.width,
-                rectangle.height,
+        BufferedImage bi = new BufferedImage(rectangle.width, rectangle.height,
                 //BufferedImage.TYPE_INT_RGB);
                 BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics2D = bufferedImage.createGraphics();
+        Graphics2D graphics2D = bi.createGraphics();
         // Set white background
         //graphics2D.setComposite(AlphaComposite.Clear);
         graphics2D.setBackground(Color.white);
@@ -484,7 +469,8 @@ public class Geotools_Environment {
 //                Logger.getLogger(Geotools_Environment.class.getName()).log(Level.SEVERE, null, ex);
 //            }
 //                    }
-        Generic_Visualisation.saveImage(bufferedImage, outputType, outputImageFile);
+        Generic_Visualisation v = new Generic_Visualisation(env);
+        v.saveImage(bi, outputType, outputImageFile);
         graphics2D.dispose();
     }
 
