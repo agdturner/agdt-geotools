@@ -46,16 +46,25 @@
         <jts.version>1.14.0</jts.version>
         <jts.version>1.12</jts.version>
         -->
-        <geotools.version>20.2</geotools.version>
+        <geotools.version>21.3</geotools.version>
         <!--
-        <geotools.version>13.2</geotools.version>
+        <geotools.version>22.RC</geotools.version>
+        <geotools.version>20.2</geotools.version>
         <geotools.version>18.0</geotools.version>
+        <geotools.version>13.2</geotools.version>
         <geotools.version>13-SNAPSHOT</geotools.version>
         -->
         <agdt-java-generic.version>1.0-SNAPSHOT</agdt-java-generic.version>
         <agdt-java-generic-grids.version>1.0-SNAPSHOT</agdt-java-generic-grids.version>
+        <agdt-java-generic-vector.version>1.0-SNAPSHOT</agdt-java-generic-vector.version>
+        <maven.compiler.source>12</maven.compiler.source>
+        <maven.compiler.target>12</maven.compiler.target>
+        <!--
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        -->
     </properties>
 
     <dependencies>
@@ -156,6 +165,11 @@
             <groupId>uk.ac.leeds.ccg.andyt</groupId>
             <artifactId>agdt-java-generic-grids</artifactId>
             <version>${agdt-java-generic-grids.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.leeds.ccg.andyt</groupId>
+            <artifactId>agdt-java-generic-vector</artifactId>
+            <version>${agdt-java-generic-vector.version}</version>
         </dependency>
     </dependencies>
     
