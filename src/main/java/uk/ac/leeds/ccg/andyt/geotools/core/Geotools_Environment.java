@@ -402,24 +402,14 @@ public class Geotools_Environment {
      * @param outputImageFile
      * @param outputType
      */
-    public void writeImageFile(
-            Grids_Environment ge,
-            MapContent mapContent,
-            int imageWidth,
-            int imageHeight,
-            File outputImageFile,
-            String outputType) {
+    public void writeImageFile(Grids_Environment ge, MapContent mapContent,
+            int imageWidth, int imageHeight, File outputImageFile, String outputType) {
         try {
-            writeImageFile(
-                    mapContent,
-                    imageWidth,
-                    imageHeight,
-                    outputImageFile,
-                    outputType);
+            writeImageFile(mapContent, imageWidth, imageHeight, outputImageFile, outputType);
         } catch (OutOfMemoryError oome) {
             if (ge.HOOME) {
                 ge.clearMemoryReserve();
-                ge.swapChunk(true);
+                ge.cacheChunk(true);
                 ge.initMemoryReserve();
                 writeImageFile(ge, mapContent, imageWidth, imageHeight,
                         outputImageFile, outputType);
