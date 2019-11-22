@@ -504,7 +504,7 @@ public class Geotools_Environment {
             File outputDir,
             int imageWidth,
             boolean showMapsInJMapPane,
-            boolean scaleToFirst) {
+            boolean scaleToFirst) throws IOException {
         String png_String = "PNG";
         MapContent mc = createMapContent(
                 normalisation,
@@ -590,7 +590,7 @@ public class Geotools_Environment {
             File outputDir,
             int imageWidth,
             boolean showMapsInJMapPane,
-            boolean scaleToFirst) {
+            boolean scaleToFirst) throws IOException {
         String png_String = "PNG";
         MapContent mc = createMapContent(
                 normalisation,

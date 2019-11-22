@@ -31,21 +31,20 @@ import uk.ac.leeds.ccg.andyt.geotools.core.Geotools_Strings;
 public class Geotools_Files extends Generic_Files {
 
     protected Geotools_Files() throws IOException {
-        this(getDefaultDir());        
+        this(getDefaultDir());
     }
-        
+
     /**
      * {@code return new File(System.getProperty("user.dir"), "data");}
      *
      * @return A default directory called data in the user.dir.
      */
     public static File getDefaultDir() {
-        return new File(Generic_Defaults.getDefaultDir(), 
-                Geotools_Strings.s_Geotools);
+        return new File(getDefaultGenericDir(), Geotools_Strings.s_Geotools);
     }
 
     public Geotools_Files(File dataDir) throws IOException {
         super(dataDir);
     }
-    
+
 }
