@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package uk.ac.leeds.ccg.andyt.geotools;
+package uk.ac.leeds.ccg.geotools;
 
 import java.awt.Color;
 
