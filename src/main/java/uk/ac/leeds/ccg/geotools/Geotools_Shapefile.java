@@ -273,7 +273,9 @@ public class Geotools_Shapefile extends Geotools_Object {
     /**
      * Pushes the FeatureCollection holding SimpleFeatureType sft to the
      * shapefile f.
-     *
+     * 
+     * Try using {@link #transact(org.geotools.data.shapefile.ShapefileDataStore, org.opengis.feature.simple.SimpleFeatureType, java.util.List)}
+     * 
      * @param f
      * @param sft
      * @param fc
@@ -282,8 +284,7 @@ public class Geotools_Shapefile extends Geotools_Object {
     @Deprecated
     public static void transact(Path f, SimpleFeatureType sft,
             FeatureCollection fc, ShapefileDataStoreFactory sdsf) {
-        ShapefileDataStore sds;
-        sds = initialiseOutputDataStore(f, sft, sdsf);
+        ShapefileDataStore sds = initialiseOutputDataStore(f, sft, sdsf);
         SimpleFeatureSource simpleFeatureSource;
         try {
             String typeName = sds.getTypeNames()[0];

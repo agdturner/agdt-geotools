@@ -467,7 +467,7 @@ public class Geotools_Maps extends Geotools_Object {
                                     if (n.equalsIgnoreCase("null")) {
                                         value = 0;
                                     } else {
-                                        value = new Integer(split[1].trim());
+                                        value = Integer.valueOf(split[1].trim());
                                     }
                                     map.put(split[0], value);
                                     max = Math.max(max, value);
