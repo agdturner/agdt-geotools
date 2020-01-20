@@ -17,9 +17,8 @@
     </scm>
     <licenses>
         <license>
-            <name>Apache License 2.0</name>
-            <url>https://github.com/agdturner/agdt-java-geotools/LICENSE.txt</url>
-            <distribution>repo</distribution>
+            <name>APACHE LICENSE, VERSION 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
     <organization>
@@ -46,9 +45,10 @@
         <jts.version>1.14.0</jts.version>
         <jts.version>1.12</jts.version>
         -->
-        <geotools.version>21.3</geotools.version>
+        <geotools.version>21.4</geotools.version>
         <!--
-        <geotools.version>22.RC</geotools.version>
+        <geotools.version>21.3</geotools.version>
+        <geotools.version>22.2</geotools.version>
         <geotools.version>20.2</geotools.version>
         <geotools.version>18.0</geotools.version>
         <geotools.version>13.2</geotools.version>
