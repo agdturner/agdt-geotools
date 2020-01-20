@@ -20,14 +20,14 @@ public class Geotools_LegendLayer extends DirectLayer {
 
     private final Geotools_StyleParameters styleParameters;
 
-    private List<Geotools_LegendItem> legendItems;
-    private MapContent mc;
+    private final List<Geotools_LegendItem> legendItems;
+    private final MapContent mc;
     ReferencedEnvelope bounds;
 
-    private int originalImageWidth;
-    private int originalImageHeight;
-    private boolean addLegendToTheSide;
-    private String legendTitle;
+    private final int originalImageWidth;
+    private final int originalImageHeight;
+    private final boolean addLegendToTheSide;
+    private final String legendTitle;
 
     private AffineTransform at;
     private FontRenderContext frc;
@@ -65,60 +65,34 @@ public class Geotools_LegendLayer extends DirectLayer {
     private int legendUpperLeftX;
     private int legendUpperLeftY;
 
-    public Geotools_LegendLayer(
-            Geotools_StyleParameters styleParameters,
-            //AGDT_StyleParameters styleParameters,
-            String legendTitle,
-            List<Geotools_LegendItem> legendItems,
-            MapContent mc,
-            int imageWidth,
-            int imageHeight,
-            boolean addLegendToTheSide) {
+    /**
+     * @param styleParameters styleParameters
+     * @param title Legend title.
+     * @param li Legend items.
+     * @param mc MapContext
+     * @param w Image width.
+     * @param h Image height.
+     * @param addLegendToTheSide If true then legend added to the side.
+     */
+    public Geotools_LegendLayer(Geotools_StyleParameters styleParameters,
+            String title, List<Geotools_LegendItem> li, MapContent mc, int w,
+            int h, boolean addLegendToTheSide) {
         this.styleParameters = styleParameters;
         this.legendTitleFont = new Font("Ariel", Font.BOLD, 12);
         this.legendItemFont = new Font("Ariel", Font.PLAIN, 10);
-        init(legendTitle,
-                legendItems,
-                mc,
-                imageWidth,
-                imageHeight,
-                addLegendToTheSide);
+        this.legendTitle = title;
+        this.legendItems = li;
+        this.mc = mc;
+        this.originalImageWidth = w;
+        this.originalImageHeight = h;
+        this.addLegendToTheSide = addLegendToTheSide;
+        init();
     }
 
     public final void init() {
-        this.frc = new FontRenderContext(
-                at,
+        this.frc = new FontRenderContext(at,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT,
                 RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-        buildLegendParams();
-        initBounds();
-    }
-
-    /**
-     * @param legendTitle
-     * @param legendItems
-     * @param mc
-     * @param imageWidth
-     * @param imageHeight
-     * @param addLegendToTheSide
-     */
-    public final void init(
-            String legendTitle,
-            List<Geotools_LegendItem> legendItems,
-            MapContent mc,
-            int imageWidth,
-            int imageHeight,
-            boolean addLegendToTheSide) {
-        this.frc = new FontRenderContext(
-                at,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT,
-                RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-        this.legendTitle = legendTitle;
-        this.legendItems = legendItems;
-        this.mc = mc;
-        this.originalImageWidth = imageWidth;
-        this.originalImageHeight = imageHeight;
-        this.addLegendToTheSide = addLegendToTheSide;
         buildLegendParams();
         initBounds();
     }
@@ -155,30 +129,20 @@ public class Geotools_LegendLayer extends DirectLayer {
         //this.legendUpperLeftY = newImageHeight - legendHeight - legendInsetHeight;
     }
 
-    /**
-     * @TODO Move to somewhere general.
-     * @param r2
-     * @return
+   /**
+     * @param r2 The rectangle.
+     * @return The maximum height.
      */
-    public static int getMaxHeight(Rectangle2D r2) {
-        int r;
-        double h;
-        h = r2.getHeight();
-        r = Math_Double.roundUpToNearestInt(h);
-        return r;
+     public static int getMaxHeight(Rectangle2D r2) {
+        return Math_Double.roundUpToNearestInt(r2.getHeight());
     }
 
     /**
-     *
-     * @param r
-     * @return
+     * @param r2 The rectangle.
+     * @return The maximum width.
      */
     public static int getMaxWidth(Rectangle2D r2) {
-        int r;
-        double w;
-        w = r2.getWidth();
-        r = Math_Double.roundUpToNearestInt(w);
-        return r;
+        return Math_Double.roundUpToNearestInt(r2.getWidth());
     }
 
     /**
@@ -313,7 +277,7 @@ public class Geotools_LegendLayer extends DirectLayer {
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 
