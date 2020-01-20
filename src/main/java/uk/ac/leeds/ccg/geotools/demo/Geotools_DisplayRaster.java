@@ -18,7 +18,6 @@
  */
 package uk.ac.leeds.ccg.geotools.demo;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -27,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.TreeMap;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridReader;
+import uk.ac.leeds.ccg.generic.io.Generic_Path;
 import uk.ac.leeds.ccg.grids.d2.chunk.d.Grids_ChunkFactoryDouble;
 import uk.ac.leeds.ccg.grids.d2.grid.d.Grids_GridDouble;
 import uk.ac.leeds.ccg.grids.d2.chunk.d.Grids_ChunkFactoryDoubleArray;
@@ -88,7 +88,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
     /**
      *
      */
-    public void run() throws IOException {
+    public void run() throws IOException, Exception {
         //runSingleColour();
         runDifference();
     }
@@ -97,7 +97,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
      * Positive values are shown in red, zero values are shown white, negative
      * values are shown in blue.
      */
-    public void runDifference() throws IOException {
+    public void runDifference() throws IOException, Exception {
         // If showMapsInJMapPane is true, the maps are presented in individual 
         // JMapPanes
         //showMapsInJMapPane = false;
@@ -140,10 +140,12 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         gcf = new Grids_ChunkFactoryDoubleArray();
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
-        gf = new Grids_GridFactoryDouble(env.ge, gp.gridFactoryDouble,
-                gp.gridFactoryDouble.defaultGridChunkDoubleFactory, -9999d, chunkNRows,
-                chunkNCols, new Grids_Dimensions(chunkNRows, chunkNCols),
-                new Grids_StatsNotUpdatedDouble(env.ge));
+        gf = gp.gridFactoryDouble;
+        gf.setChunkNRows(chunkNRows);
+        gf.setChunkNCols(chunkNCols);
+        gf.setNoDataValue(-9999d);
+        gf.setDimensions(new Grids_Dimensions(chunkNRows, chunkNCols));
+        gf.setDefaultChunkFactory(gcf);
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
@@ -177,11 +179,8 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         String nameOfGrid = "test3";
         Path differenceAsciigridFile = Paths.get(dirIn.toString(),
                 nameOfGrid + ".asc");
-
-        Path dirGen = Paths.get(mapDirectory.toString(), "generated");
-        Path differenceGridDir = Paths.get(dirGen.toString(), nameOfGrid);
-        Grids_GridDouble g = (Grids_GridDouble) gf.create(
-                differenceGridDir, differenceAsciigridFile);
+        Grids_GridDouble g = (Grids_GridDouble) gf.create(new Generic_Path(
+                differenceAsciigridFile));
 
 //        gp.addToGrid(g, g2, -1.0d, handleOutOfMemoryErrors);
 //        
@@ -212,7 +211,7 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
     /**
      * Positive values are shown in red, zero values are shown white.
      */
-    public void runSingleColour() throws IOException {
+    public void runSingleColour() throws IOException, Exception {
         // If showMapsInJMapPane is true, the maps are presented in individual 
         // JMapPanes
         //showMapsInJMapPane = false;
@@ -256,15 +255,12 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         gcf = new Grids_ChunkFactoryDoubleArray();
         chunkNRows = 300;//250; //64
         chunkNCols = 350;//300; //64
-        gf = new Grids_GridDoubleFactory(
-                env.ge,
-                gp.GridChunkDoubleFactory,
-                gp.DefaultGridChunkDoubleFactory,
-                -9999d,
-                chunkNRows,
-                chunkNCols,
-                new Grids_Dimensions(chunkNRows, chunkNCols),
-                new Grids_GridDoubleStatsNotUpdated(env.ge));
+        gf = gp.gridFactoryDouble;
+        gf.setChunkNRows(chunkNRows);
+        gf.setChunkNCols(chunkNCols);
+        gf.setNoDataValue(-9999d);
+        gf.setDimensions(new Grids_Dimensions(chunkNRows, chunkNCols));
+        gf.setDefaultChunkFactory(gcf);
 //        Currently only equal interval implemented
 //        // Jenks runs
 //        styleParameters.setClassificationFunctionName("Jenks");
@@ -283,14 +279,14 @@ public class Geotools_DisplayRaster extends Geotools_Maps {
         Path dirIn = Paths.get(mapDirectory.toString(), "input");
         String nameOfGrid;
         nameOfGrid = "test";
-        Path asciigridFile = Paths.get(dirIn.toString(),                nameOfGrid + ".asc");
+        Path asciigridFile = Paths.get(dirIn.toString(), nameOfGrid + ".asc");
         ArcGridReader agr;
         agr = getArcGridReader(asciigridFile);
         GridCoverage2D gc;
         gc = getGridCoverage2D(agr);
         Path dirGen = Paths.get(mapDirectory.toString(), "generated");
         Path dir = Paths.get(dirGen.toString(), nameOfGrid);
-        Grids_GridDouble g = (Grids_GridDouble) gf.create(dir, asciigridFile);
+        Grids_GridDouble g = gf.create(new Generic_Path(asciigridFile));
         int index = 0;
         boolean scaleToFirst = false;
         String outname = nameOfGrid + "GeoToolsOutput";
