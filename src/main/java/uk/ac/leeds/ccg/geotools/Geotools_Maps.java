@@ -58,7 +58,8 @@ import uk.ac.leeds.ccg.geotools.core.Geotools_Strings;
 
 /**
  *
- * @author geoagdt
+ * @author Andy Turner
+ * @version 1.0.0
  */
 public class Geotools_Maps extends Geotools_Object {
 
@@ -447,15 +448,15 @@ public class Geotools_Maps extends Geotools_Object {
 //            st.nextToken();
 //            st.nextToken();
                 int max = Integer.MIN_VALUE;
-                long RecordID = 0;
-                String line = "";
+                long recordID = 0;
+                String line;
                 while (!(token == StreamTokenizer.TT_EOF)) {
                     switch (token) {
                         case StreamTokenizer.TT_EOL:
 //                        if (RecordID % 100 == 0) {
 //                            System.out.println(line);
 //                        }
-                            RecordID++;
+                            recordID++;
                             break;
                         case StreamTokenizer.TT_WORD:
                             line = st.sval;
@@ -1161,6 +1162,7 @@ public class Geotools_Maps extends Geotools_Object {
      * @param fc The feature collection to be turned into a shapefile.
      * @param sft
      * @return shapefile File
+     * @throws java.io.IOException
      */
     public Path createShapefileIfItDoesNotExist(Path dir, String name,
             TreeSetFeatureCollection fc, SimpleFeatureType sft)
@@ -1176,6 +1178,7 @@ public class Geotools_Maps extends Geotools_Object {
      * @param sft
      * @param sdsf
      * @return shapefile File
+     * @throws java.io.IOException
      */
     public Path createShapefileIfItDoesNotExist(Path dir, String name,
             TreeSetFeatureCollection fc, SimpleFeatureType sft,
@@ -1197,6 +1200,7 @@ public class Geotools_Maps extends Geotools_Object {
      * @param yllcorner
      * @param cellsize
      * @return
+     * @throws java.io.IOException
      */
     public Path createLineGridShapefileIfItDoesNotExist(Path dir, String name,
             long nrows, long ncols, double xllcorner, double yllcorner,
@@ -1213,17 +1217,18 @@ public class Geotools_Maps extends Geotools_Object {
      * @param name Better to internally generate this from other parameters?
      * @param nrows
      * @param ncols
-     * @param xllcorner
-     * @param yllcorner
+     * @param xll xllcorner
+     * @param yll yllcorner
      * @param cellsize
      * @return
+     * @throws java.io.IOException
      */
     public Path createPolyGridShapefileIfItDoesNotExist(Path dir, String name,
-            long nrows, long ncols, double xllcorner, double yllcorner,
+            long nrows, long ncols, double xll, double yll,
             double cellsize) throws IOException {
         SimpleFeatureType sft = getPolygonSimpleFeatureType(getDefaultSRID());
         TreeSetFeatureCollection fc = getPolyGridFeatureCollection(sft, nrows,
-                ncols, xllcorner, yllcorner, cellsize);
+                ncols, xll, yll, cellsize);
         return createShapefileIfItDoesNotExist(dir, name, fc, sft);
     }
 
