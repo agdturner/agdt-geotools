@@ -162,8 +162,9 @@ public class Geotools_Shapefile extends Geotools_Object {
     /**
      *
      * @return
+     * @throws java.io.IOException
      */
-    public FeatureCollection getFeatureCollection() {
+    public FeatureCollection getFeatureCollection() throws IOException {
         return getFeatureCollection(getFileDataStore());
     }
 
@@ -254,17 +255,12 @@ public class Geotools_Shapefile extends Geotools_Object {
     /**
      * @param fds The FileDataStore from which the FeatureSource Features are
      * returned as a FeatureCollection.
-     * @return A FeatureCollection from fds.
+     * @return A FeatureCollection from {@code fds}.
+     * @throws java.io.IOException If encountered.
      */
     protected static FeatureCollection getFeatureCollection(
-            FileDataStore fds) {
-        FeatureCollection result = null;
-        try {
-            result = fds.getFeatureSource().getFeatures();
-        } catch (IOException ex) {
-            Logger.getLogger(Geotools_Shapefile.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return result;
+            FileDataStore fds) throws IOException {
+        return fds.getFeatureSource().getFeatures();
     }
 
     /**

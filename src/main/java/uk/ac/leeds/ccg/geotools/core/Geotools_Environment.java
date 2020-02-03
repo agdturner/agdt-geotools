@@ -19,7 +19,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,20 +50,42 @@ import uk.ac.leeds.ccg.grids.core.Grids_Environment;
 import uk.ac.leeds.ccg.vector.core.Vector_Environment;
 
 /**
- * A class for holding various useful methods for doing things with
- * Geotools_Environment Objects.
+ * Geotools_Environment.
  *
- * @author geoagdt
+ * @author Andy Turner
+ * @version 1.0.0
  */
 public class Geotools_Environment {
 
+    /**
+     * The Vector Environment
+     */
     public final transient Vector_Environment ve;
+
+    /**
+     * The Grids Environment of {@link #ve} for convenience.
+     */
     public final transient Grids_Environment ge;
+
+    /**
+     * The Grids Environment of {@link #ve} and {@link #ge} for convenience.
+     */
     public final transient Generic_Environment env;
 
+    /**
+     * For managing files.
+     */
     public transient Geotools_Files files;
 
+    /**
+     * The Geotools_Maps.
+     */
     protected Geotools_Maps maps;
+
+    /**
+     * The Geotools_Style.
+     */
+    protected Geotools_Style style;
 
     public Geotools_Environment(Vector_Environment ve, Path dataDir)
             throws IOException {
@@ -74,8 +95,10 @@ public class Geotools_Environment {
         //Memory_Threshold = 3000000000L;
         files = new Geotools_Files(dataDir);
     }
-    protected Geotools_Style style;
 
+    /**
+     * @return {@link #maps} initialising it first if it is {@code null}.
+     */
     public Geotools_Maps getMaps() {
         if (maps == null) {
             maps = new Geotools_Maps(this);
@@ -83,6 +106,9 @@ public class Geotools_Environment {
         return maps;
     }
 
+    /**
+     * @return {@link #style} initialising it first if it is {@code null}.
+     */
     public Geotools_Style getStyle() {
         if (style == null) {
             style = new Geotools_Style(this);
@@ -90,17 +116,20 @@ public class Geotools_Environment {
         return style;
     }
 
-    public int getMapContentImageHeight(
-            MapContent mc,
-            int imageWidth) {
-        int result;
+    /**
+     * Calculate and return the map content image height.
+     *
+     * @param mc The MapContent
+     * @param imageWidth The image
+     * @return The height in pixels.
+     */
+    public int getMapContentImageHeight(MapContent mc, int imageWidth) {
         ReferencedEnvelope re = mc.getMaxBounds();
         double height = re.getHeight();
         double width = re.getWidth();
         //System.out.println("height " + height + ", width " + width);
         double heightToWidth = height / width;
-        result = (int) (imageWidth * heightToWidth);
-        return result;
+        return (int) (imageWidth * heightToWidth);
     }
 
     /**
