@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2020 Andy Turner, University of Leeds.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package uk.ac.leeds.ccg.geotools.demo;
 
@@ -42,7 +52,7 @@ public class Geotools_DisplayShapefile extends Geotools_Object {
 
     public static void main(String[] args) {
         try {
-        new Geotools_DisplayShapefile().run();
+            new Geotools_DisplayShapefile().run();
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }
@@ -67,16 +77,20 @@ public class Geotools_DisplayShapefile extends Geotools_Object {
         Path dir;
         Path f;
 
-        name = "high_water_polyline.shp";
-        dir = Paths.get("M:/Projects/PFIHack/data/input/OrdnanceSurvey/bdline_essh_gb/Data/GB/");
-        f = env.getShapefile(dir, name, false);
-        files.add(f);
-
-        name = "test.shp";
-        dir = Paths.get("M:/test/");
-        f = env.getShapefile(dir, name, false);
-        files.add(f);
-
+//        name = "high_water_polyline.shp";
+//        dir = Paths.get("M:/Projects/PFIHack/data/input/OrdnanceSurvey/bdline_essh_gb/Data/GB/");
+//        f = env.getShapefile(dir, name, false);
+//        files.add(f);
+//
+//        name = "test.shp";
+//        dir = Paths.get("M:/test/");
+//        f = env.getShapefile(dir, name, false);
+//        files.add(f);
+        
+        f = Paths.get("C:", "Users", "geoagdt", "data", "data", "electoral",
+                "Westminster_Parliamentary_Constituencies_December_2018_UK_BUC",
+                "Westminster_Parliamentary_Constituencies_December_2018_UK_BUC.shp");
+                files.add(f);
         try {
             displayShapefiles(files);
         } catch (Exception ex) {
