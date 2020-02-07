@@ -23,8 +23,10 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import org.geotools.brewer.color.StyleGenerator;
 import org.geotools.factory.CommonFactoryFinder;
@@ -33,6 +35,7 @@ import org.geotools.filter.IllegalFilterException;
 import org.geotools.filter.function.Classifier;
 import org.geotools.filter.function.ExplicitClassifier;
 import org.geotools.filter.function.RangedClassifier;
+import org.geotools.styling.Description;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
 import org.geotools.styling.Graphic;
@@ -46,6 +49,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
+import org.opengis.style.SemanticType;
 
 /**
  *
@@ -115,7 +119,8 @@ public class Geotools_StyleGenerator extends StyleGenerator {
                     colors,
                     opacity,
                     stroke);
-            fts.addRule(rule);
+            //fts.addRule(rule);
+            fts.rules().add(rule);
             // For each middle classes
             for (i = 1; i < ranged.getSize() - 1; i++) {
                 // obtain min/max values
@@ -132,7 +137,8 @@ public class Geotools_StyleGenerator extends StyleGenerator {
                         colors,
                         opacity,
                         stroke);
-                fts.addRule(rule);
+            //fts.addRule(rule); // Change for Geotools 22.3
+            fts.rules().add(rule);
             }
             // For last class
             i = ranged.getSize() - 1;
@@ -151,7 +157,8 @@ public class Geotools_StyleGenerator extends StyleGenerator {
                     colors,
                     opacity,
                     stroke);
-            fts.addRule(rule);
+            //fts.addRule(rule); // Change for Geotools 22.3
+            fts.rules().add(rule);
         } else if (classifier instanceof ExplicitClassifier) {
             ExplicitClassifier explicit = (ExplicitClassifier) classifier;
 
@@ -160,7 +167,8 @@ public class Geotools_StyleGenerator extends StyleGenerator {
                 Set value = (Set) explicit.getValues(i);
                 Rule rule = createRuleExplicit(explicit, expression, value, geometryAttrType, i,
                         elseMode, colors, opacity, stroke);
-                fts.addRule(rule);
+            //fts.addRule(rule); // Change for Geotools 22.3
+            fts.rules().add(rule);
             }
         } else {
             LOGGER.log(Level.SEVERE, "Error: no handler for this Classifier type");
@@ -170,28 +178,40 @@ public class Geotools_StyleGenerator extends StyleGenerator {
         if (elseMode != ELSEMODE_IGNORE) {
             Symbolizer symb = createSymbolizer(geometryAttrType, getElseColor(elseMode, colors),
                     opacity, stroke);
-            Rule elseRule = sb.createRule(symb);
-            elseRule.setIsElseFilter(true);
-            elseRule.setTitle("Else");
-            elseRule.setName("else");
-            fts.addRule(elseRule);
+            Rule rule = sb.createRule(symb);
+            //elseRule.setIsElseFilter(true); // Change for Geotools 22.3
+            rule.setElseFilter(true);
+            //elseRule.setTitle("Else"); // Change for Geotools 22.3
+            rule.setName("else");
+            //fts.addRule(rule); // Change for Geotools 22.3
+            fts.rules().add(rule);
         }
 
         // sort the FeatureTypeStyle rules
-        Rule[] rule = fts.getRules();
+            //Rule[] rule = fts.getRules();; // Change for Geotools 22.3
+            List<Rule> rule = fts.rules();
 
         if (elseMode == ELSEMODE_INCLUDEASMIN) {
             //move last rule to the front
-            for (int i = rule.length - 1; i > 0; i--) {
-                Rule tempRule = rule[i];
-                rule[i] = rule[i - 1];
-                rule[i - 1] = tempRule;
+//            for (int i = rule.length - 1; i > 0; i--) {
+//                Rule tempRule = rule[i];
+//                rule[i] = rule[i - 1];
+//                rule[i - 1] = tempRule;
+//            }
+            for (int i = rule.size() - 1; i > 0; i--) {
+                Rule tempRule = rule.get(i);
+                rule.set(i, rule.get(i - 1));
+                rule.set(i - 1, tempRule);
             }
         }
 
         //our syntax will be: ColorBrewer:id
-        fts.setSemanticTypeIdentifiers(new String[]{"generic:geometry", "colorbrewer:" + typeId});
-
+        //fts.setSemanticTypeIdentifiers(new String[]{"generic:geometry", "colorbrewer:" + typeId});
+        Set<SemanticType> st = new HashSet<>();
+        st.add(new SemanticType("generic:geometry"));
+        st.add(new SemanticType("colorbrewer:" + typeId));
+        fts.semanticTypeIdentifiers().addAll(st);
+        
         return fts;
     }
 
@@ -255,7 +275,7 @@ public class Geotools_StyleGenerator extends StyleGenerator {
         // create a rule
         Rule rule = sb.createRule(symb);
         rule.setFilter(filter);
-        rule.setTitle(title);
+        //rule.setTitle(title);
         rule.setName(getRuleName(i + 1));
 
         return rule;
@@ -271,7 +291,7 @@ public class Geotools_StyleGenerator extends StyleGenerator {
      */
     private static Object chopInteger(Object value) {
         if ((value instanceof Number) && (value.toString().endsWith(".0"))) {
-            return new Integer(((Number) value).intValue());
+            return ((Number) value).intValue();
         } else {
             return value;
         }
@@ -284,7 +304,7 @@ public class Geotools_StyleGenerator extends StyleGenerator {
      *
      */
     private static String getRuleName(int count) {
-        String strVal = new Integer(count).toString();
+        String strVal = Integer.valueOf(count).toString();
 
         if (strVal.length() == 1) {
             return "rule0" + strVal;
@@ -364,7 +384,7 @@ public class Geotools_StyleGenerator extends StyleGenerator {
             rule.setFilter(ff.or(filters));
         }
 
-        rule.setTitle(title);
+        //rule.setTitle(title);
         rule.setName(getRuleName(i + 1));
 
         return rule;

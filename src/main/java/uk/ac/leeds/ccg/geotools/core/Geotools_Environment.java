@@ -37,6 +37,8 @@ import org.geotools.styling.Style;
 import org.geotools.swing.JMapFrame;
 import org.opengis.feature.simple.SimpleFeature;
 import uk.ac.leeds.ccg.generic.core.Generic_Environment;
+import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
+import uk.ac.leeds.ccg.generic.io.Generic_Path;
 import uk.ac.leeds.ccg.generic.visualisation.Generic_Visualisation;
 import uk.ac.leeds.ccg.geotools.Geotools_LegendItem;
 import uk.ac.leeds.ccg.geotools.Geotools_LegendLayer;
@@ -87,13 +89,46 @@ public class Geotools_Environment {
      */
     protected Geotools_Style style;
 
-    public Geotools_Environment(Vector_Environment ve, Path dataDir)
-            throws IOException {
-        this.ve = ve;
+    /**
+     * Creates a new Geotools_Environment.
+     *
+     * The Vector_Environment is initialised using:
+     * {@code new Vector_Environment(new Grids_Environment(
+                new Generic_Environment(new Generic_Defaults())))}.
+     *
+     * @throws java.io.IOException If encountered.
+     * @throws Exception If there is another problem setting up the file store.
+     */
+    public Geotools_Environment() throws IOException, Exception {
+        this(new Vector_Environment(new Grids_Environment(
+                new Generic_Environment(new Generic_Defaults()))));
+    }
+
+    /**
+     * Creates a new Geotools_Environment. {@link #files} is initialised from
+     * {@code e.files.getDir()}.
+     *
+     * @param e The Generic_Environment.
+     * @throws java.io.IOException If encountered.
+     */
+    public Geotools_Environment(Vector_Environment e) throws IOException,
+            Exception {
+        this(e, e.files.getDir());
+    }
+
+    /**
+     * Creates a new Grids_Environment.
+     *
+     * @param e What {@link #env} is set to.
+     * @param dir Used to initialise {@link #files}.
+     * @throws java.io.IOException If encountered.
+     */
+    public Geotools_Environment(Vector_Environment e, Generic_Path dir)
+            throws IOException, Exception {
+        this.ve = e;
         this.ge = ve.ge;
         this.env = ve.env;
-        //Memory_Threshold = 3000000000L;
-        files = new Geotools_Files(dataDir);
+        files = new Geotools_Files();
     }
 
     /**

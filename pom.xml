@@ -45,8 +45,9 @@
         <jts.version>1.14.0</jts.version>
         <jts.version>1.12</jts.version>
         -->
-        <geotools.version>21.4</geotools.version>
+        <geotools.version>22.3</geotools.version>
         <!--
+        <geotools.version>21.4</geotools.version>
         <geotools.version>21.3</geotools.version>
         <geotools.version>22.2</geotools.version>
         <geotools.version>20.2</geotools.version>
@@ -54,7 +55,7 @@
         <geotools.version>13.2</geotools.version>
         <geotools.version>13-SNAPSHOT</geotools.version>
         -->
-        <agdt-java-generic.version>1.1.1</agdt-java-generic.version>
+        <agdt-java-generic.version>1.2-SNAPSHOT</agdt-java-generic.version>
         <agdt-java-grids.version>1.0-SNAPSHOT</agdt-java-grids.version>
         <agdt-java-vector.version>1.0-SNAPSHOT</agdt-java-vector.version>
         <maven.compiler.source>11</maven.compiler.source>

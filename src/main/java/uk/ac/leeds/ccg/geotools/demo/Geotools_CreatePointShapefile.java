@@ -55,10 +55,9 @@ public class Geotools_CreatePointShapefile extends Geotools_Object {
 
     public static void main(String[] args) {
         try {
-            Vector_Environment ve = new Vector_Environment(
-                    new Generic_Environment(new Generic_Defaults()));
-            Geotools_Environment env = new Geotools_Environment(ve,
-                    ve.env.files.getDir());
+            Geotools_Environment env = new Geotools_Environment(
+                    new Vector_Environment(new Grids_Environment(
+                            new Generic_Environment(new Generic_Defaults()))));
             Geotools_CreatePointShapefile p = new Geotools_CreatePointShapefile(env);
             p.run();
         } catch (Exception ex) {
@@ -70,7 +69,7 @@ public class Geotools_CreatePointShapefile extends Geotools_Object {
         // Todo
         Path dir = Paths.get("M:/Test");
         Files.createDirectories(dir);
-        
+
         SimpleFeatureType aPointSFT = null;
         try {
             aPointSFT = DataUtilities.createType(

@@ -16,7 +16,6 @@
 package uk.ac.leeds.ccg.geotools.io;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import uk.ac.leeds.ccg.generic.io.Generic_Defaults;
 import uk.ac.leeds.ccg.generic.io.Generic_Files;
@@ -30,21 +29,15 @@ import uk.ac.leeds.ccg.geotools.core.Geotools_Strings;
  */
 public class Geotools_Files extends Generic_Files {
 
-    protected Geotools_Files() throws IOException {
-        this(getDefaultDir());
+    private static final long serialVersionUID = 1L;
+
+    public Geotools_Files() throws IOException {
+        this(new Generic_Defaults(Paths.get(System.getProperty("user.home"),
+                Geotools_Strings.s_Geotools)));
     }
 
-    /**
-     * {@code return new File(System.getProperty("user.dir"), "data");}
-     *
-     * @return A default directory called data in the user.dir.
-     */
-    public static Path getDefaultDir() {
-        return Paths.get(getDefaultDir().toString(), Geotools_Strings.s_Geotools);
-    }
-
-    public Geotools_Files(Path dataDir) throws IOException {
-        super(new Generic_Defaults(dataDir));
+    public Geotools_Files(Generic_Defaults d) throws IOException {
+        super(d);
     }
 
 }

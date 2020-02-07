@@ -1236,10 +1236,10 @@ public class Geotools_Maps extends Geotools_Object {
     public ArcGridReader getArcGridReader(Path f) {
         ArcGridReader r = null;
         try {
-            r = new ArcGridReader(f);
+            r = new ArcGridReader(f.toFile());
         } catch (DataSourceException ex) {
             Logger.getLogger(Geotools_Maps.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("f.toString()" + f.toString());
+            System.out.println("f.toString() " + f.toString());
         }
         return r;
     }

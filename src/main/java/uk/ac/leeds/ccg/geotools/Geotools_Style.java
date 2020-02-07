@@ -990,10 +990,8 @@ public class Geotools_Style extends Geotools_Object {
         long nonZeroAndNonNoDataValueCount = gs.getN().longValueExact();
         System.out.println("nonZeroAndNonNoDataValueCount " + nonZeroAndNonNoDataValueCount);
         Object[] quantileClassMap = gs.getQuantileClassMap(nClasses);
-        TreeMap<Integer, Double> minDouble;
-        minDouble = (TreeMap<Integer, Double>) quantileClassMap[0];
-        TreeMap<Integer, Double> maxDouble;
-        maxDouble = (TreeMap<Integer, Double>) quantileClassMap[1];
+        TreeMap<Integer, Double> minDouble = (TreeMap<Integer, Double>) quantileClassMap[0];
+        TreeMap<Integer, Double> maxDouble = (TreeMap<Integer, Double>) quantileClassMap[1];
 
         TreeMap<Integer, TreeMap<Double, Long>> classMap;
         classMap = (TreeMap<Integer, TreeMap<Double, Long>>) quantileClassMap[2];
